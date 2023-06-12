@@ -1,9 +1,10 @@
 ﻿using System.Text;
 using System.Xml.Linq;
+using PgConvert.Config;
 
 namespace PgConvert
 {
-	public abstract class DtElement : BaseSelectable
+    public abstract class DtElement : BaseSelectable
 	{
 		#region конструктор
 		private protected DtElement() { }

@@ -2,6 +2,8 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using Microsoft.VisualBasic.FileIO;
+using PgConvert.Config;
 
 namespace PgConvert
 {
@@ -32,15 +34,10 @@ namespace PgConvert
 		public ConvertMsToPgCfg GetConfig() =>
 			Config;
 
-		public string SetConfig(ConvertMsToPgCfg newCfg)
+		public void SetConfig(ConvertMsToPgCfg newCfg)
 		{
-			var err = newCfg.TestConnectDatabase();
-			if (!string.IsNullOrEmpty(err))
-				return err;
-
 			Config = newCfg;
 			NeedUpdateConfig = true;
-			return null;
 		}
 		#endregion config
 
@@ -176,6 +173,8 @@ namespace PgConvert
 			if (string.IsNullOrEmpty(path))
 				return "Необходимо указать путь для сохраняемого файла";
 
+			Delete();
+
 			try
 			{
 				projectFile = Path.ChangeExtension(FullFilePath, _extProj);
@@ -205,6 +204,26 @@ namespace PgConvert
 
 			NeedUpdateFile = NeedUpdateConfig = false;
 			return null;
+		}
+
+		private void Delete()
+		{
+			var list = new List<OnePgDatabase>
+			{
+				new OnePgDatabase
+				{
+					 ConnectionString=Config.ConnectionStringToDic,
+					  Elements=Array.Empty< DtElement>()                },
+				new OnePgDatabase
+				{
+					 ConnectionString=Config.ConnectionStringToArc,
+					  Elements=Array.Empty< DtElement>()                },
+				new OnePgDatabase
+				{
+					 ConnectionString=Config.ConnectionStringToWrk,
+					  Elements=Array.Empty< DtElement>()                },
+			};
+			Config.Databases = list.ToArray();
 		}
 	}
 }
