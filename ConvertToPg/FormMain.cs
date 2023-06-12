@@ -1,4 +1,5 @@
 using PgConvert;
+using PgConvert.Config;
 
 namespace ConvertToPg
 {
@@ -25,14 +26,14 @@ namespace ConvertToPg
 		/// </summary>
 		private void MakeTypeCheckboxes()
 		{
-			int i = 0;
+			int i = 0, y = 0;
 			foreach (var elementType in Enum.GetValues(typeof(ElmType)))
 			{
 				RadioButton radioButton = new();
 				groupBoxCheckElmType.Controls.Add(radioButton);
 
 				radioButton.AutoSize = true;
-				radioButton.Location = new Point(6, 22 + i);
+				radioButton.Location = new Point(6, 22 + y);
 				radioButton.Name = $"radioButton{i}";
 				radioButton.Size = new Size(83, 19);
 				radioButton.TabIndex = i;
@@ -42,7 +43,8 @@ namespace ConvertToPg
 				radioButton.Checked = (ElmType)elementType == ElmType.None;
 				radioButton.CheckedChanged += CheckBox_CheckedChanged;
 
-				i += 25;
+				i++;
+				y += 25;
 			}
 		}
 
@@ -104,19 +106,15 @@ namespace ConvertToPg
 				return;
 			ConvertMsToPgCfg newCfg = new()
 			{
-				ForDatabase_Dict = cfg.ForDatabase_Dict,
-				ForDatabase_Work = cfg.ForDatabase_Work,
-				ForDatabase_Ignore = cfg.ForDatabase_Ignore,
-				ConnectionStringToWrk = formCfg.ConnectionStringToAct,
-				ConnectionStringToArc = formCfg.ConnectionStringToArc,
-				ConnectionStringToDic = formCfg.ConnectionStringToPg,
+				//ForDatabase_Dict = cfg.ForDatabase_Dict,
+				//ForDatabase_Work = cfg.ForDatabase_Work,
+				//ForDatabase_Ignore = cfg.ForDatabase_Ignore,
+				//ConnectionStringToDic = formCfg.ConnectionStringToPg,
 				SkipOperation = formCfg.SkipOperation,
 				SkipElement = formCfg.SkipElement,
 			};
 
-			var err = convert.SetConfig(newCfg);
-			if (!string.IsNullOrEmpty(err))
-				ShowErrorMessage(err);
+			convert.SetConfig(newCfg);
 		}
 
 		private static void ShowErrorMessage(string err) =>
