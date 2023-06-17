@@ -1,10 +1,9 @@
 ﻿using System.Text;
-using System.Xml.Linq;
 using PgConvert.Config;
 
 namespace PgConvert
 {
-    public abstract class DtElement : BaseSelectable
+	public abstract class DtElement : BaseSelectable
 	{
 		#region конструктор
 		private protected DtElement() { }
@@ -158,16 +157,21 @@ namespace PgConvert
 
 		public virtual DtField[] GetChild => Array.Empty<DtField>();
 
-		public override int GetHashCode()
+		public override int GetHashCode() =>
+			HashCode;
+		public int HashCode
 		{
-			var hash = FirstLine.GetHashCode();
-			if (Lines != null)
-				foreach (var str in Lines)
-					hash ^= str.GetHashCode();
-			return hash;
+			get
+			{
+				var hash = FirstLine.GetHashCode();
+				if (Lines != null)
+					foreach (var str in Lines)
+						hash ^= str.GetHashCode();
+				return hash;
+			}
 		}
 
 		public override string ToString() =>
-			$"{ElementOperation.GetOperationSign(Operation)} {Type}: {Name}{(this is ElIndex index ? $" ON {index.TableName}" : string.Empty)}";
+			$"{ElementOperation.GetOperationSign(Operation)} {Type}: {Name}";
 	}
 }

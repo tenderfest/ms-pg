@@ -10,7 +10,7 @@ namespace PgConvert.Config
 			Databases = new OnePgDatabase[]
 			{
 				new OnePgDatabase {
-					Name = "Игнорировать",
+					Name = OnePgDatabase.ThisIgnore,
 				}
 			};
 		}
@@ -20,9 +20,6 @@ namespace PgConvert.Config
 		public string ConnectionStringToArc { get; set; }
 		public string[] SkipOperation { get; set; }
 		public string[] SkipElement { get; set; }
-		public DtElement[] ForDatabase_Dict { get; set; }
-		public DtElement[] ForDatabase_Work { get; set; }
-		public DtElement[] ForDatabase_Ignore { get; set; }
 
 		public static string[] GetSkipArrayFromText(string text) =>
 			text?.Split('\n')
@@ -35,6 +32,19 @@ namespace PgConvert.Config
 			var sb = new StringBuilder();
 			stringArray?.ToList().ForEach(s => sb.AppendLine(s));
 			return sb.ToString();
+		}
+
+		public void AddDelDatabase(OnePgDatabase db, bool isAdd)
+		{
+			if (null == db || db.IsDefault)
+				return;
+
+			var databases = Databases.ToList();
+			if (isAdd)
+				databases.Add(db);
+			else
+				databases.Remove(db);
+			Databases = databases.ToArray();
 		}
 
 		public string GetSkipElementAsText() =>

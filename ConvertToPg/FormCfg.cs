@@ -21,10 +21,10 @@ namespace ConvertToPg
 			textBoxSkipOperations.Text = Cfg.GetSkipOperationAsText();
 			textBoxSkipElement.Text = Cfg.GetSkipElementAsText();
 
-			MakeDatabases(true);
+			ShowDatabases(true);
 		}
 
-		private void MakeDatabases(bool addHeight)
+		private void ShowDatabases(bool addHeight)
 		{
 			groupBoxTargetDatabases.Controls.Clear();
 			foreach (var db in Cfg.Databases)
@@ -34,16 +34,19 @@ namespace ConvertToPg
 					db.ConnectionString,
 					TestConnect,
 					DeleteDatabase,
-					ConnectionStringChanged);
+					ConnectionStringChanged)
+				{
+					Text = db.Name,
+					Dock = DockStyle.Top,
+					Location = new Point(1, 1),
+					Enabled = !db.IsDefault,
+				};
 				if (addHeight)
 				{
 					panelDatabaseHeight = panel.Height;
 					HeightChange(true);
 				}
 				groupBoxTargetDatabases.Controls.Add(panel);
-				panel.Text = db.Name;
-				panel.Dock = DockStyle.Top;
-				panel.Location = new Point(1, 1);
 			}
 		}
 
@@ -73,11 +76,11 @@ namespace ConvertToPg
 		private void DeleteDatabase(object sender, EventArgs e) =>
 			DatabaseFromControl(sender, (db) =>
 			{
-				var databases = Cfg.Databases.ToList();
-				databases.Remove(db);
-				Cfg.Databases = databases.ToArray();
+				if (db.IsDefault) return;
+
+				Cfg.AddDelDatabase(db, false);
 				HeightChange(false);
-				MakeDatabases(false);
+				ShowDatabases(false);
 			});
 
 		private void ConnectionStringChanged(object sender, EventArgs e) =>
@@ -90,7 +93,19 @@ namespace ConvertToPg
 
 		private void ButtonAddDatabase_Click(object sender, EventArgs e)
 		{
+			var newDBForm = new FormNewDatabase();
+			newDBForm.ShowDialog(this);
+			var dr = newDBForm.DialogResult;
+			if (dr != DialogResult.OK)
+				return;
 
+			Cfg.AddDelDatabase(new OnePgDatabase
+			{
+				Name = newDBForm.DbName,
+				ConnectionString = newDBForm.DbConnectionString
+			}, true);
+			HeightChange(true);
+			ShowDatabases(true);
 		}
 
 		public string[] SkipOperation =>

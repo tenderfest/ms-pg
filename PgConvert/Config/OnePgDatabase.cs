@@ -2,9 +2,11 @@
 {
 	public class OnePgDatabase
 	{
+		public const string ThisIgnore = "Игнорировать";
 		public string Name { get; set; }
 		public string ConnectionString { get; set; }
 		public DtElement[] Elements { get; set; }
+
 		public string TestConnectDatabase()
 		{
 			try
@@ -15,7 +17,10 @@
 			catch (Exception ex) { return $"Ошибка подключения к БД PostgreSQL: {ex.Message}"; }
 			return null;
 		}
-		public override string ToString() => 
+
+		public bool IsDefault =>
+			Name == ThisIgnore;
+		public override string ToString() =>
 			Name;
 	}
 }

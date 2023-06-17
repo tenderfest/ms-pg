@@ -102,7 +102,7 @@ namespace ConvertToPg
 		{
 			ConvertMsToPgCfg cfg = convert.GetConfig();
 			var formCfg = new FormCfg(cfg);
-			if (formCfg.ShowDialog() != DialogResult.OK)
+			if (formCfg.ShowDialog(this) != DialogResult.OK)
 				return;
 			ConvertMsToPgCfg newCfg = new()
 			{
