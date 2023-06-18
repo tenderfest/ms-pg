@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PgConvert.Config
 {
@@ -7,15 +8,15 @@ namespace PgConvert.Config
 	{
 		public ConvertMsToPgCfg()
 		{
-			Databases = new OnePgDatabase[]
+			if (null == Databases)
 			{
-				new OnePgDatabase (OnePgDatabase.ThisIgnore)
-			};
+				Databases = new OnePgDatabase[]
+				{
+					new OnePgDatabase (OnePgDatabase.ThisIgnore)
+				};
+			}
 		}
 		public OnePgDatabase[] Databases { get; set; }
-		public string ConnectionStringToDic { get; set; }
-		public string ConnectionStringToWrk { get; set; }
-		public string ConnectionStringToArc { get; set; }
 		public string[] SkipOperation { get; set; }
 		public string[] SkipElement { get; set; }
 

@@ -7,7 +7,8 @@ namespace ConvertToPg
 		private readonly ConvertMsToPgCfg _cfg;
 		private int panelDatabaseHeight;
 
-		public FormCfg() => InitializeComponent();
+		public FormCfg() =>
+			InitializeComponent();
 
 		public FormCfg(ConvertMsToPgCfg cfg) : this() =>
 			_cfg = cfg;
@@ -28,18 +29,19 @@ namespace ConvertToPg
 			groupBoxTargetDatabases.Controls.Clear();
 			foreach (var db in Cfg.Databases)
 			{
-				PanelDatabase panel = new(
+				PanelDatabase panel =
+					new(
 					db,
 					db.ConnectionString,
 					TestConnect,
 					DeleteDatabase,
 					ConnectionStringChanged)
-				{
-					Text = db.Name,
-					Dock = DockStyle.Top,
-					Location = new Point(1, 1),
-					Enabled = !db.IsDefault,
-				};
+					{
+						Text = db.Name,
+						Dock = DockStyle.Top,
+						Location = new Point(1, 1),
+						Enabled = !db.IsDefault,
+					};
 				if (addHeight)
 				{
 					panelDatabaseHeight = panel.Height;
@@ -97,16 +99,21 @@ namespace ConvertToPg
 				return;
 
 			var newDatabase = new OnePgDatabase(newDbForm.DatabaseName);
-			var errSetConnectionString = newDatabase.SetConnectionString(
-					newDbForm.BdServer,
-					newDbForm.BdPort,
-					newDbForm.BdLogin,
-					newDbForm.BdPassword,
-					newDbForm.BdName);
-			if (!string.IsNullOrEmpty(errSetConnectionString))
+			if (!string.IsNullOrEmpty(newDbForm.ConnectionString))
+				newDatabase.ConnectionString = newDbForm.ConnectionString;
+			else
 			{
-				MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
+				var errSetConnectionString = newDatabase.SetConnectionString(
+						newDbForm.BdServer,
+						newDbForm.BdPort,
+						newDbForm.BdName,
+						newDbForm.BdLogin,
+						newDbForm.BdPassword);
+				if (!string.IsNullOrEmpty(errSetConnectionString))
+				{
+					MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
 			}
 
 			Cfg.AddDelDatabase(newDatabase, true);

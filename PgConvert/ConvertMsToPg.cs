@@ -108,7 +108,7 @@ namespace PgConvert
 			}
 			catch (Exception ex) { return ex.Message; }
 
-			if (!Elements.Any())
+			if (!InFile.Any())
 				return $"Файл '{fileName}' пуст";
 
 			NeedUpdateFile = true;

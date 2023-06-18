@@ -106,6 +106,7 @@ namespace ConvertToPg
 				return;
 			ConvertMsToPgCfg newCfg = new()
 			{
+				Databases = cfg.Databases,
 				//ForDatabase_Dict = cfg.ForDatabase_Dict,
 				//ForDatabase_Work = cfg.ForDatabase_Work,
 				//ForDatabase_Ignore = cfg.ForDatabase_Ignore,

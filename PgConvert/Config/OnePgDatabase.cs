@@ -1,4 +1,6 @@
-﻿namespace PgConvert.Config
+﻿using System.Text.Json.Serialization;
+
+namespace PgConvert.Config
 {
 	public class OnePgDatabase
 	{
@@ -7,6 +9,7 @@
 
 		private const string _mustBeSpecified = " должен быть указан!";
 
+		public OnePgDatabase() { }
 		public OnePgDatabase(string databaseName)
 		{
 			Name = databaseName;
@@ -27,12 +30,17 @@
 			return null;
 		}
 
+		[JsonIgnore]
 		public bool IsDefault =>
 			Name == ThisIgnore;
 		public override string ToString() =>
 			Name;
 
-		public string SetConnectionString(string server, string port, string login, string password, string name)
+		/// <summary>
+		/// Сборка строки подключения из элементов
+		/// </summary>
+		/// <returns>Сообщение об ошибке или null, если ошибки нет</returns>
+		public string SetConnectionString(string server, string port, string name, string login, string password)
 		{
 			if (string.IsNullOrEmpty(server))
 				return "Сервер" + _mustBeSpecified;
