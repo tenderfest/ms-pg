@@ -29,36 +29,32 @@
 		private void InitializeComponent()
 		{
 			panelButtons = new Panel();
-			buttonSave = new Button();
 			buttonCancel = new Button();
+			buttonSave = new Button();
 			textBoxName = new TextBox();
-			textBoxConnString = new TextBox();
 			labelName = new Label();
-			labelConnString = new Label();
+			labelBdName = new Label();
+			textBoxBdName = new TextBox();
+			labelPassword = new Label();
+			textBoxPassword = new TextBox();
+			labelLogin = new Label();
+			textBoxLogin = new TextBox();
+			labelPort = new Label();
+			textBoxPort = new TextBox();
+			labelServer = new Label();
+			textBoxServer = new TextBox();
 			panelButtons.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panelButtons
 			// 
-			panelButtons.Controls.Add(buttonSave);
 			panelButtons.Controls.Add(buttonCancel);
+			panelButtons.Controls.Add(buttonSave);
 			panelButtons.Dock = DockStyle.Top;
 			panelButtons.Location = new Point(0, 0);
 			panelButtons.Name = "panelButtons";
-			panelButtons.Size = new Size(564, 24);
-			panelButtons.TabIndex = 1;
-			// 
-			// buttonSave
-			// 
-			buttonSave.Dock = DockStyle.Right;
-			buttonSave.Enabled = false;
-			buttonSave.Location = new Point(489, 0);
-			buttonSave.Name = "buttonSave";
-			buttonSave.Size = new Size(75, 24);
-			buttonSave.TabIndex = 1;
-			buttonSave.Text = "Сохранить";
-			buttonSave.UseVisualStyleBackColor = true;
-			buttonSave.Click += ButtonSave_Click;
+			panelButtons.Size = new Size(495, 24);
+			panelButtons.TabIndex = 0;
 			// 
 			// buttonCancel
 			// 
@@ -69,22 +65,26 @@
 			buttonCancel.TabIndex = 0;
 			buttonCancel.Text = "Отменить";
 			buttonCancel.UseVisualStyleBackColor = true;
-			buttonCancel.Click += ButtonCancel_Click;
+			// 
+			// buttonSave
+			// 
+			buttonSave.DialogResult = DialogResult.OK;
+			buttonSave.Dock = DockStyle.Right;
+			buttonSave.Enabled = false;
+			buttonSave.Location = new Point(420, 0);
+			buttonSave.Name = "buttonSave";
+			buttonSave.Size = new Size(75, 24);
+			buttonSave.TabIndex = 1;
+			buttonSave.Text = "Сохранить";
+			buttonSave.UseVisualStyleBackColor = true;
 			// 
 			// textBoxName
 			// 
-			textBoxName.Location = new Point(143, 30);
+			textBoxName.Location = new Point(77, 30);
 			textBoxName.Name = "textBoxName";
-			textBoxName.Size = new Size(403, 23);
+			textBoxName.Size = new Size(164, 23);
 			textBoxName.TabIndex = 2;
 			textBoxName.TextChanged += TextBoxName_TextChanged;
-			// 
-			// textBoxConnString
-			// 
-			textBoxConnString.Location = new Point(143, 59);
-			textBoxConnString.Name = "textBoxConnString";
-			textBoxConnString.Size = new Size(403, 23);
-			textBoxConnString.TabIndex = 3;
 			// 
 			// labelName
 			// 
@@ -92,17 +92,88 @@
 			labelName.Location = new Point(12, 33);
 			labelName.Name = "labelName";
 			labelName.Size = new Size(59, 15);
-			labelName.TabIndex = 4;
+			labelName.TabIndex = 1;
 			labelName.Text = "Название";
 			// 
-			// labelConnString
+			// labelBdName
 			// 
-			labelConnString.AutoSize = true;
-			labelConnString.Location = new Point(12, 62);
-			labelConnString.Name = "labelConnString";
-			labelConnString.Size = new Size(125, 15);
-			labelConnString.TabIndex = 5;
-			labelConnString.Text = "Строка подключения";
+			labelBdName.AutoSize = true;
+			labelBdName.Location = new Point(256, 33);
+			labelBdName.Name = "labelBdName";
+			labelBdName.Size = new Size(49, 15);
+			labelBdName.TabIndex = 3;
+			labelBdName.Text = "Имя БД";
+			// 
+			// textBoxBdName
+			// 
+			textBoxBdName.Location = new Point(311, 30);
+			textBoxBdName.Name = "textBoxBdName";
+			textBoxBdName.Size = new Size(164, 23);
+			textBoxBdName.TabIndex = 4;
+			// 
+			// labelPassword
+			// 
+			labelPassword.AutoSize = true;
+			labelPassword.Location = new Point(256, 91);
+			labelPassword.Name = "labelPassword";
+			labelPassword.Size = new Size(49, 15);
+			labelPassword.TabIndex = 11;
+			labelPassword.Text = "Пароль";
+			// 
+			// textBoxPassword
+			// 
+			textBoxPassword.Location = new Point(311, 88);
+			textBoxPassword.Name = "textBoxPassword";
+			textBoxPassword.Size = new Size(164, 23);
+			textBoxPassword.TabIndex = 12;
+			// 
+			// labelLogin
+			// 
+			labelLogin.AutoSize = true;
+			labelLogin.Location = new Point(12, 91);
+			labelLogin.Name = "labelLogin";
+			labelLogin.Size = new Size(41, 15);
+			labelLogin.TabIndex = 9;
+			labelLogin.Text = "Логин";
+			// 
+			// textBoxLogin
+			// 
+			textBoxLogin.Location = new Point(77, 88);
+			textBoxLogin.Name = "textBoxLogin";
+			textBoxLogin.Size = new Size(164, 23);
+			textBoxLogin.TabIndex = 10;
+			// 
+			// labelPort
+			// 
+			labelPort.AutoSize = true;
+			labelPort.Location = new Point(256, 62);
+			labelPort.Name = "labelPort";
+			labelPort.Size = new Size(35, 15);
+			labelPort.TabIndex = 7;
+			labelPort.Text = "Порт";
+			// 
+			// textBoxPort
+			// 
+			textBoxPort.Location = new Point(311, 59);
+			textBoxPort.Name = "textBoxPort";
+			textBoxPort.Size = new Size(164, 23);
+			textBoxPort.TabIndex = 8;
+			// 
+			// labelServer
+			// 
+			labelServer.AutoSize = true;
+			labelServer.Location = new Point(12, 62);
+			labelServer.Name = "labelServer";
+			labelServer.Size = new Size(47, 15);
+			labelServer.TabIndex = 5;
+			labelServer.Text = "Сервер";
+			// 
+			// textBoxServer
+			// 
+			textBoxServer.Location = new Point(77, 59);
+			textBoxServer.Name = "textBoxServer";
+			textBoxServer.Size = new Size(164, 23);
+			textBoxServer.TabIndex = 6;
 			// 
 			// FormNewDatabase
 			// 
@@ -110,11 +181,19 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = buttonCancel;
-			ClientSize = new Size(564, 93);
+			ClientSize = new Size(495, 128);
 			ControlBox = false;
-			Controls.Add(labelConnString);
+			Controls.Add(labelPort);
+			Controls.Add(textBoxPort);
+			Controls.Add(labelServer);
+			Controls.Add(textBoxServer);
+			Controls.Add(labelPassword);
+			Controls.Add(textBoxPassword);
+			Controls.Add(labelLogin);
+			Controls.Add(textBoxLogin);
+			Controls.Add(labelBdName);
+			Controls.Add(textBoxBdName);
 			Controls.Add(labelName);
-			Controls.Add(textBoxConnString);
 			Controls.Add(textBoxName);
 			Controls.Add(panelButtons);
 			FormBorderStyle = FormBorderStyle.Fixed3D;
@@ -132,8 +211,16 @@
 		private Button buttonSave;
 		private Button buttonCancel;
 		private TextBox textBoxName;
-		private TextBox textBoxConnString;
 		private Label labelName;
-		private Label labelConnString;
+		private Label labelBdName;
+		private TextBox textBoxBdName;
+		private Label labelPassword;
+		private TextBox textBoxPassword;
+		private Label labelLogin;
+		private TextBox textBoxLogin;
+		private Label labelPort;
+		private TextBox textBoxPort;
+		private Label labelServer;
+		private TextBox textBoxServer;
 	}
 }

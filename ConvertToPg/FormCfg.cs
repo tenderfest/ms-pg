@@ -1,5 +1,4 @@
 ﻿using PgConvert.Config;
-using System.Windows.Forms;
 
 namespace ConvertToPg
 {
@@ -93,17 +92,24 @@ namespace ConvertToPg
 
 		private void ButtonAddDatabase_Click(object sender, EventArgs e)
 		{
-			var newDBForm = new FormNewDatabase();
-			newDBForm.ShowDialog(this);
-			var dr = newDBForm.DialogResult;
-			if (dr != DialogResult.OK)
+			var newDbForm = new FormNewDatabase();
+			if (newDbForm.ShowDialog(this) != DialogResult.OK)
 				return;
 
-			Cfg.AddDelDatabase(new OnePgDatabase
+			var newDatabase = new OnePgDatabase(newDbForm.DatabaseName);
+			var errSetConnectionString = newDatabase.SetConnectionString(
+					newDbForm.BdServer,
+					newDbForm.BdPort,
+					newDbForm.BdLogin,
+					newDbForm.BdPassword,
+					newDbForm.BdName);
+			if (!string.IsNullOrEmpty(errSetConnectionString))
 			{
-				Name = newDBForm.DbName,
-				ConnectionString = newDBForm.DbConnectionString
-			}, true);
+				MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+
+			Cfg.AddDelDatabase(newDatabase, true);
 			HeightChange(true);
 			ShowDatabases(true);
 		}

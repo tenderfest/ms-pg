@@ -173,8 +173,6 @@ namespace PgConvert
 			if (string.IsNullOrEmpty(path))
 				return "Необходимо указать путь для сохраняемого файла";
 
-			Delete();
-
 			try
 			{
 				projectFile = Path.ChangeExtension(FullFilePath, _extProj);
@@ -204,26 +202,6 @@ namespace PgConvert
 
 			NeedUpdateFile = NeedUpdateConfig = false;
 			return null;
-		}
-
-		private void Delete()
-		{
-			var list = new List<OnePgDatabase>
-			{
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToDic,
-					  Elements=Array.Empty< DtElement>()                },
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToArc,
-					  Elements=Array.Empty< DtElement>()                },
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToWrk,
-					  Elements=Array.Empty< DtElement>()                },
-			};
-			Config.Databases = list.ToArray();
 		}
 	}
 }

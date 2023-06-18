@@ -5,18 +5,23 @@
 		public FormNewDatabase() =>
 			InitializeComponent();
 
-		public string DbName =>
+		/// <summary>
+		/// Удобное для человека название базы двнных
+		/// </summary>
+		public string DatabaseName =>
 			textBoxName.Text;
-		public string DbConnectionString =>
-			textBoxConnString.Text;
+		public string BdName =>
+			textBoxBdName.Text;
+		public string BdServer =>
+			textBoxServer.Text;
+		public string BdPort =>
+			textBoxPort.Text;
+		public string BdLogin =>
+			textBoxLogin.Text;
+		public string BdPassword =>
+			textBoxPassword.Text;
 
 		private void TextBoxName_TextChanged(object sender, EventArgs e) =>
 			buttonSave.Enabled = !string.IsNullOrEmpty(textBoxName.Text);
-
-		private void ButtonCancel_Click(object sender, EventArgs e) =>
-			Close();
-
-		private void ButtonSave_Click(object sender, EventArgs e) => 
-			DialogResult = DialogResult.OK;
 	}
 }

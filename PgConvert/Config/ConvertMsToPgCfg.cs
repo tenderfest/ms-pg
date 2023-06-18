@@ -9,9 +9,7 @@ namespace PgConvert.Config
 		{
 			Databases = new OnePgDatabase[]
 			{
-				new OnePgDatabase {
-					Name = OnePgDatabase.ThisIgnore,
-				}
+				new OnePgDatabase (OnePgDatabase.ThisIgnore)
 			};
 		}
 		public OnePgDatabase[] Databases { get; set; }
