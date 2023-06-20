@@ -149,8 +149,8 @@ namespace ConvertToPg
 			panelLeft.ResumeLayout();
 		}
 
-		private static void ShowErrorMessage(string err) =>
-			MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		private static void ShowErrorMessage(string err)
+			=> MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 		private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 		{
@@ -184,8 +184,8 @@ namespace ConvertToPg
 			else MessageBox.Show($"Проект сохранён в файле {projectFile}");
 		}
 
-		private void ButtonParseSource_Click(object sender, EventArgs e) =>
-			FillTables();
+		private void ButtonParseSource_Click(object sender, EventArgs e)
+			=> FillTables();
 
 		private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{

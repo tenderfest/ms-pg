@@ -31,8 +31,8 @@ namespace PgConvert
 		};
 
 		#region config
-		public ConvertMsToPgCfg GetConfig() =>
-			Config;
+		public ConvertMsToPgCfg GetConfig()
+			=> Config;
 
 		public void SetConfig(ConvertMsToPgCfg newCfg)
 		{
@@ -42,29 +42,23 @@ namespace PgConvert
 		#endregion config
 
 		public DtElement[] GetAllElements()
-		{
-			return Elements
-				.Select(s => s.Value)
-				.ToArray();
-		}
+			=> Elements
+			.Select(s => s.Value)
+			.ToArray();
 
-		public DtElement[] GetElements(ElmType[] elmTypes) =>
-			Elements
-				.Where(s => elmTypes.Contains(s.Value.Type))
-				.Select(s => s.Value)
-				.ToArray();
+		public DtElement[] GetElements(ElmType[] elmTypes)
+			=> Elements
+			.Where(s => elmTypes.Contains(s.Value.Type))
+			.Select(s => s.Value)
+			.ToArray();
 
 		public string LoadFile(string fileName)
-		{
-			var err = Path.GetExtension(fileName) switch
+			=> Path.GetExtension(fileName) switch
 			{
 				_extSql => LoadMsSql(fileName),
 				_extProj => LoadProj(fileName),
 				_ => $"Неизвестный формат файла {fileName}",
 			};
-
-			return err;
-		}
 
 		private string LoadProj(string fileName)
 		{
