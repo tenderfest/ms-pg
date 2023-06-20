@@ -46,9 +46,6 @@
 			labelResultTree = new Label();
 			groupBoxCheckElmType = new GroupBox();
 			panelLeft = new Panel();
-			radioButtonIgnore = new RadioButton();
-			radioButtonAct = new RadioButton();
-			radioButtonDict = new RadioButton();
 			radioButtonNone = new RadioButton();
 			splitContainerEltText = new SplitContainer();
 			textBoxContent = new TextBox();
@@ -268,9 +265,9 @@
 			groupBoxCheckElmType.Dock = DockStyle.Fill;
 			groupBoxCheckElmType.Enabled = false;
 			groupBoxCheckElmType.ForeColor = SystemColors.ControlText;
-			groupBoxCheckElmType.Location = new Point(0, 76);
+			groupBoxCheckElmType.Location = new Point(0, 19);
 			groupBoxCheckElmType.Name = "groupBoxCheckElmType";
-			groupBoxCheckElmType.Size = new Size(107, 515);
+			groupBoxCheckElmType.Size = new Size(107, 572);
 			groupBoxCheckElmType.TabIndex = 3;
 			groupBoxCheckElmType.TabStop = false;
 			groupBoxCheckElmType.Text = "Фильтр";
@@ -278,51 +275,12 @@
 			// panelLeft
 			// 
 			panelLeft.Controls.Add(groupBoxCheckElmType);
-			panelLeft.Controls.Add(radioButtonIgnore);
-			panelLeft.Controls.Add(radioButtonAct);
-			panelLeft.Controls.Add(radioButtonDict);
 			panelLeft.Controls.Add(radioButtonNone);
 			panelLeft.Dock = DockStyle.Left;
 			panelLeft.Location = new Point(0, 34);
 			panelLeft.Name = "panelLeft";
 			panelLeft.Size = new Size(107, 591);
 			panelLeft.TabIndex = 4;
-			// 
-			// radioButtonIgnore
-			// 
-			radioButtonIgnore.AutoSize = true;
-			radioButtonIgnore.Dock = DockStyle.Top;
-			radioButtonIgnore.ForeColor = Color.Red;
-			radioButtonIgnore.Location = new Point(0, 57);
-			radioButtonIgnore.Name = "radioButtonIgnore";
-			radioButtonIgnore.Size = new Size(107, 19);
-			radioButtonIgnore.TabIndex = 6;
-			radioButtonIgnore.Text = "Игнорировать";
-			radioButtonIgnore.UseVisualStyleBackColor = true;
-			// 
-			// radioButtonAct
-			// 
-			radioButtonAct.AutoSize = true;
-			radioButtonAct.Dock = DockStyle.Top;
-			radioButtonAct.ForeColor = Color.Blue;
-			radioButtonAct.Location = new Point(0, 38);
-			radioButtonAct.Name = "radioButtonAct";
-			radioButtonAct.Size = new Size(107, 19);
-			radioButtonAct.TabIndex = 5;
-			radioButtonAct.Text = "Рабочая БД";
-			radioButtonAct.UseVisualStyleBackColor = true;
-			// 
-			// radioButtonDict
-			// 
-			radioButtonDict.AutoSize = true;
-			radioButtonDict.Dock = DockStyle.Top;
-			radioButtonDict.ForeColor = Color.Green;
-			radioButtonDict.Location = new Point(0, 19);
-			radioButtonDict.Name = "radioButtonDict";
-			radioButtonDict.Size = new Size(107, 19);
-			radioButtonDict.TabIndex = 4;
-			radioButtonDict.Text = "БД словарей";
-			radioButtonDict.UseVisualStyleBackColor = true;
 			// 
 			// radioButtonNone
 			// 
@@ -414,9 +372,6 @@
 		private Button buttonDelete;
 		private Button buttonAdd;
 		private Panel panelLeft;
-		private RadioButton radioButtonIgnore;
-		private RadioButton radioButtonAct;
-		private RadioButton radioButtonDict;
 		private SplitContainer splitContainerEltText;
 		private TextBox textBoxContent;
 		private Label labelSourceElte;

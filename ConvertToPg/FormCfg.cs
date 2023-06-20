@@ -118,7 +118,7 @@ namespace ConvertToPg
 
 			Cfg.AddDelDatabase(newDatabase, true);
 			HeightChange(true);
-			ShowDatabases(true);
+			ShowDatabases(false);
 		}
 
 		public string[] SkipOperation =>

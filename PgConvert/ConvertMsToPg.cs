@@ -63,8 +63,6 @@ namespace PgConvert
 				_ => $"Неизвестный формат файла {fileName}",
 			};
 
-			if (string.IsNullOrEmpty(err))
-				ParseSource();
 			return err;
 		}
 
