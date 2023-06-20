@@ -48,7 +48,7 @@ namespace PgConvert
 
 		public DtElement[] GetElements(ElmType[] elmTypes)
 			=> Elements
-			.Where(s => elmTypes.Contains(s.Value.Type))
+			.Where(s => elmTypes.Contains(s.Value.SelectFor))
 			.Select(s => s.Value)
 			.ToArray();
 

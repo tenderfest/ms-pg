@@ -27,7 +27,6 @@ namespace PgConvert
 		//}
 		#endregion
 
-		internal ElmType Type { get; private protected set; }
 		private protected string FirstLine { get; private set; }
 		private protected string[] Lines { get; private set; }
 		private protected string[] CommentLines { get; private set; }
@@ -172,6 +171,6 @@ namespace PgConvert
 		}
 
 		public override string ToString() =>
-			$"{ElementOperation.GetOperationSign(Operation)} {Type}: {Name}";
+			$"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
 	}
 }

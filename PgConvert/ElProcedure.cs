@@ -4,7 +4,7 @@
 	{
 		public ElProcedure()
 		{
-			Type = ElmType.Procedure;
+			SelectFor = ElmType.Procedure;
 		}
 
 	}

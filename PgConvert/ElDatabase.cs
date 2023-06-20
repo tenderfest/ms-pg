@@ -4,7 +4,7 @@
 	{
 		public ElDatabase()
 		{
-			Type = ElmType.Database;
+			SelectFor = ElmType.Database;
 		}
 	}
 }

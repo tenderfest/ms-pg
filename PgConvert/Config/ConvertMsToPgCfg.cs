@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
 
 namespace PgConvert.Config
 {
@@ -46,10 +45,10 @@ namespace PgConvert.Config
 			Databases = databases.ToArray();
 		}
 
-		public string GetSkipElementAsText() =>
-			GetStringArrayAsText(SkipElement);
+		public string GetSkipElementAsText()
+			=> GetStringArrayAsText(SkipElement);
 
-		public string GetSkipOperationAsText() =>
-			GetStringArrayAsText(SkipOperation);
+		public string GetSkipOperationAsText()
+			=> GetStringArrayAsText(SkipOperation);
 	}
 }

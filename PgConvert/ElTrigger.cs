@@ -4,7 +4,7 @@
 	{
 		public ElTrigger()
 		{
-			Type = ElmType.Trigger;
+			SelectFor = ElmType.Trigger;
 		}
 
 		protected override string Name
