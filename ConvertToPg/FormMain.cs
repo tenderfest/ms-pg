@@ -61,10 +61,14 @@ namespace ConvertToPg
 					elmTypeList.Add((ElmType)chBox.Tag);
 			}
 
-			checkedListBoxTable.BeginUpdate();
-			checkedListBoxTable.Items.Clear();
-			checkedListBoxTable.Items.AddRange(convert.GetElements(elmTypeList.ToArray()));
-			checkedListBoxTable.EndUpdate();
+			var elements = convert.GetElements(elmTypeList.ToArray());
+			if (null != elements && elements.Any())
+			{
+				checkedListBoxTable.BeginUpdate();
+				checkedListBoxTable.Items.Clear();
+				checkedListBoxTable.Items.AddRange(elements);
+				checkedListBoxTable.EndUpdate();
+			}
 		}
 
 		private void ButtonLoad_Click(object sender, EventArgs e)
@@ -125,16 +129,15 @@ namespace ConvertToPg
 
 		private void SetDatabasesRadiobuttons()
 		{
-			panelLeft.SuspendLayout();
-			panelLeft.Controls.Clear();
-			panelLeft.Controls.Add(radioButtonNone);
-			panelLeft.Controls.Add(groupBoxCheckElmType);
+			groupBoxNewDatabases.SuspendLayout();
+			groupBoxNewDatabases.Controls.Clear();
+			groupBoxNewDatabases.Controls.Add(radioButtonNone);
 			radioButtonNone.Checked = true;
 
 			foreach (var db in convert.GetConfig().Databases)
 			{
 				var radioButtonDb = new RadioButton();
-				panelLeft.Controls.Add(radioButtonDb);
+				groupBoxNewDatabases.Controls.Add(radioButtonDb);
 				radioButtonDb.AutoSize = true;
 				radioButtonDb.Dock = DockStyle.Top;
 				radioButtonDb.ForeColor = Color.Blue;
@@ -146,7 +149,7 @@ namespace ConvertToPg
 				radioButtonDb.UseVisualStyleBackColor = true;
 				radioButtonDb.Tag = db;
 			}
-			panelLeft.ResumeLayout();
+			groupBoxNewDatabases.ResumeLayout();
 		}
 
 		private static void ShowErrorMessage(string err)

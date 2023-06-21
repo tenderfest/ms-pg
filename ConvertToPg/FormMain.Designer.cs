@@ -44,11 +44,12 @@
 			labelFkeys = new Label();
 			treeView = new TreeView();
 			labelResultTree = new Label();
-			groupBoxCheckElmType = new GroupBox();
-			panelLeft = new Panel();
-			radioButtonNone = new RadioButton();
 			splitContainerEltText = new SplitContainer();
 			textBoxContent = new TextBox();
+			splitContainerLeft = new SplitContainer();
+			groupBoxNewDatabases = new GroupBox();
+			radioButtonNone = new RadioButton();
+			groupBoxCheckElmType = new GroupBox();
 			panelTop.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainerEltAll).BeginInit();
 			splitContainerEltAll.Panel1.SuspendLayout();
@@ -58,11 +59,15 @@
 			splitContainerEltSelect.Panel1.SuspendLayout();
 			splitContainerEltSelect.Panel2.SuspendLayout();
 			splitContainerEltSelect.SuspendLayout();
-			panelLeft.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainerEltText).BeginInit();
 			splitContainerEltText.Panel1.SuspendLayout();
 			splitContainerEltText.Panel2.SuspendLayout();
 			splitContainerEltText.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)splitContainerLeft).BeginInit();
+			splitContainerLeft.Panel1.SuspendLayout();
+			splitContainerLeft.Panel2.SuspendLayout();
+			splitContainerLeft.SuspendLayout();
+			groupBoxNewDatabases.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panelTop
@@ -176,8 +181,8 @@
 			// 
 			splitContainerEltAll.Panel2.Controls.Add(treeView);
 			splitContainerEltAll.Panel2.Controls.Add(labelResultTree);
-			splitContainerEltAll.Size = new Size(938, 409);
-			splitContainerEltAll.SplitterDistance = 614;
+			splitContainerEltAll.Size = new Size(895, 409);
+			splitContainerEltAll.SplitterDistance = 585;
 			splitContainerEltAll.TabIndex = 1;
 			// 
 			// splitContainerEltSelect
@@ -195,8 +200,8 @@
 			// 
 			splitContainerEltSelect.Panel2.Controls.Add(checkedListBoxFkey);
 			splitContainerEltSelect.Panel2.Controls.Add(labelFkeys);
-			splitContainerEltSelect.Size = new Size(614, 409);
-			splitContainerEltSelect.SplitterDistance = 298;
+			splitContainerEltSelect.Size = new Size(585, 409);
+			splitContainerEltSelect.SplitterDistance = 283;
 			splitContainerEltSelect.TabIndex = 0;
 			// 
 			// checkedListBoxTable
@@ -205,7 +210,7 @@
 			checkedListBoxTable.FormattingEnabled = true;
 			checkedListBoxTable.Location = new Point(0, 15);
 			checkedListBoxTable.Name = "checkedListBoxTable";
-			checkedListBoxTable.Size = new Size(298, 394);
+			checkedListBoxTable.Size = new Size(283, 394);
 			checkedListBoxTable.TabIndex = 0;
 			checkedListBoxTable.SelectedValueChanged += CheckedListBoxTable_SelectedValueChanged;
 			// 
@@ -215,7 +220,7 @@
 			labelSourceElte.Dock = DockStyle.Top;
 			labelSourceElte.Location = new Point(0, 0);
 			labelSourceElte.Name = "labelSourceElte";
-			labelSourceElte.Size = new Size(298, 15);
+			labelSourceElte.Size = new Size(283, 15);
 			labelSourceElte.TabIndex = 1;
 			labelSourceElte.Text = "Исходные элементы";
 			labelSourceElte.TextAlign = ContentAlignment.TopCenter;
@@ -226,7 +231,7 @@
 			checkedListBoxFkey.FormattingEnabled = true;
 			checkedListBoxFkey.Location = new Point(0, 15);
 			checkedListBoxFkey.Name = "checkedListBoxFkey";
-			checkedListBoxFkey.Size = new Size(312, 394);
+			checkedListBoxFkey.Size = new Size(298, 394);
 			checkedListBoxFkey.TabIndex = 0;
 			// 
 			// labelFkeys
@@ -235,7 +240,7 @@
 			labelFkeys.Dock = DockStyle.Top;
 			labelFkeys.Location = new Point(0, 0);
 			labelFkeys.Name = "labelFkeys";
-			labelFkeys.Size = new Size(312, 15);
+			labelFkeys.Size = new Size(298, 15);
 			labelFkeys.TabIndex = 2;
 			labelFkeys.Text = "Зависимые элементы";
 			labelFkeys.TextAlign = ContentAlignment.TopCenter;
@@ -245,7 +250,7 @@
 			treeView.Dock = DockStyle.Fill;
 			treeView.Location = new Point(0, 15);
 			treeView.Name = "treeView";
-			treeView.Size = new Size(320, 394);
+			treeView.Size = new Size(306, 394);
 			treeView.TabIndex = 0;
 			treeView.AfterSelect += TreeView_AfterSelect;
 			// 
@@ -255,52 +260,15 @@
 			labelResultTree.Dock = DockStyle.Top;
 			labelResultTree.Location = new Point(0, 0);
 			labelResultTree.Name = "labelResultTree";
-			labelResultTree.Size = new Size(320, 15);
+			labelResultTree.Size = new Size(306, 15);
 			labelResultTree.TabIndex = 2;
 			labelResultTree.Text = "Результат";
 			labelResultTree.TextAlign = ContentAlignment.TopCenter;
 			// 
-			// groupBoxCheckElmType
-			// 
-			groupBoxCheckElmType.Dock = DockStyle.Fill;
-			groupBoxCheckElmType.Enabled = false;
-			groupBoxCheckElmType.ForeColor = SystemColors.ControlText;
-			groupBoxCheckElmType.Location = new Point(0, 19);
-			groupBoxCheckElmType.Name = "groupBoxCheckElmType";
-			groupBoxCheckElmType.Size = new Size(107, 572);
-			groupBoxCheckElmType.TabIndex = 3;
-			groupBoxCheckElmType.TabStop = false;
-			groupBoxCheckElmType.Text = "Фильтр";
-			// 
-			// panelLeft
-			// 
-			panelLeft.Controls.Add(groupBoxCheckElmType);
-			panelLeft.Controls.Add(radioButtonNone);
-			panelLeft.Dock = DockStyle.Left;
-			panelLeft.Location = new Point(0, 34);
-			panelLeft.Name = "panelLeft";
-			panelLeft.Size = new Size(107, 591);
-			panelLeft.TabIndex = 4;
-			// 
-			// radioButtonNone
-			// 
-			radioButtonNone.AutoSize = true;
-			radioButtonNone.Checked = true;
-			radioButtonNone.Dock = DockStyle.Top;
-			radioButtonNone.ForeColor = SystemColors.ControlText;
-			radioButtonNone.Location = new Point(0, 0);
-			radioButtonNone.Name = "radioButtonNone";
-			radioButtonNone.Size = new Size(107, 19);
-			radioButtonNone.TabIndex = 7;
-			radioButtonNone.TabStop = true;
-			radioButtonNone.Text = "Неопределен";
-			radioButtonNone.UseVisualStyleBackColor = true;
-			radioButtonNone.CheckedChanged += RadioButtonNone_CheckedChanged;
-			// 
 			// splitContainerEltText
 			// 
 			splitContainerEltText.Dock = DockStyle.Fill;
-			splitContainerEltText.Location = new Point(107, 34);
+			splitContainerEltText.Location = new Point(150, 34);
 			splitContainerEltText.Name = "splitContainerEltText";
 			splitContainerEltText.Orientation = Orientation.Horizontal;
 			// 
@@ -311,7 +279,7 @@
 			// splitContainerEltText.Panel2
 			// 
 			splitContainerEltText.Panel2.Controls.Add(textBoxContent);
-			splitContainerEltText.Size = new Size(938, 591);
+			splitContainerEltText.Size = new Size(895, 591);
 			splitContainerEltText.SplitterDistance = 409;
 			splitContainerEltText.TabIndex = 5;
 			// 
@@ -323,8 +291,64 @@
 			textBoxContent.Name = "textBoxContent";
 			textBoxContent.ReadOnly = true;
 			textBoxContent.ScrollBars = ScrollBars.Both;
-			textBoxContent.Size = new Size(938, 178);
+			textBoxContent.Size = new Size(895, 178);
 			textBoxContent.TabIndex = 0;
+			// 
+			// splitContainerLeft
+			// 
+			splitContainerLeft.Dock = DockStyle.Left;
+			splitContainerLeft.Location = new Point(0, 34);
+			splitContainerLeft.Name = "splitContainerLeft";
+			splitContainerLeft.Orientation = Orientation.Horizontal;
+			// 
+			// splitContainerLeft.Panel1
+			// 
+			splitContainerLeft.Panel1.Controls.Add(groupBoxNewDatabases);
+			// 
+			// splitContainerLeft.Panel2
+			// 
+			splitContainerLeft.Panel2.Controls.Add(groupBoxCheckElmType);
+			splitContainerLeft.Size = new Size(150, 591);
+			splitContainerLeft.SplitterDistance = 295;
+			splitContainerLeft.TabIndex = 6;
+			// 
+			// groupBoxNewDatabases
+			// 
+			groupBoxNewDatabases.Controls.Add(radioButtonNone);
+			groupBoxNewDatabases.Dock = DockStyle.Fill;
+			groupBoxNewDatabases.ForeColor = SystemColors.ControlText;
+			groupBoxNewDatabases.Location = new Point(0, 0);
+			groupBoxNewDatabases.Name = "groupBoxNewDatabases";
+			groupBoxNewDatabases.Size = new Size(150, 295);
+			groupBoxNewDatabases.TabIndex = 4;
+			groupBoxNewDatabases.TabStop = false;
+			groupBoxNewDatabases.Text = "Новые базы данных";
+			// 
+			// radioButtonNone
+			// 
+			radioButtonNone.AutoSize = true;
+			radioButtonNone.Checked = true;
+			radioButtonNone.Dock = DockStyle.Top;
+			radioButtonNone.ForeColor = SystemColors.ControlText;
+			radioButtonNone.Location = new Point(3, 19);
+			radioButtonNone.Name = "radioButtonNone";
+			radioButtonNone.Size = new Size(144, 19);
+			radioButtonNone.TabIndex = 7;
+			radioButtonNone.TabStop = true;
+			radioButtonNone.Text = "Неопределен";
+			radioButtonNone.UseVisualStyleBackColor = true;
+			radioButtonNone.CheckedChanged += RadioButtonNone_CheckedChanged;
+			// 
+			// groupBoxCheckElmType
+			// 
+			groupBoxCheckElmType.Dock = DockStyle.Fill;
+			groupBoxCheckElmType.ForeColor = SystemColors.ControlText;
+			groupBoxCheckElmType.Location = new Point(0, 0);
+			groupBoxCheckElmType.Name = "groupBoxCheckElmType";
+			groupBoxCheckElmType.Size = new Size(150, 292);
+			groupBoxCheckElmType.TabIndex = 3;
+			groupBoxCheckElmType.TabStop = false;
+			groupBoxCheckElmType.Text = "Фильтр";
 			// 
 			// FormMain
 			// 
@@ -332,7 +356,7 @@
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(1045, 625);
 			Controls.Add(splitContainerEltText);
-			Controls.Add(panelLeft);
+			Controls.Add(splitContainerLeft);
 			Controls.Add(panelTop);
 			Name = "FormMain";
 			StartPosition = FormStartPosition.CenterScreen;
@@ -346,13 +370,17 @@
 			splitContainerEltSelect.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)splitContainerEltSelect).EndInit();
 			splitContainerEltSelect.ResumeLayout(false);
-			panelLeft.ResumeLayout(false);
-			panelLeft.PerformLayout();
 			splitContainerEltText.Panel1.ResumeLayout(false);
 			splitContainerEltText.Panel2.ResumeLayout(false);
 			splitContainerEltText.Panel2.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainerEltText).EndInit();
 			splitContainerEltText.ResumeLayout(false);
+			splitContainerLeft.Panel1.ResumeLayout(false);
+			splitContainerLeft.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)splitContainerLeft).EndInit();
+			splitContainerLeft.ResumeLayout(false);
+			groupBoxNewDatabases.ResumeLayout(false);
+			groupBoxNewDatabases.PerformLayout();
 			ResumeLayout(false);
 		}
 
@@ -368,16 +396,17 @@
 		private CheckedListBox checkedListBoxFkey;
 		private TreeView treeView;
 		private Button buttonSetup;
-		private GroupBox groupBoxCheckElmType;
 		private Button buttonDelete;
 		private Button buttonAdd;
-		private Panel panelLeft;
 		private SplitContainer splitContainerEltText;
 		private TextBox textBoxContent;
 		private Label labelSourceElte;
 		private Label labelFkeys;
 		private Label labelResultTree;
-		private RadioButton radioButtonNone;
 		private Button buttonParseSource;
+		private SplitContainer splitContainerLeft;
+		private GroupBox groupBoxNewDatabases;
+		private RadioButton radioButtonNone;
+		private GroupBox groupBoxCheckElmType;
 	}
 }

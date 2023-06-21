@@ -42,12 +42,16 @@ namespace PgConvert
 		#endregion config
 
 		public DtElement[] GetAllElements()
-			=> Elements
+			=> null == Elements
+			? Array.Empty<DtElement>()
+			: Elements
 			.Select(s => s.Value)
 			.ToArray();
 
 		public DtElement[] GetElements(ElmType[] elmTypes)
-			=> Elements
+			=> null == Elements
+			? Array.Empty<DtElement>()
+			: Elements
 			.Where(s => elmTypes.Contains(s.Value.SelectFor))
 			.Select(s => s.Value)
 			.ToArray();
