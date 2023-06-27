@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Xml.Schema;
 using PgConvert.Config;
 
 namespace PgConvert
@@ -75,7 +76,7 @@ namespace PgConvert
 			if (null != config.SkipElement && config.SkipElement.Contains(elementKey))
 				return default;
 
-			DtElement element = ElementType.GetType(elementKey) switch
+			DtElement element = ElementType.GetType(elementKey, operation) switch
 			{
 				ElmType.Database => new ElDatabase(),
 				ElmType.Index => new ElIndex(),
@@ -83,6 +84,10 @@ namespace PgConvert
 				ElmType.Trigger => new ElTrigger(),
 				ElmType.Table => new ElTable(),
 				ElmType.View => new ElView(),
+				ElmType.User => new ElUser(),
+				ElmType.Role => new ElRole(),
+				ElmType.Schema => new ElSchema(),
+				ElmType.Exec => new ElExec(),
 				_ => new DtUnknown(),
 			};
 			element.SetFields(operation, firstLine, firstLineWords, inLines.ToArray(), comment.ToArray());
@@ -112,29 +117,7 @@ namespace PgConvert
 				null != Lines && null == x.Lines)
 				return false;
 
-			if (null != Lines || null != x.Lines)
-			{
-				if (Lines.Length != x.Lines.Length)
-					return false;
-				for (int i = 0; i < Lines.Length; i++)
-					if (Lines[i] != x.Lines[i])
-						return false;
-			}
-
-			if (null == CommentLines && null != x.CommentLines ||
-				null != CommentLines && null == x.CommentLines)
-				return false;
-
-			if (null != CommentLines || null != x.CommentLines)
-			{
-				if (CommentLines.Length != x.CommentLines.Length)
-					return false;
-				for (int i = 0; i < CommentLines.Length; i++)
-					if (CommentLines[i] != x.CommentLines[i])
-						return false;
-			}
-
-			return true;
+			return GetHashCode() == x.GetHashCode();
 		}
 
 		public string GetEmenenlContent
@@ -156,21 +139,21 @@ namespace PgConvert
 
 		public virtual DtField[] GetChild => Array.Empty<DtField>();
 
-		public override int GetHashCode() =>
-			HashCode;
-		public int HashCode
+		int? _hashCode;
+		public override int GetHashCode()
 		{
-			get
+			if (!_hashCode.HasValue)
 			{
 				var hash = FirstLine.GetHashCode();
 				if (Lines != null)
 					foreach (var str in Lines)
 						hash ^= str.GetHashCode();
-				return hash;
+				_hashCode = hash;
 			}
+			return _hashCode.Value;
 		}
 
-		public override string ToString() =>
-			$"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
+		public override string ToString()
+			=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
 	}
 }

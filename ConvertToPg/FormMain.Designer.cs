@@ -348,6 +348,7 @@
 			groupBoxCheckElmType.Size = new Size(150, 292);
 			groupBoxCheckElmType.TabIndex = 3;
 			groupBoxCheckElmType.TabStop = false;
+			groupBoxCheckElmType.Enabled = false;
 			groupBoxCheckElmType.Text = "Фильтр";
 			// 
 			// FormMain

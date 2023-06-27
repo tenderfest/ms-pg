@@ -48,11 +48,11 @@ namespace PgConvert
 			.Select(s => s.Value)
 			.ToArray();
 
-		public DtElement[] GetElements(ElmType[] elmTypes)
+		public DtElement[] GetElements(ElmType elmType)
 			=> null == Elements
 			? Array.Empty<DtElement>()
 			: Elements
-			.Where(s => elmTypes.Contains(s.Value.SelectFor))
+			.Where(s => elmType == s.Value.SelectFor)
 			.Select(s => s.Value)
 			.ToArray();
 
