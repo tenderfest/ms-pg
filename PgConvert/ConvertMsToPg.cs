@@ -131,6 +131,26 @@ namespace PgConvert
 		/// </summary>
 		public void ParseSource()
 		{
+			ParseStrings();
+			ParseElements();
+			// установка взаимосвязей
+
+		}
+
+		/// <summary>
+		/// Разбор каждого элемента по состовляющим
+		/// </summary>
+		private void ParseElements()
+		{
+			foreach (var el in Elements.Values)
+				el.Parse();
+		}
+
+		/// <summary>
+		/// Чтение и разбор входного потока
+		/// </summary>
+		private void ParseStrings()
+		{
 			int i = 0;
 			List<string> inLines = new();
 			List<string> commentBuffer = new();

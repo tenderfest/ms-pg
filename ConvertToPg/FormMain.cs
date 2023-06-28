@@ -101,9 +101,9 @@ namespace ConvertToPg
 			checkedListBoxTable.Items.AddRange(convert.GetAllElements());
 			checkedListBoxTable.EndUpdate();
 
-				buttonCreate.Enabled =
-				buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
-			groupBoxCheckElmType.Enabled = true;
+			groupBoxCheckElmType.Enabled =
+			buttonCreate.Enabled =
+			buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
 		}
 
 		private void ButtonSetup_Click(object sender, EventArgs e)
@@ -181,19 +181,6 @@ namespace ConvertToPg
 				MessageBox.Show(err);
 			}
 			else MessageBox.Show($"Проект сохранён в файле {projectFile}");
-		}
-
-		private void ButtonParseSource_Click(object sender, EventArgs e)
-		{
-			foreach (var ctrl in groupBoxCheckElmType.Controls)
-			{
-				var checkBox = (RadioButton)ctrl;
-				if (checkBox.Checked)
-				{
-					FillTables((ElmType)checkBox.Tag);
-					return;
-				}
-			}
 		}
 
 		private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)

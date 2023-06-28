@@ -30,7 +30,6 @@
 		{
 			panelTop = new Panel();
 			buttonSave = new Button();
-			buttonParseSource = new Button();
 			buttonDelete = new Button();
 			buttonAdd = new Button();
 			buttonCreate = new Button();
@@ -73,7 +72,6 @@
 			// panelTop
 			// 
 			panelTop.Controls.Add(buttonSave);
-			panelTop.Controls.Add(buttonParseSource);
 			panelTop.Controls.Add(buttonDelete);
 			panelTop.Controls.Add(buttonAdd);
 			panelTop.Controls.Add(buttonCreate);
@@ -91,23 +89,11 @@
 			buttonSave.Enabled = false;
 			buttonSave.Location = new Point(283, 0);
 			buttonSave.Name = "buttonSave";
-			buttonSave.Size = new Size(572, 34);
+			buttonSave.Size = new Size(647, 34);
 			buttonSave.TabIndex = 2;
 			buttonSave.Text = "Сохранить";
 			buttonSave.UseVisualStyleBackColor = true;
 			buttonSave.Click += ButtonSave_Click;
-			// 
-			// buttonParseSource
-			// 
-			buttonParseSource.Dock = DockStyle.Right;
-			buttonParseSource.Enabled = false;
-			buttonParseSource.Location = new Point(855, 0);
-			buttonParseSource.Name = "buttonParseSource";
-			buttonParseSource.Size = new Size(75, 34);
-			buttonParseSource.TabIndex = 6;
-			buttonParseSource.Text = "Разобрать";
-			buttonParseSource.UseVisualStyleBackColor = true;
-			buttonParseSource.Click += ButtonParseSource_Click;
 			// 
 			// buttonDelete
 			// 
@@ -163,7 +149,7 @@
 			buttonLoad.Name = "buttonLoad";
 			buttonLoad.Size = new Size(74, 34);
 			buttonLoad.TabIndex = 0;
-			buttonLoad.Text = "Загрузить";
+			buttonLoad.Text = "Открыть";
 			buttonLoad.UseVisualStyleBackColor = true;
 			buttonLoad.Click += ButtonLoad_Click;
 			// 
@@ -342,13 +328,13 @@
 			// groupBoxCheckElmType
 			// 
 			groupBoxCheckElmType.Dock = DockStyle.Fill;
+			groupBoxCheckElmType.Enabled = false;
 			groupBoxCheckElmType.ForeColor = SystemColors.ControlText;
 			groupBoxCheckElmType.Location = new Point(0, 0);
 			groupBoxCheckElmType.Name = "groupBoxCheckElmType";
 			groupBoxCheckElmType.Size = new Size(150, 292);
 			groupBoxCheckElmType.TabIndex = 3;
 			groupBoxCheckElmType.TabStop = false;
-			groupBoxCheckElmType.Enabled = false;
 			groupBoxCheckElmType.Text = "Фильтр";
 			// 
 			// FormMain
@@ -404,7 +390,6 @@
 		private Label labelSourceElte;
 		private Label labelFkeys;
 		private Label labelResultTree;
-		private Button buttonParseSource;
 		private SplitContainer splitContainerLeft;
 		private GroupBox groupBoxNewDatabases;
 		private RadioButton radioButtonNone;
