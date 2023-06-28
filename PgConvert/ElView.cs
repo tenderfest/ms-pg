@@ -6,7 +6,7 @@
 
 		public ElView()
 		{
-			Type = ElmType.View;
+			SelectFor = ElmType.View;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using PgConvert.Config;
-using System.Windows.Forms;
 
 namespace ConvertToPg
 {
@@ -8,7 +7,8 @@ namespace ConvertToPg
 		private readonly ConvertMsToPgCfg _cfg;
 		private int panelDatabaseHeight;
 
-		public FormCfg() => InitializeComponent();
+		public FormCfg() =>
+			InitializeComponent();
 
 		public FormCfg(ConvertMsToPgCfg cfg) : this() =>
 			_cfg = cfg;
@@ -21,29 +21,33 @@ namespace ConvertToPg
 			textBoxSkipOperations.Text = Cfg.GetSkipOperationAsText();
 			textBoxSkipElement.Text = Cfg.GetSkipElementAsText();
 
-			MakeDatabases(true);
+			ShowDatabases(true);
 		}
 
-		private void MakeDatabases(bool addHeight)
+		private void ShowDatabases(bool addHeight)
 		{
 			groupBoxTargetDatabases.Controls.Clear();
 			foreach (var db in Cfg.Databases)
 			{
-				PanelDatabase panel = new(
+				PanelDatabase panel =
+					new(
 					db,
 					db.ConnectionString,
 					TestConnect,
 					DeleteDatabase,
-					ConnectionStringChanged);
+					ConnectionStringChanged)
+					{
+						Text = db.Name,
+						Dock = DockStyle.Top,
+						Location = new Point(1, 1),
+						Enabled = !db.IsDefault,
+					};
 				if (addHeight)
 				{
 					panelDatabaseHeight = panel.Height;
 					HeightChange(true);
 				}
 				groupBoxTargetDatabases.Controls.Add(panel);
-				panel.Text = db.Name;
-				panel.Dock = DockStyle.Top;
-				panel.Location = new Point(1, 1);
 			}
 		}
 
@@ -73,11 +77,11 @@ namespace ConvertToPg
 		private void DeleteDatabase(object sender, EventArgs e) =>
 			DatabaseFromControl(sender, (db) =>
 			{
-				var databases = Cfg.Databases.ToList();
-				databases.Remove(db);
-				Cfg.Databases = databases.ToArray();
+				if (db.IsDefault) return;
+
+				Cfg.AddDelDatabase(db, false);
 				HeightChange(false);
-				MakeDatabases(false);
+				ShowDatabases(false);
 			});
 
 		private void ConnectionStringChanged(object sender, EventArgs e) =>
@@ -90,7 +94,31 @@ namespace ConvertToPg
 
 		private void ButtonAddDatabase_Click(object sender, EventArgs e)
 		{
+			var newDbForm = new FormNewDatabase();
+			if (newDbForm.ShowDialog(this) != DialogResult.OK)
+				return;
 
+			var newDatabase = new OnePgDatabase(newDbForm.DatabaseName);
+			if (!string.IsNullOrEmpty(newDbForm.ConnectionString))
+				newDatabase.ConnectionString = newDbForm.ConnectionString;
+			else
+			{
+				var errSetConnectionString = newDatabase.SetConnectionString(
+						newDbForm.BdServer,
+						newDbForm.BdPort,
+						newDbForm.BdName,
+						newDbForm.BdLogin,
+						newDbForm.BdPassword);
+				if (!string.IsNullOrEmpty(errSetConnectionString))
+				{
+					MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+			}
+
+			Cfg.AddDelDatabase(newDatabase, true);
+			HeightChange(true);
+			ShowDatabases(false);
 		}
 
 		public string[] SkipOperation =>

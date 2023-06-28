@@ -40,7 +40,7 @@ namespace ConvertToPg
 				radioButton.Text = elementType.ToString();
 				radioButton.UseVisualStyleBackColor = true;
 				radioButton.Tag = (ElmType)elementType;
-				radioButton.Checked = (ElmType)elementType == ElmType.None;
+				radioButton.Checked = false;// (ElmType)elementType == ElmType.None;
 				radioButton.CheckedChanged += CheckBox_CheckedChanged;
 
 				i++;
@@ -48,22 +48,22 @@ namespace ConvertToPg
 			}
 		}
 
-		private void CheckBox_CheckedChanged(object sender, EventArgs e) =>
-			FillTables();
-
-		private void FillTables()
+		private void CheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			List<ElmType> elmTypeList = new();
-			foreach (var ctrl in groupBoxCheckElmType.Controls)
-			{
-				var chBox = (RadioButton)ctrl;
-				if (chBox.Checked)
-					elmTypeList.Add((ElmType)chBox.Tag);
-			}
+			var checkBox = (RadioButton)sender;
+			if (!checkBox.Checked) return;
+			FillTables((ElmType)checkBox.Tag);
+		}
 
+		private void FillTables(ElmType elmType)
+		{
 			checkedListBoxTable.BeginUpdate();
 			checkedListBoxTable.Items.Clear();
-			checkedListBoxTable.Items.AddRange(convert.GetElements(elmTypeList.ToArray()));
+			var elements = convert.GetElements(elmType);
+			if (null != elements && elements.Any())
+			{
+				checkedListBoxTable.Items.AddRange(elements);
+			}
 			checkedListBoxTable.EndUpdate();
 		}
 
@@ -88,37 +88,68 @@ namespace ConvertToPg
 				return;
 			}
 
+			ShowElements();
+		}
+
+		private void ShowElements()
+		{
+			SetDatabasesRadiobuttons();
+			convert.ParseSource();
+
 			checkedListBoxTable.BeginUpdate();
 			checkedListBoxTable.Items.Clear();
 			checkedListBoxTable.Items.AddRange(convert.GetAllElements());
 			checkedListBoxTable.EndUpdate();
 
-			groupBoxCheckElmType.Enabled =
 				buttonCreate.Enabled =
 				buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
+			groupBoxCheckElmType.Enabled = true;
 		}
 
 		private void ButtonSetup_Click(object sender, EventArgs e)
 		{
 			ConvertMsToPgCfg cfg = convert.GetConfig();
 			var formCfg = new FormCfg(cfg);
-			if (formCfg.ShowDialog() != DialogResult.OK)
+			if (formCfg.ShowDialog(this) != DialogResult.OK)
 				return;
 			ConvertMsToPgCfg newCfg = new()
 			{
-				//ForDatabase_Dict = cfg.ForDatabase_Dict,
-				//ForDatabase_Work = cfg.ForDatabase_Work,
-				//ForDatabase_Ignore = cfg.ForDatabase_Ignore,
-				//ConnectionStringToDic = formCfg.ConnectionStringToPg,
+				Databases = cfg.Databases,
 				SkipOperation = formCfg.SkipOperation,
 				SkipElement = formCfg.SkipElement,
 			};
 
 			convert.SetConfig(newCfg);
+			ShowElements();
 		}
 
-		private static void ShowErrorMessage(string err) =>
-			MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		private void SetDatabasesRadiobuttons()
+		{
+			groupBoxNewDatabases.SuspendLayout();
+			groupBoxNewDatabases.Controls.Clear();
+			groupBoxNewDatabases.Controls.Add(radioButtonNone);
+			radioButtonNone.Checked = true;
+
+			foreach (var db in convert.GetConfig().Databases)
+			{
+				var radioButtonDb = new RadioButton();
+				groupBoxNewDatabases.Controls.Add(radioButtonDb);
+				radioButtonDb.AutoSize = true;
+				radioButtonDb.Dock = DockStyle.Top;
+				radioButtonDb.ForeColor = Color.Blue;
+				radioButtonDb.Location = new Point(0, 38);
+				radioButtonDb.Name = $"radioButton{db}";
+				radioButtonDb.Size = new Size(107, 19);
+				radioButtonDb.TabIndex = 5;
+				radioButtonDb.Text = $"{db}";
+				radioButtonDb.UseVisualStyleBackColor = true;
+				radioButtonDb.Tag = db;
+			}
+			groupBoxNewDatabases.ResumeLayout();
+		}
+
+		private static void ShowErrorMessage(string err)
+			=> MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 		private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 		{
@@ -152,8 +183,18 @@ namespace ConvertToPg
 			else MessageBox.Show($"Проект сохранён в файле {projectFile}");
 		}
 
-		private void ButtonParseSource_Click(object sender, EventArgs e) =>
-			FillTables();
+		private void ButtonParseSource_Click(object sender, EventArgs e)
+		{
+			foreach (var ctrl in groupBoxCheckElmType.Controls)
+			{
+				var checkBox = (RadioButton)ctrl;
+				if (checkBox.Checked)
+				{
+					FillTables((ElmType)checkBox.Tag);
+					return;
+				}
+			}
+		}
 
 		private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{

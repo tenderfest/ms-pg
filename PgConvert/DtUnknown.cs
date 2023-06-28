@@ -4,7 +4,7 @@
 	{
 		public DtUnknown()
 		{
-			Type = ElmType.None;
+			SelectFor = ElmType.None;
 		}
 
 	}

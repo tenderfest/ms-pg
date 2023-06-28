@@ -31,8 +31,8 @@ namespace PgConvert
 		};
 
 		#region config
-		public ConvertMsToPgCfg GetConfig() =>
-			Config;
+		public ConvertMsToPgCfg GetConfig()
+			=> Config;
 
 		public void SetConfig(ConvertMsToPgCfg newCfg)
 		{
@@ -42,31 +42,27 @@ namespace PgConvert
 		#endregion config
 
 		public DtElement[] GetAllElements()
-		{
-			return Elements
-				.Select(s => s.Value)
-				.ToArray();
-		}
+			=> null == Elements
+			? Array.Empty<DtElement>()
+			: Elements
+			.Select(s => s.Value)
+			.ToArray();
 
-		public DtElement[] GetElements(ElmType[] elmTypes) =>
-			Elements
-				.Where(s => elmTypes.Contains(s.Value.Type))
-				.Select(s => s.Value)
-				.ToArray();
+		public DtElement[] GetElements(ElmType elmType)
+			=> null == Elements
+			? Array.Empty<DtElement>()
+			: Elements
+			.Where(s => elmType == s.Value.SelectFor)
+			.Select(s => s.Value)
+			.ToArray();
 
 		public string LoadFile(string fileName)
-		{
-			var err = Path.GetExtension(fileName) switch
+			=> Path.GetExtension(fileName) switch
 			{
 				_extSql => LoadMsSql(fileName),
 				_extProj => LoadProj(fileName),
 				_ => $"Неизвестный формат файла {fileName}",
 			};
-
-			if (string.IsNullOrEmpty(err))
-				ParseSource();
-			return err;
-		}
 
 		private string LoadProj(string fileName)
 		{
@@ -108,7 +104,7 @@ namespace PgConvert
 			}
 			catch (Exception ex) { return ex.Message; }
 
-			if (!Elements.Any())
+			if (!InFile.Any())
 				return $"Файл '{fileName}' пуст";
 
 			NeedUpdateFile = true;
@@ -173,8 +169,6 @@ namespace PgConvert
 			if (string.IsNullOrEmpty(path))
 				return "Необходимо указать путь для сохраняемого файла";
 
-			Delete();
-
 			try
 			{
 				projectFile = Path.ChangeExtension(FullFilePath, _extProj);
@@ -204,26 +198,6 @@ namespace PgConvert
 
 			NeedUpdateFile = NeedUpdateConfig = false;
 			return null;
-		}
-
-		private void Delete()
-		{
-			var list = new List<OnePgDatabase>
-			{
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToDic,
-					  Elements=Array.Empty< DtElement>()                },
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToArc,
-					  Elements=Array.Empty< DtElement>()                },
-				new OnePgDatabase
-				{
-					 ConnectionString=Config.ConnectionStringToWrk,
-					  Elements=Array.Empty< DtElement>()                },
-			};
-			Config.Databases = list.ToArray();
 		}
 	}
 }

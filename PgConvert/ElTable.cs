@@ -4,11 +4,12 @@
 	{
 		DtField[] Fields { get; set; }
 
-		public override DtField[] GetChild => Fields;
+		public override DtField[] GetChild 
+			=> Fields;
 
 		public ElTable()
 		{
-			Type = ElmType.Table;
+			SelectFor = ElmType.Table;
 		}
 
 	}

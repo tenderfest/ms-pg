@@ -4,7 +4,7 @@
 	{
 		public ElIndex()
 		{
-			Type = ElmType.Index;
+			SelectFor = ElmType.Index;
 		}
 
 		protected override string Name
@@ -20,6 +20,7 @@
 			}
 		}
 
-
+		public override string ToString()
+			=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
 	}
 }

@@ -9,7 +9,7 @@
 			TableName = tableName;
 		}
 
-		public override string ToString() =>
-			$"{ElementOperation.GetOperationSign(Operation)} {Type}: {Name} ON {TableName}";
+		public override string ToString()
+			=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
 	}
 }

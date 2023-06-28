@@ -7,22 +7,17 @@ namespace PgConvert.Config
 	{
 		public ConvertMsToPgCfg()
 		{
-			Databases = new OnePgDatabase[]
+			if (null == Databases)
 			{
-				new OnePgDatabase {
-					Name = "Игнорировать",
-				}
-			};
+				Databases = new OnePgDatabase[]
+				{
+					new OnePgDatabase (OnePgDatabase.ThisIgnore)
+				};
+			}
 		}
 		public OnePgDatabase[] Databases { get; set; }
-		public string ConnectionStringToDic { get; set; }
-		public string ConnectionStringToWrk { get; set; }
-		public string ConnectionStringToArc { get; set; }
 		public string[] SkipOperation { get; set; }
 		public string[] SkipElement { get; set; }
-		public DtElement[] ForDatabase_Dict { get; set; }
-		public DtElement[] ForDatabase_Work { get; set; }
-		public DtElement[] ForDatabase_Ignore { get; set; }
 
 		public static string[] GetSkipArrayFromText(string text) =>
 			text?.Split('\n')
@@ -37,10 +32,23 @@ namespace PgConvert.Config
 			return sb.ToString();
 		}
 
-		public string GetSkipElementAsText() =>
-			GetStringArrayAsText(SkipElement);
+		public void AddDelDatabase(OnePgDatabase db, bool isAdd)
+		{
+			if (null == db || db.IsDefault)
+				return;
 
-		public string GetSkipOperationAsText() =>
-			GetStringArrayAsText(SkipOperation);
+			var databases = Databases.ToList();
+			if (isAdd)
+				databases.Add(db);
+			else
+				databases.Remove(db);
+			Databases = databases.ToArray();
+		}
+
+		public string GetSkipElementAsText()
+			=> GetStringArrayAsText(SkipElement);
+
+		public string GetSkipOperationAsText()
+			=> GetStringArrayAsText(SkipOperation);
 	}
 }

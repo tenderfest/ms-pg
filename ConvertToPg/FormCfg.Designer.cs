@@ -60,7 +60,6 @@
 			// 
 			// buttonAddDatabase
 			// 
-			buttonAddDatabase.DialogResult = DialogResult.OK;
 			buttonAddDatabase.Dock = DockStyle.Right;
 			buttonAddDatabase.Location = new Point(356, 0);
 			buttonAddDatabase.Name = "buttonAddDatabase";
@@ -109,7 +108,7 @@
 			groupBoxSkipOperations.Dock = DockStyle.Fill;
 			groupBoxSkipOperations.Location = new Point(0, 0);
 			groupBoxSkipOperations.Name = "groupBoxSkipOperations";
-			groupBoxSkipOperations.Size = new Size(252, 265);
+			groupBoxSkipOperations.Size = new Size(252, 164);
 			groupBoxSkipOperations.TabIndex = 2;
 			groupBoxSkipOperations.TabStop = false;
 			groupBoxSkipOperations.Text = "Пропускаемые операции";
@@ -120,7 +119,7 @@
 			textBoxSkipOperations.Location = new Point(3, 19);
 			textBoxSkipOperations.Multiline = true;
 			textBoxSkipOperations.Name = "textBoxSkipOperations";
-			textBoxSkipOperations.Size = new Size(246, 243);
+			textBoxSkipOperations.Size = new Size(246, 142);
 			textBoxSkipOperations.TabIndex = 0;
 			// 
 			// splitContainerSkips
@@ -136,7 +135,7 @@
 			// splitContainerSkips.Panel2
 			// 
 			splitContainerSkips.Panel2.Controls.Add(groupBoxSkipElement);
-			splitContainerSkips.Size = new Size(528, 265);
+			splitContainerSkips.Size = new Size(528, 164);
 			splitContainerSkips.SplitterDistance = 252;
 			splitContainerSkips.TabIndex = 3;
 			// 
@@ -146,7 +145,7 @@
 			groupBoxSkipElement.Dock = DockStyle.Fill;
 			groupBoxSkipElement.Location = new Point(0, 0);
 			groupBoxSkipElement.Name = "groupBoxSkipElement";
-			groupBoxSkipElement.Size = new Size(272, 265);
+			groupBoxSkipElement.Size = new Size(272, 164);
 			groupBoxSkipElement.TabIndex = 3;
 			groupBoxSkipElement.TabStop = false;
 			groupBoxSkipElement.Text = "Пропускаемые элементы";
@@ -157,7 +156,7 @@
 			textBoxSkipElement.Location = new Point(3, 19);
 			textBoxSkipElement.Multiline = true;
 			textBoxSkipElement.Name = "textBoxSkipElement";
-			textBoxSkipElement.Size = new Size(266, 243);
+			textBoxSkipElement.Size = new Size(266, 142);
 			textBoxSkipElement.TabIndex = 0;
 			// 
 			// FormCfg
@@ -165,7 +164,7 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = buttonCancel;
-			ClientSize = new Size(528, 308);
+			ClientSize = new Size(528, 207);
 			Controls.Add(splitContainerSkips);
 			Controls.Add(groupBoxTargetDatabases);
 			Controls.Add(panelButtons);
