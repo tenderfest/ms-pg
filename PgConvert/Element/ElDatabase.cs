@@ -9,6 +9,6 @@ public class ElDatabase : DtElement
 
 	internal override void Parse()
 	{
-
+		Ignore = ElmOperation.Alter == Operation;
 	}
 }

@@ -156,7 +156,7 @@ public abstract class DtElement : BaseSelectable
 	}
 
 	public override string ToString()
-		=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
+		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
 
 	internal abstract void Parse();
 }
