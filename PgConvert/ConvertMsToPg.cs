@@ -2,222 +2,221 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using Microsoft.VisualBasic.FileIO;
 using PgConvert.Config;
+using PgConvert.Element;
 
-namespace PgConvert
+namespace PgConvert;
+
+public class ConvertMsToPg
 {
-	public class ConvertMsToPg
+	const string _cfgFileName = "ConvertMsToPg.Cfg";
+	public const string _extProj = ".ms2pg";
+	public const string _extSql = ".sql";
+
+	const string GO = "GO";
+	const string CREATE_TABLE = "CREATE TABLE";
+
+	private bool NeedUpdateFile = false;
+	private bool NeedUpdateConfig = false;
+
+	ConvertMsToPgCfg Config { get; set; } = new();
+	public string FullFilePath { get; set; }
+	List<string> InFile { get; set; }
+	Dictionary<int, DtElement> Elements { get; set; }
+
+	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
-		const string _cfgFileName = "ConvertMsToPg.Cfg";
-		public const string _extProj = ".ms2pg";
-		public const string _extSql = ".sql";
+		Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+		WriteIndented = true,
+	};
 
-		const string GO = "GO";
-		const string CREATE_TABLE = "CREATE TABLE";
+	#region config
+	public ConvertMsToPgCfg GetConfig()
+		=> Config;
 
-		private bool NeedUpdateFile = false;
-		private bool NeedUpdateConfig = false;
+	public void SetConfig(ConvertMsToPgCfg newCfg)
+	{
+		Config = newCfg;
+		NeedUpdateConfig = true;
+	}
+	#endregion config
 
-		ConvertMsToPgCfg Config { get; set; } = new();
-		public string FullFilePath { get; set; }
-		List<string> InFile { get; set; }
-		Dictionary<int, DtElement> Elements { get; set; }
+	public DtElement[] GetAllElements()
+		=> null == Elements
+		? Array.Empty<DtElement>()
+		: Elements
+		.Select(s => s.Value)
+		.ToArray();
 
-		private static readonly JsonSerializerOptions _jsonOptions = new()
+	public DtElement[] GetElements(ElmType elmType)
+		=> null == Elements
+		? Array.Empty<DtElement>()
+		: Elements
+		.Where(s => elmType == s.Value.SelectFor)
+		.Select(s => s.Value)
+		.ToArray();
+
+	public string LoadFile(string fileName)
+		=> Path.GetExtension(fileName) switch
 		{
-			Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-			WriteIndented = true,
+			_extSql => LoadMsSql(fileName),
+			_extProj => LoadProj(fileName),
+			_ => $"Неизвестный формат файла {fileName}",
 		};
 
-		#region config
-		public ConvertMsToPgCfg GetConfig()
-			=> Config;
-
-		public void SetConfig(ConvertMsToPgCfg newCfg)
+	private string LoadProj(string fileName)
+	{
+		FullFilePath = fileName;
+		try
 		{
-			Config = newCfg;
-			NeedUpdateConfig = true;
-		}
-		#endregion config
-
-		public DtElement[] GetAllElements()
-			=> null == Elements
-			? Array.Empty<DtElement>()
-			: Elements
-			.Select(s => s.Value)
-			.ToArray();
-
-		public DtElement[] GetElements(ElmType elmType)
-			=> null == Elements
-			? Array.Empty<DtElement>()
-			: Elements
-			.Where(s => elmType == s.Value.SelectFor)
-			.Select(s => s.Value)
-			.ToArray();
-
-		public string LoadFile(string fileName)
-			=> Path.GetExtension(fileName) switch
+			using var stream = new FileStream(fileName, FileMode.Open);
+			using var zip = new ZipArchive(stream, ZipArchiveMode.Read, false);
+			foreach (var entry in zip.Entries)
 			{
-				_extSql => LoadMsSql(fileName),
-				_extProj => LoadProj(fileName),
-				_ => $"Неизвестный формат файла {fileName}",
-			};
-
-		private string LoadProj(string fileName)
-		{
-			FullFilePath = fileName;
-			try
-			{
-				using var stream = new FileStream(fileName, FileMode.Open);
-				using var zip = new ZipArchive(stream, ZipArchiveMode.Read, false);
-				foreach (var entry in zip.Entries)
+				// чтение настроек
+				if (entry.Name == _cfgFileName)
 				{
-					// чтение настроек
-					if (entry.Name == _cfgFileName)
-					{
-						using var reader = new StreamReader(entry.Open());
-						string cfgText = reader.ReadToEnd();
-						Config = (ConvertMsToPgCfg)JsonSerializer.Deserialize(cfgText, typeof(ConvertMsToPgCfg));
-						continue;
-					}
-
-					if (Path.GetExtension(entry.Name) != _extSql)
-						continue;
-
-					// чтение обрабатываемого файла
-					using (var reader = new StreamReader(entry.Open()))
-						ReadInLines(reader);
+					using var reader = new StreamReader(entry.Open());
+					string cfgText = reader.ReadToEnd();
+					Config = (ConvertMsToPgCfg)JsonSerializer.Deserialize(cfgText, typeof(ConvertMsToPgCfg));
+					continue;
 				}
-			}
-			catch (Exception ex) { return ex.Message; }
-			return null;
-		}
 
-		private string LoadMsSql(string fileName)
-		{
-			FullFilePath = fileName;
-			try
-			{
-				using StreamReader reader = new(fileName);
-				ReadInLines(reader);
-			}
-			catch (Exception ex) { return ex.Message; }
+				if (Path.GetExtension(entry.Name) != _extSql)
+					continue;
 
-			if (!InFile.Any())
-				return $"Файл '{fileName}' пуст";
-
-			NeedUpdateFile = true;
-
-			if (null == Config.SkipOperation)
-				return "Нужно проверить настройки";
-			return null;
-		}
-
-		private void ReadInLines(StreamReader reader)
-		{
-			// сохранение исходника
-			InFile = new();
-			while (true)
-			{
-				var inLine = reader.ReadLine();
-				if (inLine == null) break;
-				InFile.Add(inLine);
+				// чтение обрабатываемого файла
+				using (var reader = new StreamReader(entry.Open()))
+					ReadInLines(reader);
 			}
 		}
+		catch (Exception ex) { return ex.Message; }
+		return null;
+	}
 
-		/// <summary>
-		/// разбор файла
-		/// </summary>
-		public void ParseSource()
+	private string LoadMsSql(string fileName)
+	{
+		FullFilePath = fileName;
+		try
 		{
-			ParseStrings();
-			ParseElements();
-			// установка взаимосвязей
-
+			using StreamReader reader = new(fileName);
+			ReadInLines(reader);
 		}
+		catch (Exception ex) { return ex.Message; }
 
-		/// <summary>
-		/// Разбор каждого элемента по состовляющим
-		/// </summary>
-		private void ParseElements()
+		if (!InFile.Any())
+			return $"Файл '{fileName}' пуст";
+
+		NeedUpdateFile = true;
+
+		if (null == Config.SkipOperation)
+			return "Нужно проверить настройки";
+		return null;
+	}
+
+	private void ReadInLines(StreamReader reader)
+	{
+		// сохранение исходника
+		InFile = new();
+		while (true)
 		{
-			foreach (var el in Elements.Values)
-				el.Parse();
+			var inLine = reader.ReadLine();
+			if (inLine == null) break;
+			InFile.Add(inLine);
 		}
+	}
 
-		/// <summary>
-		/// Чтение и разбор входного потока
-		/// </summary>
-		private void ParseStrings()
+	/// <summary>
+	/// разбор файла
+	/// </summary>
+	public void ParseSource()
+	{
+		ParseStrings();
+		ParseElements();
+		// установка взаимосвязей
+
+	}
+
+	/// <summary>
+	/// Разбор каждого элемента по состовляющим
+	/// </summary>
+	private void ParseElements()
+	{
+		foreach (var el in Elements.Values)
+			el.Parse();
+	}
+
+	/// <summary>
+	/// Чтение и разбор входного потока
+	/// </summary>
+	private void ParseStrings()
+	{
+		int i = 0;
+		List<string> inLines = new();
+		List<string> commentBuffer = new();
+		Elements = new();
+		foreach (var inLine in InFile)
 		{
-			int i = 0;
-			List<string> inLines = new();
-			List<string> commentBuffer = new();
-			Elements = new();
-			foreach (var inLine in InFile)
+			// дошли до конца определения элемента, сохраняем его
+			if (inLine == GO)
 			{
-				// дошли до конца определения элемента, сохраняем его
-				if (inLine == GO)
+				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
+				if (default != dicValue)
 				{
-					var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
-					if (default != dicValue)
-					{
-						var equalElement = Elements.Values.FirstOrDefault(e => e.Equals(dicValue));
-						if (equalElement == default)
-							Elements.Add(i++, dicValue);
-						else
-							equalElement.IncremenCount();
-					}
-
-					inLines = new();
-					commentBuffer = new();
-				}
-				else if (!string.IsNullOrEmpty(inLine))
-				{
-					if (inLine.StartsWith("--"))
-						commentBuffer.Add(inLine);
+					var equalElement = Elements.Values.FirstOrDefault(e => e.Equals(dicValue));
+					if (equalElement == default)
+						Elements.Add(i++, dicValue);
 					else
-						inLines.Add(inLine);
+						equalElement.IncremenCount();
 				}
+
+				inLines = new();
+				commentBuffer = new();
 			}
-		}
-
-		public string SaveFile(string path, out string projectFile)
-		{
-			projectFile = null;
-			if (string.IsNullOrEmpty(path))
-				return "Необходимо указать путь для сохраняемого файла";
-
-			try
+			else if (!string.IsNullOrEmpty(inLine))
 			{
-				projectFile = Path.ChangeExtension(FullFilePath, _extProj);
-				using var stream = new FileStream(Path.Combine(path, projectFile), FileMode.OpenOrCreate);
-				using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
-				// сохранение обрабатываемого файла
-				if (NeedUpdateFile)
-				{
-					var fileName = Path.GetFileName(FullFilePath);
-					var fileEntry = zip.GetEntry(fileName);
-					fileEntry?.Delete();
-					fileEntry = zip.CreateEntry(fileName);
-					using var writer = new StreamWriter(fileEntry.Open());
-					InFile.ForEach(writer.WriteLine);
-				}
-				// сохранение настроек
-				if (NeedUpdateConfig)
-				{
-					var configEntry = zip.GetEntry(_cfgFileName);
-					configEntry?.Delete();
-					configEntry = zip.CreateEntry(Path.GetFileName(_cfgFileName));
-					using var writer = new StreamWriter(configEntry.Open());
-					JsonSerializer.Serialize(writer.BaseStream, Config, _jsonOptions);
-				}
+				if (inLine.StartsWith("--"))
+					commentBuffer.Add(inLine);
+				else
+					inLines.Add(inLine);
 			}
-			catch (Exception ex) { return ex.Message; }
-
-			NeedUpdateFile = NeedUpdateConfig = false;
-			return null;
 		}
+	}
+
+	public string SaveFile(string path, out string projectFile)
+	{
+		projectFile = null;
+		if (string.IsNullOrEmpty(path))
+			return "Необходимо указать путь для сохраняемого файла";
+
+		try
+		{
+			projectFile = Path.ChangeExtension(FullFilePath, _extProj);
+			using var stream = new FileStream(Path.Combine(path, projectFile), FileMode.OpenOrCreate);
+			using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
+			// сохранение обрабатываемого файла
+			if (NeedUpdateFile)
+			{
+				var fileName = Path.GetFileName(FullFilePath);
+				var fileEntry = zip.GetEntry(fileName);
+				fileEntry?.Delete();
+				fileEntry = zip.CreateEntry(fileName);
+				using var writer = new StreamWriter(fileEntry.Open());
+				InFile.ForEach(writer.WriteLine);
+			}
+			// сохранение настроек
+			if (NeedUpdateConfig)
+			{
+				var configEntry = zip.GetEntry(_cfgFileName);
+				configEntry?.Delete();
+				configEntry = zip.CreateEntry(Path.GetFileName(_cfgFileName));
+				using var writer = new StreamWriter(configEntry.Open());
+				JsonSerializer.Serialize(writer.BaseStream, Config, _jsonOptions);
+			}
+		}
+		catch (Exception ex) { return ex.Message; }
+
+		NeedUpdateFile = NeedUpdateConfig = false;
+		return null;
 	}
 }
