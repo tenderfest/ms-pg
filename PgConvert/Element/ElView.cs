@@ -9,8 +9,9 @@ public class ElView : DtElement
 		SelectFor = ElmType.View;
 	}
 
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 }

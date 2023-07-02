@@ -6,10 +6,16 @@
 public enum FldType
 {
 	None = 0,
-	Varchar,
+	Bool,
+	Byte,
 	Int16,
 	Int32,
 	Int64,
+	Numeric,
 	Date,
 	DateTime,
+	Guid,
+	Varchar,
+	Char,
+	ByteA,
 }

@@ -7,8 +7,9 @@ public class ElDatabase : DtElement
 		SelectFor = ElmType.Database;
 	}
 
-	internal override void Parse()
+	internal override string Parse()
 	{
 		Ignore = ElmOperation.Alter == Operation;
+		return null;
 	}
 }

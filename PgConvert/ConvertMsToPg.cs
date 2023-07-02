@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System;
+using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -129,21 +130,32 @@ public class ConvertMsToPg
 	/// <summary>
 	/// разбор файла
 	/// </summary>
-	public void ParseSource()
+	public string ParseSource()
 	{
 		ParseStrings();
-		ParseElements();
+		string errorMessage = ParseElements();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
 		// установка взаимосвязей
 
+		return null;
 	}
 
 	/// <summary>
 	/// Разбор каждого элемента по состовляющим
 	/// </summary>
-	private void ParseElements()
+	private string ParseElements()
 	{
 		foreach (var el in Elements.Values)
-			el.Parse();
+		{
+			string errorMessage = el.Parse();
+			if (!string.IsNullOrEmpty(errorMessage))
+			{
+				return errorMessage;
+			}
+		}
+		return null;
 	}
 
 	/// <summary>

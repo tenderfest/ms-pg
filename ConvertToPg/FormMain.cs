@@ -95,7 +95,12 @@ public partial class FormMain : Form
 	private void ShowElements()
 	{
 		SetDatabasesRadiobuttons();
-		convert.ParseSource();
+		string errorMessage = convert.ParseSource();
+		if (!string.IsNullOrEmpty(errorMessage))
+		{
+			ShowErrorMessage(errorMessage);
+			return;
+		}
 
 		checkedListBoxTable.BeginUpdate();
 		checkedListBoxTable.Items.Clear();

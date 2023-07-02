@@ -2,6 +2,9 @@
 
 public class ElIndex : ElBaseForTable
 {
+	public string TableName { get; set; }
+	public string[] FieldNames { get; set; }
+
 	public ElIndex()
 	{
 		SelectFor = ElmType.Index;
@@ -23,8 +26,9 @@ public class ElIndex : ElBaseForTable
 	//public override string ToString()
 	//	=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
 
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 }

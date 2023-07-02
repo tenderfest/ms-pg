@@ -6,9 +6,10 @@ public class ElProcedure : DtElement
 	{
 		SelectFor = ElmType.Procedure;
 	}
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 
 }

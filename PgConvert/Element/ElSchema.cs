@@ -6,8 +6,9 @@ internal class ElSchema : DtElement
 	{
 		SelectFor = ElmType.Schema;
 	}
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 }

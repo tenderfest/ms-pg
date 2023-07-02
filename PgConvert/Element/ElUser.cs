@@ -6,9 +6,10 @@ internal class ElUser : DtElement
 	{
 		SelectFor = ElmType.User;
 	}
-	internal override void Parse()
+	internal override string Parse()
 	{
 		// CREATE USER [tf] WITHOUT LOGIN WITH DEFAULT_SCHEMA=[dbo]
 
+		return null;
 	}
 }

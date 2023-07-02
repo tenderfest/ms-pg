@@ -158,17 +158,21 @@ public abstract class DtElement : BaseSelectable
 	public override string ToString()
 		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
 
-	internal abstract void Parse();
+	internal abstract string Parse();
 
+	private string linesAsString = null;
 	protected string LinesAsString
 	{
 		get
 		{
-			StringBuilder stringBuilder = new();
-			foreach (var str in Lines)
-				stringBuilder.Append(str);
-			var allStr = stringBuilder.ToString();
-			return allStr;
+			if (null == linesAsString)
+			{
+				var stringBuilder = new StringBuilder();
+				foreach (var str in Lines)
+					stringBuilder.Append(str);
+				linesAsString = stringBuilder.ToString();
+			}
+			return linesAsString;
 		}
 	}
 }

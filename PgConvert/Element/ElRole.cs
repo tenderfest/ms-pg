@@ -7,8 +7,9 @@ internal class ElRole : DtElement
 		SelectFor = ElmType.Role;
 	}
 
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 }

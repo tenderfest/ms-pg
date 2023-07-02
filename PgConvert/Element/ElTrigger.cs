@@ -22,8 +22,9 @@ public class ElTrigger : ElBaseForTable
 		}
 	}
 
-	internal override void Parse()
+	internal override string Parse()
 	{
 
+		return null;
 	}
 }
