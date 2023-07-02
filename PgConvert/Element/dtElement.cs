@@ -159,4 +159,16 @@ public abstract class DtElement : BaseSelectable
 		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
 
 	internal abstract void Parse();
+
+	protected string LinesAsString
+	{
+		get
+		{
+			StringBuilder stringBuilder = new();
+			foreach (var str in Lines)
+				stringBuilder.Append(str);
+			var allStr = stringBuilder.ToString();
+			return allStr;
+		}
+	}
 }
