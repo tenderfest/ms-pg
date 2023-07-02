@@ -139,7 +139,7 @@ public abstract class DtElement : BaseSelectable
 		}
 	}
 
-	public virtual DtField[] GetChild => Array.Empty<DtField>();
+	public virtual DtField[] GetFields => Array.Empty<DtField>();
 
 	int? _hashCode;
 	public override int GetHashCode()

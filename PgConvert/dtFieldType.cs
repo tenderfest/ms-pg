@@ -44,7 +44,7 @@ public class DtFieldType
 		}
 	}
 
-	FldType FieldType { get; set; }
+	internal FldType FieldType { get; set; }
 	int Len { get; set; }
 	int LenDecimal { get; set; }
 	bool IsMax { get; set; }
@@ -61,6 +61,7 @@ public class DtFieldType
 			"datetime2" => FldType.TimeStamp,
 			"decimal" => FldType.Numeric,
 			"int" => FldType.Int32,
+			"money" => FldType.Money,
 			"nvarchar" => FldType.Varchar,
 			"smallint" => FldType.Int16,
 			"tinyint" => FldType.Byte,

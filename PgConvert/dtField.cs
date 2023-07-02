@@ -14,6 +14,8 @@ public class DtField
 	DtFieldType FieldType { get; set; }
 	bool NotNull { get; set; }
 	bool Generated { get; set; }
+	public bool IsFieldTypeNone
+		=> FldType.None == FieldType.FieldType;
 
 	//public DtField(string name, DtFieldType fieldType)
 	//{
@@ -24,9 +26,9 @@ public class DtField
 	public DtField(string[] pieces)
 	{
 		Name = Clear(pieces[0]);
-		var secondPiece = Clear(pieces[1]);
+		var secondPiece = ClearToLower(pieces[1]);
 		if (secondPiece.EndsWith(','))
-			secondPiece += Clear(pieces[2]);
+			secondPiece += ClearToLower(pieces[2]);
 
 		Generated = _generated == secondPiece;
 		if (!Generated)
@@ -39,17 +41,19 @@ public class DtField
 		}
 		// ограничение NULL
 		NotNull =
-			_not == Clear(pieces[pieces.Length - 2]) &&
-			_null == Clear(pieces[pieces.Length - 1]);
+			_not == ClearToLower(pieces[pieces.Length - 2]) &&
+			_null == ClearToLower(pieces[pieces.Length - 1]);
 	}
+
+	private string ClearToLower(string str)
+		=> Clear(str).ToLower();
 
 	private static string Clear(string str)
 		=> str
 		.Trim()
 		.Replace("[", null)
-		.Replace("]", null)
-		.ToLower();
+		.Replace("]", null);
 
 	public override string ToString()
-		=> $"{Name} {FieldType}";
+		=> $"{(IsFieldTypeNone ? "--- " : string.Empty)}{Name} {FieldType}";
 }

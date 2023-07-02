@@ -13,7 +13,7 @@ public class ElTable : DtElement
 	List<ElIndex> Indexes { get; set; } = new List<ElIndex>();
 	List<ElTrigger> Triggers { get; set; } = new List<ElTrigger>();
 
-	public override DtField[] GetChild
+	public override DtField[] GetFields
 		=> Fields.ToArray();
 
 	public ElTable()
@@ -52,8 +52,7 @@ public class ElTable : DtElement
 			else
 			// обычное поле
 			{
-				var field = new DtField(pieces);
-				Fields.Add(field);
+				Fields.Add(new DtField(pieces));
 			}
 		}
 		return null;

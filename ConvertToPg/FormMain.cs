@@ -165,8 +165,11 @@ public partial class FormMain : Form
 		if (checkedListBoxTable.SelectedItem is not DtElement dtTable)
 			return;
 
-		if (null != dtTable.GetChild)
-			checkedListBoxFkey.Items.AddRange(dtTable.GetChild);
+		if (null != dtTable.GetFields)
+		{
+			checkedListBoxFkey.Items.AddRange(dtTable.GetFields);
+		}
+
 		textBoxContent.BackColor = _sourceColor;
 		textBoxContent.Text = dtTable.GetEmenenlContent;
 	}
