@@ -27,7 +27,7 @@ public class DtField
 	/// <summary>
 	/// поле является вычисляемым
 	/// </summary>
-	public bool Generated => !string.IsNullOrEmpty(FormulaPg);
+	public bool Generated => !string.IsNullOrEmpty(FormulaMs);
 
 	public bool IsFieldTypeNone
 		=> FldType.None == FieldType?.FieldType;

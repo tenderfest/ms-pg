@@ -132,8 +132,13 @@ public class ConvertMsToPg
 	/// </summary>
 	public string ParseSource()
 	{
-		ParseStrings();
-		string errorMessage = ParseElements();
+		string errorMessage;
+
+		errorMessage = ParseStrings();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
+		errorMessage = ParseElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
@@ -161,7 +166,7 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Чтение и разбор входного потока
 	/// </summary>
-	private void ParseStrings()
+	private string ParseStrings()
 	{
 		int i = 0;
 		List<string> inLines = new();
@@ -179,7 +184,7 @@ public class ConvertMsToPg
 					if (equalElement == default)
 						Elements.Add(i++, dicValue);
 					else
-						equalElement.IncremenCount();
+						return $"Элемент {dicValue} уже есть в общем списке элементов";
 				}
 
 				inLines = new();
@@ -193,6 +198,7 @@ public class ConvertMsToPg
 					inLines.Add(inLine);
 			}
 		}
+		return null;
 	}
 
 	public string SaveFile(string path, out string projectFile)

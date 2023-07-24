@@ -36,7 +36,6 @@ public abstract class DtElement : BaseSelectable
 
 	private protected ElmOperation Operation { get; set; }
 	private protected string[] FirstLineWords { get; set; }
-	private int tmpCount { get; set; }
 
 	private protected string name;
 	protected virtual string Name
@@ -58,9 +57,6 @@ public abstract class DtElement : BaseSelectable
 			.Replace("(", string.Empty)
 			.Replace("[", string.Empty)
 			.Replace("]", string.Empty);
-
-	internal void IncremenCount() =>
-		tmpCount++;
 
 	/// <summary>
 	/// Определение типа элемента и создание экземпляров элементов
@@ -104,7 +100,6 @@ public abstract class DtElement : BaseSelectable
 		FirstLineWords = firstLineWords;
 		Lines = inLines;
 		CommentLines = comment;
-		tmpCount = 1;
 	}
 
 	public override bool Equals(object obj)
