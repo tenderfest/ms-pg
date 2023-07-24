@@ -3,6 +3,7 @@
 public class ElIndex : ElBaseForTable
 {
 	public string TableName { get; set; }
+	public IdxType IndexType { get; set; }
 	public string[] FieldNames { get; set; }
 
 	public ElIndex()

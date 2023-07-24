@@ -43,16 +43,18 @@ public class ElTable : DtElement
 			if (null == pieces || !pieces.Any() || pieces.Length < 3)
 				return $"Описание поля таблицы {Name} '{fieldDraft}' содержит меньше трёх элементов.";
 
-			// индекс
-			if (_indexSign.Contains(pieces[0].ToLower()))
+			try
 			{
-				var index = new ElIndex();
-				Indexes.Add(index);
+				// индекс
+				if (_indexSign.Contains(pieces[0].ToLower()))
+					Indexes.Add(new ElIndex());
+				else
+					// обычное поле
+					Fields.Add(new DtField(pieces));
 			}
-			else
-			// обычное поле
+			catch (Exception ex)
 			{
-				Fields.Add(new DtField(pieces));
+				return ex.Message;
 			}
 		}
 		return null;
