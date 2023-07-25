@@ -18,7 +18,7 @@ public class ElTable : DtElement
 
 	public ElTable()
 	{
-		SelectFor = ElmType.Table;
+		ElementType = ElmType.Table;
 	}
 
 	internal override string Parse()

@@ -4,7 +4,7 @@ public class ElDatabase : DtElement
 {
 	public ElDatabase()
 	{
-		SelectFor = ElmType.Database;
+		ElementType = ElmType.Database;
 	}
 
 	internal override string Parse()

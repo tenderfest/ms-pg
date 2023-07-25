@@ -4,5 +4,5 @@ namespace PgConvert;
 
 public class BaseSelectable
 {
-	public ElmType SelectFor { get; private protected set; } = ElmType.None;
+	public ElmType ElementType { get; private protected set; } 
 }

@@ -4,7 +4,7 @@ public class ElTrigger : ElBaseForTable
 {
 	public ElTrigger()
 	{
-		SelectFor = ElmType.Trigger;
+		ElementType = ElmType.Trigger;
 	}
 
 	protected override string Name

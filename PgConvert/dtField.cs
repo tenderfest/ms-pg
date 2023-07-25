@@ -32,6 +32,7 @@ public class DtField
 	public bool IsFieldTypeNone
 		=> FldType.None == FieldType?.FieldType;
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	public DtField(string[] pieces)
 	{
 		while (pieces.Length < 3)

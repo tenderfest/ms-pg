@@ -6,7 +6,7 @@ public class ElView : DtElement
 
 	public ElView()
 	{
-		SelectFor = ElmType.View;
+		ElementType = ElmType.View;
 	}
 
 	internal override string Parse()

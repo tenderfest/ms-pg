@@ -13,5 +13,5 @@ public abstract class ElBaseForTable : DtElement
 	}
 
 	public override string ToString()
-		=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
+		=> $"{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name} ON {TableName}";
 }

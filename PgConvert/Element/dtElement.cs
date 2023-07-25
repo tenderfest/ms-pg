@@ -4,37 +4,16 @@ using PgConvert.Config;
 
 namespace PgConvert.Element;
 
-public abstract class DtElement : BaseSelectable
+public class DtElement : BaseSelectable
 {
-	#region конструктор
 	public DtElement() { }
-	//private protected DtElement(
-	//	string operation,
-	//	string[] firstLineWords,
-	//	string firstLine,
-	//	ElmType type,
-	//	List<string> lines,
-	//	List<string> comment)
-	//{
-	//	FirstLineWords = firstLineWords;
-	//	FirstLine = firstLine;
-	//	Type = type;
-	//	Lines = lines.ToArray();
-	//	CommentLines = comment.ToArray();
 
-	//	Operation = ElementOperation.GetOperation(operation);
-
-	//	tmpCount = 1;
-	//}
-	#endregion
-
-	public ElmType Type { get; private protected set; }
 	internal bool Ignore { get; private protected set; }
 	private protected string FirstLine { get; private set; }
 	public string[] Lines { get; private set; }
 	public string[] CommentLines { get; private set; }
 
-	private protected ElmOperation Operation { get; set; }
+	internal protected ElmOperation Operation { get; set; }
 	private protected string[] FirstLineWords { get; set; }
 
 	internal OnePgDatabase Database { get; set; }
@@ -76,18 +55,18 @@ public abstract class DtElement : BaseSelectable
 		if (null != config.SkipElement && config.SkipElement.Contains(elementKey))
 			return default;
 
-		DtElement element = ElementType.GetType(elementKey, operation) switch
+        DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
-			ElmType.Database => new ElDatabase(),
-			ElmType.Index => new ElIndex(),
-			ElmType.Procedure => new ElProcedure(),
-			ElmType.Trigger => new ElTrigger(),
-			ElmType.Table => new ElTable(),
-			ElmType.View => new ElView(),
-			ElmType.User => new ElUser(),
-			ElmType.Role => new ElRole(),
-			ElmType.Schema => new ElSchema(),
-			ElmType.Exec => new ElExec(),
+            ElmType.Database => new ElDatabase(),
+            ElmType.Index => new ElIndex(),
+            ElmType.Procedure => new ElProcedure(),
+            ElmType.Trigger => new ElTrigger(),
+            ElmType.Table => new ElTable(),
+            ElmType.View => new ElView(),
+            ElmType.User => new ElUser(),
+            ElmType.Role => new ElRole(),
+            ElmType.Schema => new ElSchema(),
+            ElmType.Exec => new ElExec(),
 			_ => new DtUnknown(),
 		};
 		element.SetFields(operation, firstLine, firstLineWords, inLines.ToArray(), comment.ToArray());
@@ -155,9 +134,9 @@ public abstract class DtElement : BaseSelectable
 	}
 
 	public override string ToString()
-		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name}";
+		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
-	internal abstract string Parse();
+	internal virtual string Parse() { return null; }
 
 	private string linesAsString = null;
 	protected string LinesAsString

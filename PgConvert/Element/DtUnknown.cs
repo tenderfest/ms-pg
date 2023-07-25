@@ -4,7 +4,7 @@ public class DtUnknown : DtElement
 {
 	public DtUnknown()
 	{
-		SelectFor = ElmType.None;
+		ElementType = ElmType.None;
 	}
 
 	internal override string Parse() => null;

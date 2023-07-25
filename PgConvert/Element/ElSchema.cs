@@ -4,7 +4,7 @@ internal class ElSchema : DtElement
 {
 	public ElSchema()
 	{
-		SelectFor = ElmType.Schema;
+		ElementType = ElmType.Schema;
 	}
 	internal override string Parse()
 	{

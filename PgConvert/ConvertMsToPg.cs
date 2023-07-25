@@ -1,13 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Xml.Linq;
 using PgConvert.Config;
 using PgConvert.Element;
-using System.Linq;
 
 namespace PgConvert;
 
@@ -65,7 +61,7 @@ public class ConvertMsToPg
 		=> null == Elements
 		? Array.Empty<DtElement>()
 		: Elements
-		.Where(s => elmType == s.SelectFor)
+		.Where(s => elmType == s.ElementType)
 		.ToArray();
 
 	public string LoadFile(string fileName)
@@ -138,6 +134,8 @@ public class ConvertMsToPg
 		}
 	}
 
+	#region ParseSource
+
 	/// <summary>
 	/// разбор файла
 	/// </summary>
@@ -154,11 +152,32 @@ public class ConvertMsToPg
 			return errorMessage;
 
 		// установка взаимосвязей
+		errorMessage = RelationElements();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
 
 		// разнесение элементов по разным БД
 		errorMessage = SortingElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
+
+		return null;
+	}
+
+	/// <summary>
+	/// Установка взаимосвязей между элементами
+	/// </summary>
+	private string RelationElements()
+	{
+		var tables = Elements
+			.Where(e => e.ElementType == ElmType.Table);
+		// создание таблиц
+		var createTables = tables
+			.Where(e => e.Operation == ElmOperation.Create);
+		// изменения таблиц
+		var alterTables = tables
+			.Where(e => e.Operation == ElmOperation.Alter);
+
 
 		return null;
 	}
@@ -251,6 +270,8 @@ public class ConvertMsToPg
 		return null;
 	}
 
+	#endregion
+
 	public string SaveFile(string path, out string projectFile)
 	{
 		projectFile = null;
@@ -262,6 +283,7 @@ public class ConvertMsToPg
 			projectFile = Path.ChangeExtension(FullFilePath, _extProj);
 			using var stream = new FileStream(Path.Combine(path, projectFile), FileMode.OpenOrCreate);
 			using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
+
 			// сохранение обрабатываемого файла
 			if (NeedUpdateFile)
 			{
@@ -272,9 +294,9 @@ public class ConvertMsToPg
 				using var writer = new StreamWriter(fileEntry.Open());
 				InFile.ForEach(writer.WriteLine);
 			}
+
 			// сохранение настроек
-#if DEBUG
-#else
+#if !DEBUG
 			if (NeedUpdateConfig)
 #endif
 			{

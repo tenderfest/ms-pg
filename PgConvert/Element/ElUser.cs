@@ -4,7 +4,7 @@ internal class ElUser : DtElement
 {
 	public ElUser()
 	{
-		SelectFor = ElmType.User;
+		ElementType = ElmType.User;
 	}
 	internal override string Parse()
 	{

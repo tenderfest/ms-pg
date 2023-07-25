@@ -4,7 +4,7 @@ internal class ElExec : DtElement
 {
 	public ElExec()
 	{
-		SelectFor = ElmType.Exec;
+		ElementType = ElmType.Exec;
 	}
 	internal override string Parse()
 	{

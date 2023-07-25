@@ -4,7 +4,7 @@ public class ElProcedure : DtElement
 {
 	public ElProcedure()
 	{
-		SelectFor = ElmType.Procedure;
+		ElementType = ElmType.Procedure;
 	}
 	internal override string Parse()
 	{

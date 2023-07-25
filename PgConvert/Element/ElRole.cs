@@ -4,7 +4,7 @@ internal class ElRole : DtElement
 {
 	public ElRole()
 	{
-		SelectFor = ElmType.Role;
+		ElementType = ElmType.Role;
 	}
 
 	internal override string Parse()

@@ -2,15 +2,15 @@
 
 public class ElIndex : ElBaseForTable
 {
-	public string TableName { get; set; }
 	public IdxType IndexType { get; set; }
 	public string[] FieldNames { get; set; }
 
 	public ElIndex()
 	{
-		SelectFor = ElmType.Index;
+		ElementType = ElmType.Index;
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	protected override string Name
 	{
 		get
