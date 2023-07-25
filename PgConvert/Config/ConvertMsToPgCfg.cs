@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using PgConvert.Element;
+using System.Text;
 
 namespace PgConvert.Config;
 
@@ -16,6 +17,7 @@ public class ConvertMsToPgCfg
 		}
 	}
 	public OnePgDatabase[] Databases { get; set; }
+	public DtElement[] FreeElements { get; set; }
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
 

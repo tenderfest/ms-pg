@@ -118,14 +118,13 @@ public partial class FormMain : Form
 		var formCfg = new FormCfg(cfg);
 		if (formCfg.ShowDialog(this) != DialogResult.OK)
 			return;
-		ConvertMsToPgCfg newCfg = new()
-		{
-			Databases = cfg.Databases,
-			SkipOperation = formCfg.SkipOperation,
-			SkipElement = formCfg.SkipElement,
-		};
 
-		convert.SetConfig(newCfg);
+		convert.SetConfig(
+			cfg.Databases,
+			cfg.FreeElements,
+			formCfg.SkipOperation,
+			formCfg.SkipElement);
+
 		ShowElements();
 	}
 
@@ -184,12 +183,12 @@ public partial class FormMain : Form
 		if (save != DialogResult.OK)
 			return;
 
-		var err = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
-		if (!string.IsNullOrEmpty(err))
+		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
+		if (string.IsNullOrEmpty(errMessage))
 		{
-			MessageBox.Show(err);
+			errMessage = $"Проект сохранён в файле {projectFile}";
 		}
-		else MessageBox.Show($"Проект сохранён в файле {projectFile}");
+		MessageBox.Show(errMessage);
 	}
 
 	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)

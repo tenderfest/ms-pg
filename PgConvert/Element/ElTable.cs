@@ -9,7 +9,7 @@ public class ElTable : DtElement
 			"unique",
 		};
 
-	List<DtField> Fields { get; set; } = new List<DtField>();
+	public List<DtField> Fields { get; set; } = new List<DtField>();
 	List<ElIndex> Indexes { get; set; } = new List<ElIndex>();
 	List<ElTrigger> Triggers { get; set; } = new List<ElTrigger>();
 

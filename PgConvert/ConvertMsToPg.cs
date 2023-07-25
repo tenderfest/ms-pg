@@ -1,10 +1,13 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Xml.Linq;
 using PgConvert.Config;
 using PgConvert.Element;
+using System.Linq;
 
 namespace PgConvert;
 
@@ -23,7 +26,7 @@ public class ConvertMsToPg
 	ConvertMsToPgCfg Config { get; set; } = new();
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
-	Dictionary<int, DtElement> Elements { get; set; }
+	List<DtElement> Elements { get; set; }
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -35,9 +38,19 @@ public class ConvertMsToPg
 	public ConvertMsToPgCfg GetConfig()
 		=> Config;
 
-	public void SetConfig(ConvertMsToPgCfg newCfg)
+	public void SetConfig(
+		OnePgDatabase[] databases,
+		DtElement[] freeElements,
+		string[] skipOperation,
+		string[] skipElement)
 	{
-		Config = newCfg;
+		Config = new ConvertMsToPgCfg
+		{
+			Databases = databases,
+			FreeElements = freeElements,
+			SkipElement = skipOperation,
+			SkipOperation = skipElement,
+		};
 		NeedUpdateConfig = true;
 	}
 	#endregion config
@@ -46,15 +59,13 @@ public class ConvertMsToPg
 		=> null == Elements
 		? Array.Empty<DtElement>()
 		: Elements
-		.Select(s => s.Value)
 		.ToArray();
 
 	public DtElement[] GetElements(ElmType elmType)
 		=> null == Elements
 		? Array.Empty<DtElement>()
 		: Elements
-		.Where(s => elmType == s.Value.SelectFor)
-		.Select(s => s.Value)
+		.Where(s => elmType == s.SelectFor)
 		.ToArray();
 
 	public string LoadFile(string fileName)
@@ -74,11 +85,12 @@ public class ConvertMsToPg
 			using var zip = new ZipArchive(stream, ZipArchiveMode.Read, false);
 			foreach (var entry in zip.Entries)
 			{
+				using var reader = new StreamReader(entry.Open());
+
 				// чтение настроек
 				if (entry.Name == _cfgFileName)
 				{
-					using var reader = new StreamReader(entry.Open());
-					string cfgText = reader.ReadToEnd();
+					var cfgText = reader.ReadToEnd();
 					Config = (ConvertMsToPgCfg)JsonSerializer.Deserialize(cfgText, typeof(ConvertMsToPgCfg));
 					continue;
 				}
@@ -87,8 +99,7 @@ public class ConvertMsToPg
 					continue;
 
 				// чтение обрабатываемого файла
-				using (var reader = new StreamReader(entry.Open()))
-					ReadInLines(reader);
+				ReadInLines(reader);
 			}
 		}
 		catch (Exception ex) { return ex.Message; }
@@ -144,17 +155,57 @@ public class ConvertMsToPg
 
 		// установка взаимосвязей
 
+		// разнесение элементов по разным БД
+		errorMessage = SortingElements();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
 		return null;
 	}
 
 	/// <summary>
-	/// Разбор каждого элемента по состовляющим
+	/// Разнесение элементов по базам данных
+	/// </summary>
+	private string SortingElements()
+	{
+		if (Config.Databases.Contains(null))
+			Config.Databases = Config.Databases.Where(db => db != null).ToArray();
+
+		foreach (var db in Config.Databases)
+			db.Elements ??= Array.Empty<DtElement>();
+
+		int freeElementsNum = Config.FreeElements == null ? 0 : Config.FreeElements.Length;
+		try
+		{
+			List<DtElement> freeElements = new();
+			foreach (var element in Elements)
+			{
+				foreach (var db in Config.Databases.Where(db => db.Elements.Contains(element)))
+					element.Database = db;
+
+				if (null == element.Database)
+					freeElements.Add(element);
+			}
+			Config.FreeElements = freeElements.ToArray();
+			if (freeElementsNum != Config.FreeElements.Length)
+				NeedUpdateConfig = true;
+
+			return null;
+		}
+		catch (Exception ex)
+		{
+			return ex.Message;
+		}
+	}
+
+	/// <summary>
+	/// Разбор каждого элемента по составляющим
 	/// </summary>
 	private string ParseElements()
 	{
-		foreach (var el in Elements.Values)
+		foreach (var element in Elements)
 		{
-			string errorMessage = el.Parse();
+			var errorMessage = element.Parse();
 			if (!string.IsNullOrEmpty(errorMessage))
 			{
 				return errorMessage;
@@ -168,7 +219,6 @@ public class ConvertMsToPg
 	/// </summary>
 	private string ParseStrings()
 	{
-		int i = 0;
 		List<string> inLines = new();
 		List<string> commentBuffer = new();
 		Elements = new();
@@ -180,9 +230,9 @@ public class ConvertMsToPg
 				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
 				if (default != dicValue)
 				{
-					var equalElement = Elements.Values.FirstOrDefault(e => e.Equals(dicValue));
+					var equalElement = Elements.FirstOrDefault(e => e.Equals(dicValue));
 					if (equalElement == default)
-						Elements.Add(i++, dicValue);
+						Elements.Add(dicValue);
 					else
 						return $"Элемент {dicValue} уже есть в общем списке элементов";
 				}
@@ -223,7 +273,10 @@ public class ConvertMsToPg
 				InFile.ForEach(writer.WriteLine);
 			}
 			// сохранение настроек
+#if DEBUG
+#else
 			if (NeedUpdateConfig)
+#endif
 			{
 				var configEntry = zip.GetEntry(_cfgFileName);
 				configEntry?.Delete();

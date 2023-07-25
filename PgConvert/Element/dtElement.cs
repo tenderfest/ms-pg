@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using System.Xml.Linq;
+using System.Text.Json.Serialization;
 using PgConvert.Config;
 
 namespace PgConvert.Element;
@@ -7,7 +7,7 @@ namespace PgConvert.Element;
 public abstract class DtElement : BaseSelectable
 {
 	#region конструктор
-	private protected DtElement() { }
+	public DtElement() { }
 	//private protected DtElement(
 	//	string operation,
 	//	string[] firstLineWords,
@@ -28,14 +28,16 @@ public abstract class DtElement : BaseSelectable
 	//}
 	#endregion
 
-	internal ElmType Type { get; private protected set; }
+	public ElmType Type { get; private protected set; }
 	internal bool Ignore { get; private protected set; }
 	private protected string FirstLine { get; private set; }
-	private protected string[] Lines { get; private set; }
-	private protected string[] CommentLines { get; private set; }
+	public string[] Lines { get; private set; }
+	public string[] CommentLines { get; private set; }
 
 	private protected ElmOperation Operation { get; set; }
 	private protected string[] FirstLineWords { get; set; }
+
+	internal OnePgDatabase Database { get; set; }
 
 	private protected string name;
 	protected virtual string Name
@@ -117,6 +119,7 @@ public abstract class DtElement : BaseSelectable
 		return GetHashCode() == x.GetHashCode();
 	}
 
+	[JsonIgnore]
 	public string GetEmenenlContent
 	{
 		get
@@ -134,6 +137,7 @@ public abstract class DtElement : BaseSelectable
 		}
 	}
 
+	[JsonIgnore]
 	public virtual DtField[] GetFields => Array.Empty<DtField>();
 
 	int? _hashCode;
