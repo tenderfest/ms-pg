@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -246,6 +247,9 @@ public class ConvertMsToPg
 			// дошли до конца определения элемента, сохраняем его
 			if (inLine == GO)
 			{
+				if (!inLines.Any())
+					continue;
+
 				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
 				if (default != dicValue)
 				{
@@ -261,7 +265,7 @@ public class ConvertMsToPg
 			}
 			else if (!string.IsNullOrEmpty(inLine))
 			{
-				if (inLine.StartsWith("--"))
+				if (inLine.TrimStart().StartsWith("--"))
 					commentBuffer.Add(inLine);
 				else
 					inLines.Add(inLine);

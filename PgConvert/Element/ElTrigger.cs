@@ -2,7 +2,7 @@
 
 public class ElTrigger : ElBaseForTable
 {
-	public ElTrigger()
+	public ElTrigger(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Trigger;
 	}

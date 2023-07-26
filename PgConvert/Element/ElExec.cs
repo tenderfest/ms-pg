@@ -2,7 +2,7 @@
 
 internal class ElExec : DtElement
 {
-	public ElExec()
+	public ElExec(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Exec;
 	}

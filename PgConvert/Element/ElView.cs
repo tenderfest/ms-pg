@@ -4,7 +4,7 @@ public class ElView : DtElement
 {
 	ElTable[] Tables { get; set; }
 
-	public ElView()
+	public ElView(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.View;
 	}

@@ -2,7 +2,7 @@
 
 public class ElProcedure : DtElement
 {
-	public ElProcedure()
+	public ElProcedure(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Procedure;
 	}

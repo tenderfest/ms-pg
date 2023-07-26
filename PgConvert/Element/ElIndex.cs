@@ -5,7 +5,7 @@ public class ElIndex : ElBaseForTable
 	public IdxType IndexType { get; set; }
 	public string[] FieldNames { get; set; }
 
-	public ElIndex()
+	public ElIndex(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Index;
 	}

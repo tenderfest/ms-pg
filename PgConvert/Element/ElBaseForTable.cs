@@ -5,6 +5,8 @@
 /// </summary>
 public abstract class ElBaseForTable : DtElement
 {
+	protected ElBaseForTable(string[] lines) : base(lines) { }
+
 	internal string TableName { get; set; }
 
 	internal void SetTableName(string tableName)

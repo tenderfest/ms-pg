@@ -2,7 +2,7 @@
 
 internal class ElSchema : DtElement
 {
-	public ElSchema()
+	public ElSchema(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Schema;
 	}

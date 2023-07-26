@@ -2,7 +2,7 @@
 
 internal class ElRole : DtElement
 {
-	public ElRole()
+	public ElRole(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Role;
 	}

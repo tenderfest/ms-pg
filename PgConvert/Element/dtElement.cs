@@ -6,11 +6,23 @@ namespace PgConvert.Element;
 
 public class DtElement : BaseSelectable
 {
-	public DtElement() { }
+	public DtElement()
+	{
+		_hashCode = 0;
+	}
+
+	public DtElement(string[] lines)
+	{
+		Lines = lines;
+
+		var hash = lines.First().GetHashCode();
+		foreach (var str in Lines.Skip(1))
+			hash ^= str.GetHashCode();
+		_hashCode = hash;
+	}
 
 	internal bool Ignore { get; private protected set; }
-	private protected string FirstLine { get; private set; }
-	public string[] Lines { get; private set; }
+	public string[] Lines { get; }
 	public string[] CommentLines { get; private set; }
 
 	internal protected ElmOperation Operation { get; set; }
@@ -44,8 +56,7 @@ public class DtElement : BaseSelectable
 	/// </summary>
 	internal static DtElement GetElement(List<string> inLines, List<string> comment, ConvertMsToPgCfg config)
 	{
-		var firstLine = inLines.First();
-		var firstLineWords = firstLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+		var firstLineWords = inLines.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 		var operation = firstLineWords[0].ToLower();
 		var elementKey = firstLineWords.Length > 1 ? firstLineWords[1] : string.Empty;
 		elementKey = elementKey.ToLower();
@@ -55,48 +66,37 @@ public class DtElement : BaseSelectable
 		if (null != config.SkipElement && config.SkipElement.Contains(elementKey))
 			return default;
 
-        DtElement element = Element.ElementType.GetType(elementKey, operation) switch
+		var lines = inLines.ToArray();
+
+		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
-            ElmType.Database => new ElDatabase(),
-            ElmType.Index => new ElIndex(),
-            ElmType.Procedure => new ElProcedure(),
-            ElmType.Trigger => new ElTrigger(),
-            ElmType.Table => new ElTable(),
-            ElmType.View => new ElView(),
-            ElmType.User => new ElUser(),
-            ElmType.Role => new ElRole(),
-            ElmType.Schema => new ElSchema(),
-            ElmType.Exec => new ElExec(),
+			ElmType.Database => new ElDatabase(lines),
+			ElmType.Index => new ElIndex(lines),
+			ElmType.Procedure => new ElProcedure(lines),
+			ElmType.Trigger => new ElTrigger(lines),
+			ElmType.Table => new ElTable(lines),
+			ElmType.View => new ElView(lines),
+			ElmType.User => new ElUser(lines),
+			ElmType.Role => new ElRole(lines),
+			ElmType.Schema => new ElSchema(lines),
+			ElmType.Exec => new ElExec(lines),
+			ElmType.None => new DtUnknown(),
 			_ => new DtUnknown(),
 		};
-		element.SetFields(operation, firstLine, firstLineWords, inLines.ToArray(), comment.ToArray());
+		element.SetFields(operation, firstLineWords, comment.ToArray());
 
 		return element;
 	}
 
-	private void SetFields(string operation, string firstLine, string[] firstLineWords, string[] inLines, string[] comment)
+	private void SetFields(string operation, string[] firstLineWords, string[] comment)
 	{
 		Operation = ElementOperation.GetOperation(operation);
-		FirstLine = firstLine;
 		FirstLineWords = firstLineWords;
-		Lines = inLines;
 		CommentLines = comment;
 	}
 
 	public override bool Equals(object obj)
-	{
-		if (obj is not DtElement x)
-			return false;
-
-		if (FirstLine != x.FirstLine)
-			return false;
-
-		if (null == Lines && null != x.Lines ||
-			null != Lines && null == x.Lines)
-			return false;
-
-		return GetHashCode() == x.GetHashCode();
-	}
+		=> obj is DtElement x && GetHashCode() == x.GetHashCode();
 
 	[JsonIgnore]
 	public string GetEmenenlContent
@@ -119,18 +119,10 @@ public class DtElement : BaseSelectable
 	[JsonIgnore]
 	public virtual DtField[] GetFields => Array.Empty<DtField>();
 
-	int? _hashCode;
+	private readonly int _hashCode;
 	public override int GetHashCode()
 	{
-		if (!_hashCode.HasValue)
-		{
-			var hash = FirstLine.GetHashCode();
-			if (Lines != null)
-				foreach (var str in Lines)
-					hash ^= str.GetHashCode();
-			_hashCode = hash;
-		}
-		return _hashCode.Value;
+		return _hashCode;
 	}
 
 	public override string ToString()

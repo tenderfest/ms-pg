@@ -2,7 +2,7 @@
 
 public class ElDatabase : DtElement
 {
-	public ElDatabase()
+	public ElDatabase(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Database;
 	}

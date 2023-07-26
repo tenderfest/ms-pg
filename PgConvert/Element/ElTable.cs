@@ -16,7 +16,7 @@ public class ElTable : DtElement
 	public override DtField[] GetFields
 		=> Fields.ToArray();
 
-	public ElTable()
+	public ElTable(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Table;
 	}
@@ -47,7 +47,7 @@ public class ElTable : DtElement
 			{
 				// индекс
 				if (_indexSign.Contains(pieces[0].ToLower()))
-					Indexes.Add(new ElIndex());
+					Indexes.Add(new ElIndex(new[] { fieldDraft }));
 				else
 					// обычное поле
 					Fields.Add(new DtField(pieces));

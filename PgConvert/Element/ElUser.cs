@@ -2,7 +2,7 @@
 
 internal class ElUser : DtElement
 {
-	public ElUser()
+	public ElUser(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.User;
 	}
