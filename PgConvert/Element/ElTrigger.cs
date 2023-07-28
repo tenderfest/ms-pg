@@ -7,7 +7,7 @@ public class ElTrigger : ElBaseForTable
 		ElementType = ElmType.Trigger;
 	}
 
-	protected override string Name
+	internal protected override string Name
 	{
 		get
 		{

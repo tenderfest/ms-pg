@@ -15,7 +15,7 @@ public class DtElement : BaseSelectable
 	{
 		Lines = lines;
 
-		var hash = lines.First().GetHashCode();
+		var hash = lines[0].GetHashCode();
 		foreach (var str in Lines.Skip(1))
 			hash ^= str.GetHashCode();
 		_hashCode = hash;
@@ -31,10 +31,13 @@ public class DtElement : BaseSelectable
 	internal OnePgDatabase Database { get; set; }
 
 	private protected string name;
-	protected virtual string Name
+	internal protected virtual string Name
 	{
 		get
 		{
+			if (null == FirstLineWords || !FirstLineWords.Any())
+				return null;
+
 			if (null == name)
 			{
 				name = ClearBraces(FirstLineWords.Length < 3
@@ -71,7 +74,7 @@ public class DtElement : BaseSelectable
 		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
 			ElmType.Database => new ElDatabase(lines),
-			ElmType.Index => new ElIndex(lines),
+			ElmType.Index => new ElIndex(lines, false),
 			ElmType.Procedure => new ElProcedure(lines),
 			ElmType.Trigger => new ElTrigger(lines),
 			ElmType.Table => new ElTable(lines),

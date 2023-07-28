@@ -219,6 +219,7 @@ partial class FormMain
 		checkedListBoxFkey.Name = "checkedListBoxFkey";
 		checkedListBoxFkey.Size = new Size(298, 394);
 		checkedListBoxFkey.TabIndex = 0;
+		checkedListBoxFkey.SelectedValueChanged += CheckedListBoxFkey_SelectedValueChanged;
 		// 
 		// labelFkeys
 		// 

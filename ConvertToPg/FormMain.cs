@@ -158,19 +158,41 @@ public partial class FormMain : Form
 
 	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 	{
-		checkedListBoxFkey.Items.Clear();
-		textBoxContent.Text = string.Empty;
-
-		if (checkedListBoxTable.SelectedItem is not DtElement dtTable)
-			return;
-
-		if (null != dtTable.GetFields)
+		checkedListBoxFkey.BeginUpdate();
+		try
 		{
-			checkedListBoxFkey.Items.AddRange(dtTable.GetFields);
-		}
+			checkedListBoxFkey.Items.Clear();
+			textBoxContent.Text = string.Empty;
 
-		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtTable.GetEmenenlContent;
+			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
+				return;
+
+			if (dtElement is ElTable elTable)
+			{
+				if (elTable.Fields.Any())
+				{
+					checkedListBoxFkey.Items.Add("--- поля ---", CheckState.Indeterminate);
+					checkedListBoxFkey.Items.AddRange(elTable.Fields.ToArray());
+				}
+				if (elTable.Indexes.Any())
+				{
+					checkedListBoxFkey.Items.Add("--- индексы ---", CheckState.Indeterminate);
+					checkedListBoxFkey.Items.AddRange(elTable.Indexes.ToArray());
+				}
+				if (elTable.Triggers.Any())
+				{
+					checkedListBoxFkey.Items.Add("--- триггеры ---", CheckState.Indeterminate);
+					checkedListBoxFkey.Items.AddRange(elTable.Triggers.ToArray());
+				}
+			}
+
+			textBoxContent.BackColor = _sourceColor;
+			textBoxContent.Text = dtElement.GetEmenenlContent;
+		}
+		finally
+		{
+			checkedListBoxFkey.EndUpdate();
+		}
 	}
 
 	private void ButtonSave_Click(object sender, EventArgs e)
@@ -208,5 +230,19 @@ public partial class FormMain : Form
 	{
 		buttonAdd.Enabled = ((RadioButton)sender).Checked;
 		buttonDelete.Enabled = !buttonAdd.Enabled;
+	}
+
+	private void CheckedListBoxFkey_SelectedValueChanged(object sender, EventArgs e)
+	{
+		var selectedItem = checkedListBoxFkey.SelectedItem;
+		if (null == selectedItem)
+			return;
+		textBoxContent.Text = string.Empty;
+
+		if (selectedItem is not DtElement dtElement)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		textBoxContent.Text = dtElement.GetEmenenlContent;
 	}
 }

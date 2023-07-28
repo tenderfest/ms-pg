@@ -9,12 +9,9 @@ public class ElTable : DtElement
 			"unique",
 		};
 
-	public List<DtField> Fields { get; set; } = new List<DtField>();
-	List<ElIndex> Indexes { get; set; } = new List<ElIndex>();
-	List<ElTrigger> Triggers { get; set; } = new List<ElTrigger>();
-
-	public override DtField[] GetFields
-		=> Fields.ToArray();
+	public List<DtField> Fields { get; private set; } = new List<DtField>();
+	public List<ElIndex> Indexes { get; private set; } = new List<ElIndex>();
+	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
 	public ElTable(string[] lines) : base(lines)
 	{
@@ -47,7 +44,7 @@ public class ElTable : DtElement
 			{
 				// индекс
 				if (_indexSign.Contains(pieces[0].ToLower()))
-					Indexes.Add(new ElIndex(new[] { fieldDraft }));
+					Indexes.Add(new ElIndex(new[] { fieldDraft }, true));
 				else
 					// обычное поле
 					Fields.Add(new DtField(pieces));
@@ -138,4 +135,7 @@ public class ElTable : DtElement
 		}
 		return commaIndexList;
 	}
+
+	internal void AddIndexes(IEnumerable<ElTable> alterTables)
+		=> Indexes.AddRange(ElIndex.GetIndexesFromAlterTables(alterTables));
 }

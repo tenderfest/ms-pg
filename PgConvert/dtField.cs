@@ -27,7 +27,7 @@ public class DtField
 	/// <summary>
 	/// поле является вычисляемым
 	/// </summary>
-	public bool Generated => !string.IsNullOrEmpty(FormulaMs);
+	public bool IsGenerated => !string.IsNullOrEmpty(FormulaMs);
 
 	public bool IsFieldTypeNone
 		=> FldType.None == FieldType?.FieldType;
@@ -90,5 +90,5 @@ public class DtField
 		.Replace("]", null);
 
 	public override string ToString()
-		=> $"{(IsFieldTypeNone ? "--- " : string.Empty)}{Name} {FieldType}";
+		=> $"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(IsFieldTypeNone ? "???" : FieldType)}";
 }

@@ -171,7 +171,8 @@ public class ConvertMsToPg
 	private string RelationElements()
 	{
 		var tables = Elements
-			.Where(e => e.ElementType == ElmType.Table);
+			.Where(e => e.ElementType == ElmType.Table)
+			.Select(t => t as ElTable);
 		// создание таблиц
 		var createTables = tables
 			.Where(e => e.Operation == ElmOperation.Create);
@@ -179,6 +180,11 @@ public class ConvertMsToPg
 		var alterTables = tables
 			.Where(e => e.Operation == ElmOperation.Alter);
 
+		// индексы таблиц
+		foreach (var table in createTables)
+		{
+			table.AddIndexes(alterTables.Where(t => t.Name == table.Name));
+		}
 
 		return null;
 	}
