@@ -59,11 +59,50 @@ public class ConvertMsToPg
 		.ToArray();
 
 	public DtElement[] GetElements(ElmType elmType)
-		=> null == Elements
-		? Array.Empty<DtElement>()
-		: Elements
-		.Where(s => elmType == s.ElementType)
-		.ToArray();
+	{
+		if (null == Elements)
+			return Array.Empty<DtElement>();
+
+		var elements = Elements.Where(s => elmType == s.ElementType);
+
+		// для таблиц возвращаем только их создание
+		if (ElmType.Table == elmType)
+			elements = elements.Where(t => ElmOperation.Create == t.Operation);
+
+		return elements.ToArray();
+	}
+
+	private ElTable[] allTables = null;
+	private ElTable[] Tables
+	{
+		get
+		{
+			if (null == allTables)
+			{
+				allTables = Elements
+				.Where(e => e.ElementType == ElmType.Table)
+				.Select(t => t as ElTable)
+				.ToArray();
+			}
+			return allTables;
+		}
+	}
+
+	private ElTrigger[] allTriggers = null;
+	private ElTrigger[] Triggers
+	{
+		get
+		{
+			if (null == allTriggers)
+			{
+				allTriggers = Elements
+				.Where(e => e.ElementType == ElmType.Trigger)
+				.Select(t => t as ElTrigger)
+				.ToArray();
+			}
+			return allTriggers;
+		}
+	}
 
 	public string LoadFile(string fileName)
 		=> Path.GetExtension(fileName) switch
@@ -170,20 +209,20 @@ public class ConvertMsToPg
 	/// </summary>
 	private string RelationElements()
 	{
-		var tables = Elements
-			.Where(e => e.ElementType == ElmType.Table)
-			.Select(t => t as ElTable);
-		// создание таблиц
-		var createTables = tables
-			.Where(e => e.Operation == ElmOperation.Create);
-		// изменения таблиц
-		var alterTables = tables
-			.Where(e => e.Operation == ElmOperation.Alter);
+		var createTables = Tables.Where(e => e.Operation == ElmOperation.Create).ToArray();
 
-		// индексы таблиц
 		foreach (var table in createTables)
 		{
-			table.AddIndexes(alterTables.Where(t => t.Name == table.Name));
+			// изменения таблицы
+			table.AddAlterTable(
+				Tables
+				.Where(e => e.Operation == ElmOperation.Alter && e.Name == table.Name));
+
+			// триггеры
+			table.AddTriggers(
+				Triggers
+				.Where(tr => table.Name == tr.TableName)
+				.ToArray());
 		}
 
 		return null;
@@ -247,7 +286,7 @@ public class ConvertMsToPg
 	{
 		List<string> inLines = new();
 		List<string> commentBuffer = new();
-		Elements = new();
+		List<DtElement> dtElements = new();
 		foreach (var inLine in InFile)
 		{
 			// дошли до конца определения элемента, сохраняем его
@@ -259,9 +298,9 @@ public class ConvertMsToPg
 				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
 				if (default != dicValue)
 				{
-					var equalElement = Elements.FirstOrDefault(e => e.Equals(dicValue));
+					var equalElement = dtElements.Find(e => e.Equals(dicValue));
 					if (equalElement == default)
-						Elements.Add(dicValue);
+						dtElements.Add(dicValue);
 					else
 						return $"Элемент {dicValue} уже есть в общем списке элементов";
 				}
@@ -277,6 +316,8 @@ public class ConvertMsToPg
 					inLines.Add(inLine);
 			}
 		}
+		dtElements.Sort((a, b) => a.Name.CompareTo(b.Name));
+		Elements = dtElements;
 		return null;
 	}
 

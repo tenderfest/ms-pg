@@ -48,16 +48,16 @@ public class ElIndex : ElBaseForTable
 	internal static IEnumerable<ElIndex> GetIndexesFromAlterTables(IEnumerable<ElTable> alterTables)
 	{
 		var list = new List<ElIndex>();
-		foreach (var aTable in alterTables)
+		foreach (var aTableLines in alterTables.Select(aTab => aTab.Lines))
 		{
-			if (1 == aTable.Lines.Length)
+			if (1 == aTableLines.Length)
 			{
-				var pieces = aTable.Lines[0].Split(' ');
+				var pieces = aTableLines[0].Split(' ');
 				if (pieces.Length < 5 || CHECK == pieces[3] && CONSTRAINT == pieces[4])
 					continue;
 			}
 
-			list.Add(new ElIndex(aTable.Lines, false));
+			list.Add(new ElIndex(aTableLines, false));
 		}
 		return list;
 	}

@@ -59,7 +59,7 @@ public class DtElement : BaseSelectable
 	/// </summary>
 	internal static DtElement GetElement(List<string> inLines, List<string> comment, ConvertMsToPgCfg config)
 	{
-		var firstLineWords = inLines.First().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+		var firstLineWords = inLines[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
 		var operation = firstLineWords[0].ToLower();
 		var elementKey = firstLineWords.Length > 1 ? firstLineWords[1] : string.Empty;
 		elementKey = elementKey.ToLower();
@@ -96,6 +96,12 @@ public class DtElement : BaseSelectable
 		Operation = ElementOperation.GetOperation(operation);
 		FirstLineWords = firstLineWords;
 		CommentLines = comment;
+	}
+	public void SetFields(DtElement fromElement)
+	{
+		Operation = fromElement.Operation;
+		FirstLineWords = fromElement.FirstLineWords;
+		CommentLines = fromElement.CommentLines;
 	}
 
 	public override bool Equals(object obj)

@@ -3,20 +3,37 @@
 public class ElTable : DtElement
 {
 	private readonly string[] _indexSign = new string[]
-		{
-			"primary",
-			"constraint",
-			"unique",
-		};
-
-	public List<DtField> Fields { get; private set; } = new List<DtField>();
-	public List<ElIndex> Indexes { get; private set; } = new List<ElIndex>();
-	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
+	{
+		"primary",
+		"constraint",
+		"unique",
+	};
 
 	public ElTable(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Table;
 	}
+
+	public List<DtField> Fields { get; private set; } = new List<DtField>();
+	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
+
+	/// <summary>
+	/// внутритабличные индексы
+	/// </summary>
+	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
+	/// <summary>
+	/// отдельно создаваемые индексы
+	/// </summary>
+	public List<ElIndex> IndexExternal { get; private set; } = new List<ElIndex>();
+	/// <summary>
+	/// изменения таблицы
+	/// </summary>
+	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
+
+	public IEnumerable<DtElement> Indexes =>
+		IndexCreateTable.Select(x => x as DtElement)
+		.Union(IndexExternal.Select(x => x as DtElement))
+		.Union(AlterTable.Select(x => x as DtElement));
 
 	internal override string Parse()
 	{
@@ -44,7 +61,9 @@ public class ElTable : DtElement
 			{
 				// индекс
 				if (_indexSign.Contains(pieces[0].ToLower()))
-					Indexes.Add(new ElIndex(new[] { fieldDraft }, true));
+				{
+					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, true));
+				}
 				else
 					// обычное поле
 					Fields.Add(new DtField(pieces));
@@ -136,6 +155,9 @@ public class ElTable : DtElement
 		return commaIndexList;
 	}
 
-	internal void AddIndexes(IEnumerable<ElTable> alterTables)
-		=> Indexes.AddRange(ElIndex.GetIndexesFromAlterTables(alterTables));
+	internal void AddAlterTable(IEnumerable<ElTable> alterTables)
+		=> AlterTable.AddRange(alterTables);
+
+	internal void AddTriggers(ElTrigger[] trigger)
+		=> Triggers.AddRange(trigger);
 }
