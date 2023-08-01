@@ -4,12 +4,12 @@ namespace PgConvert;
 
 public class DtField
 {
-	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _generated = "as";
+	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
 	private const string _null = "null";
 
-	string Name { get; set; }
+	public string Name { get; set; }
 	public DtFieldType FieldType { get; set; }
 	public bool NotNull { get; set; }
 	/// <summary>
@@ -27,7 +27,8 @@ public class DtField
 	/// <summary>
 	/// поле является вычисляемым
 	/// </summary>
-	public bool IsGenerated => !string.IsNullOrEmpty(FormulaMs);
+	public bool IsGenerated
+		=> !string.IsNullOrEmpty(FormulaMs);
 
 	public bool IsFieldTypeNone
 		=> FldType.None == FieldType?.FieldType;

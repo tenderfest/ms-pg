@@ -7,14 +7,14 @@ public enum ElmType
 {
 	None = 0,
 	Database,
+	User,
+	Role,
+	Schema,
 	Table,
 	Procedure,
 	Trigger,
 	Index,
 	View,
-	User,
-	Role,
-	Schema,
 	Exec,
 }
 

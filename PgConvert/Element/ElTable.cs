@@ -2,7 +2,7 @@
 
 public class ElTable : DtElement
 {
-	private readonly string[] _indexSign = new string[]
+	private readonly static string[] _indexSign = new string[]
 	{
 		"primary",
 		"constraint",
@@ -22,17 +22,12 @@ public class ElTable : DtElement
 	/// </summary>
 	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
 	/// <summary>
-	/// отдельно создаваемые индексы
-	/// </summary>
-	public List<ElIndex> IndexExternal { get; private set; } = new List<ElIndex>();
-	/// <summary>
 	/// изменения таблицы
 	/// </summary>
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
 
 	public IEnumerable<DtElement> Indexes =>
 		IndexCreateTable.Select(x => x as DtElement)
-		.Union(IndexExternal.Select(x => x as DtElement))
 		.Union(AlterTable.Select(x => x as DtElement));
 
 	internal override string Parse()

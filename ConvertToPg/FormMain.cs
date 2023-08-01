@@ -158,6 +158,35 @@ public partial class FormMain : Form
 
 	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 	{
+		//FillListFKey();
+		FillTreeView();
+	}
+
+	private void FillTreeView()
+	{
+		treeView.BeginUpdate();
+		treeView.Nodes.Clear();
+		textBoxContent.Text = string.Empty;
+		try
+		{
+			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
+				return;
+
+			if (dtElement is ElTable elTable)
+			{
+				var fields = new TreeNode("поля") { ForeColor = Color.Red };
+				treeView.Nodes.Add(fields);
+				fields.Nodes.AddRange(elTable.Fields.Select(f => new TreeNode(f.Name) { Tag = f }).ToArray());
+			}
+		}
+		finally
+		{
+			treeView.EndUpdate();
+		}
+	}
+
+	private void FillListFKey()
+	{
 		checkedListBoxFkey.BeginUpdate();
 		try
 		{
