@@ -1,11 +1,12 @@
-﻿namespace PgConvert
+﻿using PgConvert.Element;
+
+namespace PgConvert;
+
+public class PgElement
 {
-	public class PgElement
-	{
-		public ElmType Type { get; }
-		public ElmOperation Operation { get; }
-		public string Name { get; }
-		public string GetEmenenlContentPostgreSql =>
-			"тест О";
-	}
+	public ElmType Type { get; }
+	public ElmOperation Operation { get; }
+	public string Name { get; }
+	public string GetEmenenlContentPostgreSql =>
+		"тест О";
 }
