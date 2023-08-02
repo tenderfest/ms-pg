@@ -7,6 +7,10 @@ public class ElIndex : ElBaseForTable
 
 	public IdxType IndexType { get; set; }
 	public string[] FieldNames { get; set; }
+	/// <summary>
+	/// Имя таблицы, к которой применяется этот индекс
+	/// </summary>
+	public string TableName { get; set; }
 	public bool FromTable { get; set; }
 
 	public ElIndex(string[] lines, bool fromTable) : base(lines)
@@ -15,6 +19,9 @@ public class ElIndex : ElBaseForTable
 		FromTable = fromTable;
 		Operation = ElmOperation.Create;
 	}
+
+	public override string ToString() =>
+		base.ToString() + $" ON ({string.Join(',', TableNames)})";
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	internal protected override string Name
@@ -48,7 +55,9 @@ public class ElIndex : ElBaseForTable
 	internal static IEnumerable<ElIndex> GetIndexesFromAlterTables(IEnumerable<ElTable> alterTables)
 	{
 		var list = new List<ElIndex>();
-		foreach (var aTableLines in alterTables.Select(aTab => aTab.Lines))
+		foreach (var aTableLines in alterTables
+			.Select(aTab =>
+				aTab.Lines))
 		{
 			if (1 == aTableLines.Length)
 			{

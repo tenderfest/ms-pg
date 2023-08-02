@@ -85,7 +85,8 @@ namespace ConvertToPg
 			});
 
 		private void ConnectionStringChanged(object sender, EventArgs e) =>
-			DatabaseFromControl(sender, (db) => db.ConnectionString = ((TextBox)sender).Text);
+			DatabaseFromControl(sender, (db) =>
+				db.ConnectionString = ((TextBox)sender).Text);
 
 		private void ButtonSave_Click(object sender, EventArgs e)
 		{

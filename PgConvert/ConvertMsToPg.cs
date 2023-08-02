@@ -32,8 +32,8 @@ public class ConvertMsToPg
 	};
 
 	#region config
-	public ConvertMsToPgCfg GetConfig()
-		=> Config;
+	public ConvertMsToPgCfg GetConfig() =>
+		Config;
 
 	public void SetConfig(
 		OnePgDatabase[] databases,
@@ -52,22 +52,23 @@ public class ConvertMsToPg
 	}
 	#endregion config
 
-	public DtElement[] GetAllElements()
-		=> null == Elements
+	public DtElement[] GetAllElements() =>
+		null == Elements
 		? Array.Empty<DtElement>()
-		: Elements
-		.ToArray();
+		: Elements.ToArray();
 
 	public DtElement[] GetElements(ElmType elmType)
 	{
 		if (null == Elements)
 			return Array.Empty<DtElement>();
 
-		var elements = Elements.Where(s => elmType == s.ElementType);
+		var elements = Elements.Where(s =>
+			elmType == s.ElementType);
 
 		// для таблиц возвращаем только их создание
 		if (ElmType.Table == elmType)
-			elements = elements.Where(t => ElmOperation.Create == t.Operation);
+			elements = elements.Where(t =>
+				ElmOperation.Create == t.Operation);
 
 		return elements.ToArray();
 	}
@@ -80,8 +81,10 @@ public class ConvertMsToPg
 			if (null == allTables)
 			{
 				allTables = Elements
-				.Where(e => e.ElementType == ElmType.Table)
-				.Select(t => t as ElTable)
+				.Where(e =>
+					e.ElementType == ElmType.Table)
+				.Select(t =>
+					t as ElTable)
 				.ToArray();
 			}
 			return allTables;
@@ -96,16 +99,18 @@ public class ConvertMsToPg
 			if (null == allTriggers)
 			{
 				allTriggers = Elements
-				.Where(e => e.ElementType == ElmType.Trigger)
-				.Select(t => t as ElTrigger)
+				.Where(e =>
+					e.ElementType == ElmType.Trigger)
+				.Select(t =>
+					t as ElTrigger)
 				.ToArray();
 			}
 			return allTriggers;
 		}
 	}
 
-	public string LoadFile(string fileName)
-		=> Path.GetExtension(fileName) switch
+	public string LoadFile(string fileName) =>
+		Path.GetExtension(fileName) switch
 		{
 			_extSql => LoadMsSql(fileName),
 			_extProj => LoadProj(fileName),
@@ -209,19 +214,24 @@ public class ConvertMsToPg
 	/// </summary>
 	private string RelationElements()
 	{
-		var createTables = Tables.Where(e => e.Operation == ElmOperation.Create).ToArray();
+		var createTables = Tables
+			.Where(e =>
+				e.Operation == ElmOperation.Create)
+			.ToArray();
 
 		foreach (var table in createTables)
 		{
 			// изменения таблицы
 			table.AddAlterTable(
 				Tables
-				.Where(e => e.Operation == ElmOperation.Alter && e.Name == table.Name));
+				.Where(e =>
+					e.Operation == ElmOperation.Alter && e.Name == table.Name));
 
 			// триггеры
 			table.AddTriggers(
 				Triggers
-				.Where(tr => table.Name == tr.TableName)
+				.Where(tr =>
+					tr.IsRelatedToTable(table.Name))
 				.ToArray());
 		}
 
@@ -234,7 +244,10 @@ public class ConvertMsToPg
 	private string SortingElements()
 	{
 		if (Config.Databases.Contains(null))
-			Config.Databases = Config.Databases.Where(db => db != null).ToArray();
+			Config.Databases = Config.Databases
+				.Where(db =>
+					db != null)
+				.ToArray();
 
 		foreach (var db in Config.Databases)
 			db.Elements ??= Array.Empty<DtElement>();
@@ -245,8 +258,12 @@ public class ConvertMsToPg
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in Config.Databases.Where(db => db.Elements.Contains(element)))
+				foreach (var db in Config.Databases
+					.Where(db =>
+						db.Elements.Contains(element)))
+				{
 					element.Database = db;
+				}
 
 				if (null == element.Database)
 					freeElements.Add(element);
@@ -298,7 +315,9 @@ public class ConvertMsToPg
 				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
 				if (default != dicValue)
 				{
-					var equalElement = dtElements.Find(e => e.Equals(dicValue));
+					var equalElement = dtElements
+						.Find(e =>
+							e.Equals(dicValue));
 					if (equalElement == default)
 						dtElements.Add(dicValue);
 					else
@@ -316,7 +335,10 @@ public class ConvertMsToPg
 					inLines.Add(inLine);
 			}
 		}
-		dtElements.Sort((a, b) => a.Name.CompareTo(b.Name));
+		dtElements
+			.Sort((a, b) =>
+				a.Name.CompareTo(b.Name));
+
 		Elements = dtElements;
 		return null;
 	}

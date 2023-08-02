@@ -27,11 +27,11 @@ public class DtField
 	/// <summary>
 	/// поле является вычисляемым
 	/// </summary>
-	public bool IsGenerated
-		=> !string.IsNullOrEmpty(FormulaMs);
+	public bool IsGenerated =>
+		!string.IsNullOrEmpty(FormulaMs);
 
-	public bool IsFieldTypeNone
-		=> FldType.None == FieldType?.FieldType;
+	public bool IsFieldTypeNone =>
+		FldType.None == FieldType?.FieldType;
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	public DtField(string[] pieces)
@@ -81,15 +81,15 @@ public class DtField
 		}
 	}
 
-	private static string ClearToLower(string str)
-		=> Clear(str).ToLower();
+	private static string ClearToLower(string str) =>
+		Clear(str).ToLower();
 
-	private static string Clear(string str)
-		=> str
+	private static string Clear(string str) =>
+		str
 		.Trim()
 		.Replace("[", null)
 		.Replace("]", null);
 
-	public override string ToString()
-		=> $"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(IsFieldTypeNone ? "???" : FieldType)}";
+	public override string ToString() =>
+		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(IsFieldTypeNone ? "???" : FieldType)}";
 }

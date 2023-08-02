@@ -26,12 +26,11 @@
 
 		public event EventHandler ClickButtonCheckConnect
 		{
-			add
-			{
+			add =>
 				Events.AddHandler(nameof(ClickButtonCheckConnect), value);
-			}
 
-			remove => Events.RemoveHandler(nameof(ClickButtonCheckConnect), value);
+			remove =>
+				Events.RemoveHandler(nameof(ClickButtonCheckConnect), value);
 		}
 	}
 }

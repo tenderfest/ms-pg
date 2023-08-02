@@ -153,30 +153,40 @@ public partial class FormMain : Form
 		groupBoxNewDatabases.ResumeLayout();
 	}
 
-	private static void ShowErrorMessage(string err)
-		=> MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+	private static void ShowErrorMessage(string err) =>
+		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 	{
-		//FillListFKey();
-		FillTreeView();
+		textBoxContent.Text = string.Empty;
+		if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		textBoxContent.Text = dtElement.GetEmenenlContent;
+
+		//FillListFKey(dtElement);
+		FillTreeView(dtElement);
 	}
 
-	private void FillTreeView()
+	private void FillTreeView(DtElement dtElement)
 	{
 		treeView.BeginUpdate();
 		treeView.Nodes.Clear();
-		textBoxContent.Text = string.Empty;
 		try
 		{
-			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
-				return;
-
 			if (dtElement is ElTable elTable)
 			{
 				var fields = new TreeNode("поля") { ForeColor = Color.Red };
+				fields.Nodes.AddRange(elTable.Fields
+					.Select(f =>
+						new TreeNode(f.Name)
+						{
+							Tag = f,
+						})
+					.ToArray());
+
 				treeView.Nodes.Add(fields);
-				fields.Nodes.AddRange(elTable.Fields.Select(f => new TreeNode(f.Name) { Tag = f }).ToArray());
 			}
 		}
 		finally
@@ -185,16 +195,12 @@ public partial class FormMain : Form
 		}
 	}
 
-	private void FillListFKey()
+	private void FillListFKey(DtElement dtElement)
 	{
 		checkedListBoxFkey.BeginUpdate();
 		try
 		{
 			checkedListBoxFkey.Items.Clear();
-			textBoxContent.Text = string.Empty;
-
-			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
-				return;
 
 			if (dtElement is ElTable elTable)
 			{
@@ -214,9 +220,6 @@ public partial class FormMain : Form
 					checkedListBoxFkey.Items.AddRange(elTable.Triggers.ToArray());
 				}
 			}
-
-			textBoxContent.BackColor = _sourceColor;
-			textBoxContent.Text = dtElement.GetEmenenlContent;
 		}
 		finally
 		{

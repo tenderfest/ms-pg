@@ -23,14 +23,17 @@ public class ConvertMsToPgCfg
 
 	public static string[] GetSkipArrayFromText(string text) =>
 		text?.Split('\n')
-		.Select(s => s.ToLower().Trim())
-		.Where(s => !string.IsNullOrEmpty(s))
+		.Select(s =>
+			s.ToLower().Trim())
+		.Where(s =>
+			!string.IsNullOrEmpty(s))
 		.ToArray();
 
 	private static string GetStringArrayAsText(string[] stringArray)
 	{
 		var sb = new StringBuilder();
-		stringArray?.ToList().ForEach(s => sb.AppendLine(s));
+		stringArray?.ToList().ForEach(s =>
+			sb.AppendLine(s));
 		return sb.ToString();
 	}
 
@@ -47,9 +50,9 @@ public class ConvertMsToPgCfg
 		Databases = databases.ToArray();
 	}
 
-	public string GetSkipElementAsText()
-		=> GetStringArrayAsText(SkipElement);
+	public string GetSkipElementAsText() =>
+		GetStringArrayAsText(SkipElement);
 
-	public string GetSkipOperationAsText()
-		=> GetStringArrayAsText(SkipOperation);
+	public string GetSkipOperationAsText() =>
+		GetStringArrayAsText(SkipOperation);
 }

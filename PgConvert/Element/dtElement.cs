@@ -15,20 +15,21 @@ public class DtElement : BaseSelectable
 	{
 		Lines = lines;
 
+		// вычисление хэша для этого элемента
 		var hash = lines[0].GetHashCode();
 		foreach (var str in Lines.Skip(1))
 			hash ^= str.GetHashCode();
 		_hashCode = hash;
 	}
 
-	internal bool Ignore { get; private protected set; }
 	public string[] Lines { get; }
 	public string[] CommentLines { get; private set; }
 
+	internal bool Ignore { get; private protected set; }
 	internal protected ElmOperation Operation { get; set; }
-	private protected string[] FirstLineWords { get; set; }
-
 	internal OnePgDatabase Database { get; set; }
+
+	private protected string[] FirstLineWords { get; set; }
 
 	private protected string name;
 	internal protected virtual string Name
@@ -73,17 +74,17 @@ public class DtElement : BaseSelectable
 
 		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
+			ElmType.None => new DtUnknown(),
 			ElmType.Database => new ElDatabase(lines),
-			ElmType.Index => new ElIndex(lines, false),
-			ElmType.Procedure => new ElProcedure(lines),
-			ElmType.Trigger => new ElTrigger(lines),
-			ElmType.Table => new ElTable(lines),
-			ElmType.View => new ElView(lines),
 			ElmType.User => new ElUser(lines),
 			ElmType.Role => new ElRole(lines),
 			ElmType.Schema => new ElSchema(lines),
+			ElmType.Table => new ElTable(lines),
+			ElmType.Procedure => new ElProcedure(lines),
+			ElmType.Trigger => new ElTrigger(lines),
+			ElmType.Index => new ElIndex(lines, false),
+			ElmType.View => new ElView(lines),
 			ElmType.Exec => new ElExec(lines),
-			ElmType.None => new DtUnknown(),
 			_ => new DtUnknown(),
 		};
 		element.SetFields(operation, firstLineWords, comment.ToArray());
@@ -104,8 +105,8 @@ public class DtElement : BaseSelectable
 		CommentLines = fromElement.CommentLines;
 	}
 
-	public override bool Equals(object obj)
-		=> obj is DtElement x && GetHashCode() == x.GetHashCode();
+	public override bool Equals(object obj) =>
+		obj is DtElement x && GetHashCode() == x.GetHashCode();
 
 	[JsonIgnore]
 	public string GetEmenenlContent
@@ -126,16 +127,15 @@ public class DtElement : BaseSelectable
 	}
 
 	[JsonIgnore]
-	public virtual DtField[] GetFields => Array.Empty<DtField>();
+	public virtual DtField[] GetFields =>
+		Array.Empty<DtField>();
 
 	private readonly int _hashCode;
-	public override int GetHashCode()
-	{
-		return _hashCode;
-	}
+	public override int GetHashCode() =>
+		_hashCode;
 
-	public override string ToString()
-		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
+	public override string ToString() =>
+		$"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
 	internal virtual string Parse() { return null; }
 

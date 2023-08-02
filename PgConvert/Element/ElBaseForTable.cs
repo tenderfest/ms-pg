@@ -7,13 +7,19 @@ public abstract class ElBaseForTable : DtElement
 {
 	protected ElBaseForTable(string[] lines) : base(lines) { }
 
-	internal string TableName { get; set; }
+	/// <summary>
+	/// Имена таблиц, от которых зависит этот элемент
+	/// </summary>
+	private protected List<string> TableNames { get; } = new List<string>();
 
-	internal void SetTableName(string tableName)
-	{
-		TableName = tableName;
-	}
+	/// <summary>
+	/// Ссылки на таблицы, от которых зависит этот элемент
+	/// </summary>
+	protected ElTable[] Tables { get; set; }
 
-	public override string ToString()
-		=> $"{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name} ON {TableName}";
+	internal bool IsRelatedToTable(string name) =>
+		TableNames.Contains(name);
+
+	internal void SetTableName(string tableName) =>
+		TableNames.Add(tableName);
 }

@@ -7,6 +7,9 @@ public class ElTrigger : ElBaseForTable
 		ElementType = ElmType.Trigger;
 	}
 
+	public override string ToString() =>
+		base.ToString() + $" ON ({string.Join(',', TableNames)})";
+
 	internal protected override string Name
 	{
 		get

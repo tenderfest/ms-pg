@@ -1,6 +1,6 @@
 ﻿namespace PgConvert.Element;
 
-public class ElTable : DtElement
+public class ElTable : ElBaseForTable
 {
 	private readonly static string[] _indexSign = new string[]
 	{
@@ -27,8 +27,12 @@ public class ElTable : DtElement
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
 
 	public IEnumerable<DtElement> Indexes =>
-		IndexCreateTable.Select(x => x as DtElement)
-		.Union(AlterTable.Select(x => x as DtElement));
+		IndexCreateTable
+		.Select(x =>
+			x as DtElement)
+		.Union(AlterTable
+			.Select(x =>
+				x as DtElement));
 
 	internal override string Parse()
 	{
@@ -150,9 +154,9 @@ public class ElTable : DtElement
 		return commaIndexList;
 	}
 
-	internal void AddAlterTable(IEnumerable<ElTable> alterTables)
-		=> AlterTable.AddRange(alterTables);
+	internal void AddAlterTable(IEnumerable<ElTable> alterTables) =>
+		AlterTable.AddRange(alterTables);
 
-	internal void AddTriggers(ElTrigger[] trigger)
-		=> Triggers.AddRange(trigger);
+	internal void AddTriggers(ElTrigger[] trigger) =>
+		Triggers.AddRange(trigger);
 }
