@@ -49,7 +49,7 @@ public class DtElement : BaseSelectable
 		}
 	}
 
-	private protected static string ClearBraces(string draftName) =>
+	public static string ClearBraces(string draftName) =>
 		draftName
 			.Replace("(", string.Empty)
 			.Replace("[", string.Empty)
@@ -135,8 +135,11 @@ public class DtElement : BaseSelectable
 	public override int GetHashCode() =>
 		_hashCode;
 
+	protected string IgnoreAsString =>
+		Ignore ? "-" : string.Empty;
+
 	public override string ToString() =>
-		$"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
+		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
 	internal virtual string Parse() { return null; }
 

@@ -226,8 +226,9 @@ public class ConvertMsToPg
 			// изменения таблицы
 			table.AddAlterTable(
 				Tables
-				.Where(e =>
-					e.Operation == ElmOperation.Alter && e.Name == table.Name));
+				.Where(at =>
+					at.Operation == ElmOperation.Alter && at.IsRelatedToTable(table.Name))
+				.ToArray());
 
 			// триггеры
 			table.AddTriggers(

@@ -8,16 +8,19 @@ public class ElTable : ElBaseForTable
 	}
 
 	public List<DtField> Fields { get; private set; } = new List<DtField>();
+
 	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
 	/// <summary>
 	/// внутритабличные индексы
 	/// </summary>
 	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
+	//public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
 	/// <summary>
-	/// изменения таблицы
+	/// изменения таблицы: внешние ключи и индексы
 	/// </summary>
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
+
 	/// <summary>
 	/// Параметры внешего ключа для ALTER TABLE
 	/// </summary>
@@ -48,7 +51,7 @@ public class ElTable : ElBaseForTable
 			if (pieces.Length != piecesLower.Length)
 				return $"Длины итоговых строк ALTER TABLE не совпадают.";
 
-			ForeignKey = new DtForeignKey(piecesLower, Name);
+			ForeignKey = new DtForeignKey(piecesLower, pieces, Name);
 
 			SetTableName(ForeignKey.FromTableName);
 			SetTableName(ForeignKey.ToTableName);
@@ -179,4 +182,11 @@ public class ElTable : ElBaseForTable
 
 	internal void AddTriggers(ElTrigger[] trigger) =>
 		Triggers.AddRange(trigger);
+
+	public override string ToString()
+	{
+		return ForeignKey == null
+			? base.ToString()
+			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} FK: {ForeignKey.Name}";
+	}
 }

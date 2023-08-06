@@ -16,7 +16,7 @@ public class DtForeignKey
 	*/
 
 	public DtForeignKey() { }
-	public DtForeignKey(string[] piecesLower, string name)
+	public DtForeignKey(string[] piecesLower, string[] pieces, string name)
 	{
 		FromTableName = name;
 
@@ -72,9 +72,9 @@ public class DtForeignKey
 			*/
 		}
 		if (piecesLower.Length > posCONSTRAINT)
-			Name = piecesLower[posCONSTRAINT + 1];
+			Name = DtElement.ClearBraces(pieces[posCONSTRAINT + 1]);
 		if (piecesLower.Length > posREFERENCES)
-			ToTableName = piecesLower[posREFERENCES + 1];
+			ToTableName = DtElement.ClearBraces(pieces[posREFERENCES + 1]);
 
 		/* TODO надо ли определять поля и разбирать ALTER TABLE с внешним ключом полностью? наверное, нет
 		OnUpdate = posON != 0 && posUPDATE != 0;

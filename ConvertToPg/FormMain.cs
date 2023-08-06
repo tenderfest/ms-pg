@@ -180,13 +180,23 @@ public partial class FormMain : Form
 				var fields = new TreeNode("поля") { ForeColor = Color.Red };
 				fields.Nodes.AddRange(elTable.Fields
 					.Select(f =>
-						new TreeNode(f.ToString())
-						{
-							Tag = f,
-						})
+						new TreeNode(f.ToString()) { Tag = f, })
 					.ToArray());
-
 				treeView.Nodes.Add(fields);
+
+				var alters = new TreeNode("индексы") { ForeColor = Color.Red };
+				alters.Nodes.AddRange(elTable.Indexes
+					.Select(f =>
+						new TreeNode(f.ToString()) { Tag = f, })
+					.ToArray());
+				treeView.Nodes.Add(alters);
+
+				var triggers = new TreeNode("триггеры") { ForeColor = Color.Red };
+				triggers.Nodes.AddRange(elTable.Triggers
+					.Select(f =>
+						new TreeNode(f.ToString()) { Tag = f, })
+					.ToArray());
+				treeView.Nodes.Add(triggers);
 			}
 		}
 		finally
@@ -211,7 +221,7 @@ public partial class FormMain : Form
 				}
 				if (elTable.Indexes.Any())
 				{
-					checkedListBoxFkey.Items.Add("--- индексы ---", CheckState.Indeterminate);
+					checkedListBoxFkey.Items.Add("--- изменения ---", CheckState.Indeterminate);
 					checkedListBoxFkey.Items.AddRange(elTable.Indexes.ToArray());
 				}
 				if (elTable.Triggers.Any())
