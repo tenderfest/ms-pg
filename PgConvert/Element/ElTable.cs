@@ -2,13 +2,6 @@
 
 public class ElTable : ElBaseForTable
 {
-	private readonly static string[] _indexSign = new string[]
-	{
-		"primary",
-		"constraint",
-		"unique",
-	};
-
 	public ElTable(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Table;
@@ -25,17 +18,44 @@ public class ElTable : ElBaseForTable
 	/// изменения таблицы
 	/// </summary>
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
+	/// <summary>
+	/// Параметры внешего ключа для ALTER TABLE
+	/// </summary>
+	public DtForeignKey ForeignKey { get; private set; }
 
 	public IEnumerable<DtElement> Indexes =>
 		IndexCreateTable
-		.Select(x =>
-			x as DtElement)
+			.Select(x =>
+				x as DtElement)
 		.Union(AlterTable
 			.Select(x =>
 				x as DtElement));
 
 	internal override string Parse()
 	{
+		// изменение таблицы
+		if (ElmOperation.Alter == Operation)
+		{
+			var pieces = LinesAsString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			if (pieces.Length < 4)
+				return $"ALTER TABLE таблицы {Name} содержит меньше четырёх элементов.";
+
+			// если эта запись ALTER TABLE не внешний ключ, просто ничего не делаем
+			if (!LinesAsStringLower.Contains(Const.FOREIGN_KEY))
+				return null;
+
+			var piecesLower = LinesAsStringLower.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			if (pieces.Length != piecesLower.Length)
+				return $"Длины итоговых строк ALTER TABLE не совпадают.";
+
+			ForeignKey = new DtForeignKey(piecesLower, Name);
+
+			SetTableName(ForeignKey.FromTableName);
+			SetTableName(ForeignKey.ToTableName);
+			return null;
+		}
+
+		// создание таблицы
 		if (ElmOperation.Create != Operation)
 			return null;
 
@@ -59,7 +79,7 @@ public class ElTable : ElBaseForTable
 			try
 			{
 				// индекс
-				if (_indexSign.Contains(pieces[0].ToLower()))
+				if (Const._indexSign.Contains(pieces[0].ToLower()))
 				{
 					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, true));
 				}

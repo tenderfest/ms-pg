@@ -23,34 +23,22 @@ public class ElIndex : ElBaseForTable
 	public override string ToString() =>
 		base.ToString() + $" ON ({string.Join(',', TableNames)})";
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
-	internal protected override string Name
-	{
-		get
-		{
-			if (null == FirstLineWords || !FirstLineWords.Any())
-				return null;
-
-			if (null == name)
-			{
-				SetTableName(ClearBraces(FirstLineWords[FirstLineWords.Length - 1]));
-				name = ClearBraces(FirstLineWords[FirstLineWords.Length - 1 - 2]);
-			}
-			return name;
-		}
-	}
+	internal protected override string Name =>
+		name;
 
 	//public override string ToString()
 	//	=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	internal override string Parse()
 	{
-
+		SetTableName(ClearBraces(FirstLineWords[FirstLineWords.Length - 1]));
+		name = ClearBraces(FirstLineWords[FirstLineWords.Length - 1 - 2]);
 		return null;
 	}
 
 	/// <summary>
-	/// Создание записи индекста из записи ALTER TABLE
+	/// Создание записи индекса из записи ALTER TABLE
 	/// </summary>
 	internal static IEnumerable<ElIndex> GetIndexesFromAlterTables(IEnumerable<ElTable> alterTables)
 	{

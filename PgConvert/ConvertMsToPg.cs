@@ -65,10 +65,10 @@ public class ConvertMsToPg
 		var elements = Elements.Where(s =>
 			elmType == s.ElementType);
 
-		// для таблиц возвращаем только их создание
-		if (ElmType.Table == elmType)
-			elements = elements.Where(t =>
-				ElmOperation.Create == t.Operation);
+		//// для таблиц возвращаем только их создание
+		//if (ElmType.Table == elmType)
+		//	elements = elements.Where(t =>
+		//		ElmOperation.Create == t.Operation);
 
 		return elements.ToArray();
 	}
@@ -188,15 +188,17 @@ public class ConvertMsToPg
 	{
 		string errorMessage;
 
+		// чтение и разбор входного потока
 		errorMessage = ParseStrings();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
+		// разбор каждого элемента по составляющим
 		errorMessage = ParseElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
-		// установка взаимосвязей
+		// установка взаимосвязей между элементами
 		errorMessage = RelationElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
@@ -293,6 +295,11 @@ public class ConvertMsToPg
 				return errorMessage;
 			}
 		}
+
+		// сортировка элементов по имени
+		Elements
+			.Sort((a, b) =>
+				a.Name.CompareTo(b.Name));
 		return null;
 	}
 
@@ -335,9 +342,6 @@ public class ConvertMsToPg
 					inLines.Add(inLine);
 			}
 		}
-		dtElements
-			.Sort((a, b) =>
-				a.Name.CompareTo(b.Name));
 
 		Elements = dtElements;
 		return null;

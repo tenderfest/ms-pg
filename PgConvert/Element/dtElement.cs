@@ -98,12 +98,13 @@ public class DtElement : BaseSelectable
 		FirstLineWords = firstLineWords;
 		CommentLines = comment;
 	}
-	public void SetFields(DtElement fromElement)
-	{
-		Operation = fromElement.Operation;
-		FirstLineWords = fromElement.FirstLineWords;
-		CommentLines = fromElement.CommentLines;
-	}
+
+	//public void SetFields(DtElement fromElement)
+	//{
+	//	Operation = fromElement.Operation;
+	//	FirstLineWords = fromElement.FirstLineWords;
+	//	CommentLines = fromElement.CommentLines;
+	//}
 
 	public override bool Equals(object obj) =>
 		obj is DtElement x && GetHashCode() == x.GetHashCode();
@@ -148,10 +149,17 @@ public class DtElement : BaseSelectable
 			{
 				var stringBuilder = new StringBuilder();
 				foreach (var str in Lines)
-					stringBuilder.Append(str);
-				linesAsString = stringBuilder.ToString();
+				{
+					stringBuilder.Append(str.Trim());
+					stringBuilder.Append(' ');
+				}
+				linesAsString = stringBuilder.ToString().Trim();
 			}
 			return linesAsString;
 		}
 	}
+
+	private string linesAsStringLower = null;
+	protected string LinesAsStringLower =>
+		linesAsStringLower ??= LinesAsString.ToLower();
 }

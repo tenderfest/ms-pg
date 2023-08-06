@@ -10,24 +10,16 @@ public class ElTrigger : ElBaseForTable
 	public override string ToString() =>
 		base.ToString() + $" ON ({string.Join(',', TableNames)})";
 
-	internal protected override string Name
+	internal protected override string Name =>
+		name;
+
+	internal override string Parse()
 	{
-		get
-		{
-			if (null == name)
-			{
-				SetTableName(ClearBraces(Lines.Length < 2
-					? "Lines.Length < 2"
-					: Lines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)[1]));
-				name = ClearBraces(FirstLineWords[2]);
-			}
-			return name;
-		}
+		SetTableName(ClearBraces(Lines.Length < 2
+			? "Lines.Length < 2"
+			: Lines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)[1]));
+		name = ClearBraces(FirstLineWords[2]);
+
+		return null;
 	}
-
-	//internal override string Parse()
-	//{
-
-	//	return null;
-	//}
 }

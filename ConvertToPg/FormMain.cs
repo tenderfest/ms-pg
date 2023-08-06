@@ -180,7 +180,7 @@ public partial class FormMain : Form
 				var fields = new TreeNode("поля") { ForeColor = Color.Red };
 				fields.Nodes.AddRange(elTable.Fields
 					.Select(f =>
-						new TreeNode(f.Name)
+						new TreeNode(f.ToString())
 						{
 							Tag = f,
 						})
