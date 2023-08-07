@@ -15,7 +15,7 @@ public class ElTable : ElBaseForTable
 	/// внутритабличные индексы
 	/// </summary>
 	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
-	//public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
+
 	/// <summary>
 	/// изменения таблицы: внешние ключи и индексы
 	/// </summary>
@@ -187,6 +187,6 @@ public class ElTable : ElBaseForTable
 	{
 		return ForeignKey == null
 			? base.ToString()
-			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} FK: {ForeignKey.Name}";
+			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {ForeignKey.Name}";
 	}
 }

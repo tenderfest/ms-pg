@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -57,7 +58,7 @@ public class ConvertMsToPg
 		? Array.Empty<DtElement>()
 		: Elements.ToArray();
 
-	public DtElement[] GetElements(ElmType elmType)
+	public DtElement[] GetElements(ElmType elmType, bool createOnly)
 	{
 		if (null == Elements)
 			return Array.Empty<DtElement>();
@@ -65,6 +66,9 @@ public class ConvertMsToPg
 		var elements = Elements.Where(s =>
 			elmType == s.ElementType);
 
+		if (createOnly)
+			elements = elements.Where(t =>
+				ElmOperation.Create == t.Operation);
 		//// для таблиц возвращаем только их создание
 		//if (ElmType.Table == elmType)
 		//	elements = elements.Where(t =>

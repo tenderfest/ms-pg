@@ -11,6 +11,8 @@ public partial class FormMain : Form
 	private readonly Color _resultColor;
 	private readonly Color _sourceColor;
 
+	private bool _isTableSelected = false;
+
 	public FormMain()
 	{
 		InitializeComponent();
@@ -42,14 +44,14 @@ public partial class FormMain : Form
 			radioButton.UseVisualStyleBackColor = true;
 			radioButton.Tag = (ElmType)elementType;
 			radioButton.Checked = false;// (ElmType)elementType == ElmType.None;
-			radioButton.CheckedChanged += CheckBox_CheckedChanged;
+			radioButton.CheckedChanged += CheckBoxElmType_CheckedChanged;
 
 			i++;
 			y += 25;
 		}
 	}
 
-	private void CheckBox_CheckedChanged(object sender, EventArgs e)
+	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
 	{
 		var checkBox = (RadioButton)sender;
 		if (!checkBox.Checked) return;
@@ -58,9 +60,13 @@ public partial class FormMain : Form
 
 	private void FillTables(ElmType elmType)
 	{
+		_isTableSelected = ElmType.Table == elmType;
+		groupBoxShowTable.Enabled = _isTableSelected;
+
 		checkedListBoxTable.BeginUpdate();
 		checkedListBoxTable.Items.Clear();
-		var elements = convert.GetElements(elmType);
+		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
+		var elements = convert.GetElements(elmType, showCreateTableOnly);
 		if (null != elements && elements.Any())
 		{
 			checkedListBoxTable.Items.AddRange(elements);
@@ -165,75 +171,39 @@ public partial class FormMain : Form
 		textBoxContent.BackColor = _sourceColor;
 		textBoxContent.Text = dtElement.GetEmenenlContent;
 
-		//FillListFKey(dtElement);
 		FillTreeView(dtElement);
 	}
 
 	private void FillTreeView(DtElement dtElement)
 	{
+		static TreeNode MakeTreeNode(string treeNodeName, IEnumerable<object> list)
+		{
+			var treeNode = new TreeNode(treeNodeName)
+			{
+				ForeColor = Color.Red,
+			};
+			treeNode.Nodes.AddRange(list
+				.Select(f => new TreeNode(f.ToString()) { Tag = f, })
+				.ToArray());
+			return treeNode;
+		}
+
 		treeView.BeginUpdate();
 		treeView.Nodes.Clear();
 		try
 		{
-			if (dtElement is ElTable elTable)
-			{
-				var fields = new TreeNode("поля") { ForeColor = Color.Red };
-				fields.Nodes.AddRange(elTable.Fields
-					.Select(f =>
-						new TreeNode(f.ToString()) { Tag = f, })
-					.ToArray());
-				treeView.Nodes.Add(fields);
-
-				var alters = new TreeNode("индексы") { ForeColor = Color.Red };
-				alters.Nodes.AddRange(elTable.Indexes
-					.Select(f =>
-						new TreeNode(f.ToString()) { Tag = f, })
-					.ToArray());
-				treeView.Nodes.Add(alters);
-
-				var triggers = new TreeNode("триггеры") { ForeColor = Color.Red };
-				triggers.Nodes.AddRange(elTable.Triggers
-					.Select(f =>
-						new TreeNode(f.ToString()) { Tag = f, })
-					.ToArray());
-				treeView.Nodes.Add(triggers);
-			}
+			if (dtElement is not ElTable elTable)
+				return;
+			if (elTable.Fields.Any())
+				treeView.Nodes.Add(MakeTreeNode("поля", elTable.Fields));
+			if (elTable.Indexes.Any())
+				treeView.Nodes.Add(MakeTreeNode("индексы", elTable.Indexes));
+			if (elTable.Triggers.Any())
+				treeView.Nodes.Add(MakeTreeNode("триггеры", elTable.Triggers));
 		}
 		finally
 		{
 			treeView.EndUpdate();
-		}
-	}
-
-	private void FillListFKey(DtElement dtElement)
-	{
-		checkedListBoxFkey.BeginUpdate();
-		try
-		{
-			checkedListBoxFkey.Items.Clear();
-
-			if (dtElement is ElTable elTable)
-			{
-				if (elTable.Fields.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- поля ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Fields.ToArray());
-				}
-				if (elTable.Indexes.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- изменения ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Indexes.ToArray());
-				}
-				if (elTable.Triggers.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- триггеры ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Triggers.ToArray());
-				}
-			}
-		}
-		finally
-		{
-			checkedListBoxFkey.EndUpdate();
 		}
 	}
 
@@ -243,8 +213,7 @@ public partial class FormMain : Form
 		{
 			InitialDirectory = PrePathInFile,
 		};
-		var save = saveFileDialog.ShowDialog();
-		if (save != DialogResult.OK)
+		if (saveFileDialog.ShowDialog() != DialogResult.OK)
 			return;
 
 		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
@@ -274,17 +243,15 @@ public partial class FormMain : Form
 		buttonDelete.Enabled = !buttonAdd.Enabled;
 	}
 
-	private void CheckedListBoxFkey_SelectedValueChanged(object sender, EventArgs e)
+	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
-		var selectedItem = checkedListBoxFkey.SelectedItem;
-		if (null == selectedItem)
-			return;
-		textBoxContent.Text = string.Empty;
 
-		if (selectedItem is not DtElement dtElement)
-			return;
+	}
 
-		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetEmenenlContent;
+	private void RadioButtonShowTables_CheckedChanged(object sender, EventArgs e)
+	{
+		if (!_isTableSelected) return;
+		if (((RadioButton)sender).Checked)
+			FillTables(ElmType.Table);
 	}
 }
