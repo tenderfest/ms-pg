@@ -91,5 +91,7 @@ public class DtField
 		.Replace("]", null);
 
 	public override string ToString() =>
-		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(IsFieldTypeNone ? "???" : FieldType)}";
+		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
+			IsFieldTypeNone ? "???" : FieldType)}{(
+			NotNull ? " NotNull" : string.Empty)}";
 }

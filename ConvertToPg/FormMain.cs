@@ -203,7 +203,28 @@ public partial class FormMain : Form
 		}
 		finally
 		{
+			treeView.ExpandAll();
 			treeView.EndUpdate();
+		}
+	}
+
+	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
+	{
+		textBoxContent.Text = string.Empty;
+
+		if (treeView.SelectedNode == null ||
+			treeView.SelectedNode.Tag == null)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		switch (treeView.SelectedNode.Tag)
+		{
+			case DtElement dtElement:
+				textBoxContent.Text = dtElement.GetEmenenlContent;
+				break;
+			case DtField dtField:
+				textBoxContent.Text = dtField.ToString();
+				break;
 		}
 	}
 
@@ -222,19 +243,6 @@ public partial class FormMain : Form
 			errMessage = $"Проект сохранён в файле {projectFile}";
 		}
 		MessageBox.Show(errMessage);
-	}
-
-	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
-	{
-		textBoxContent.Text = string.Empty;
-
-		if (treeView.SelectedNode == null ||
-			treeView.SelectedNode.Tag == null ||
-			treeView.SelectedNode.Tag is not PgElement dtTable)
-			return;
-
-		textBoxContent.BackColor = _resultColor;
-		textBoxContent.Text = dtTable.GetEmenenlContentPostgreSql;
 	}
 
 	private void RadioButtonNone_CheckedChanged(object sender, EventArgs e)
