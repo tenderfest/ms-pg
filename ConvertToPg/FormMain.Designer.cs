@@ -332,14 +332,12 @@ partial class FormMain
 		// radioButtonNone
 		// 
 		radioButtonNone.AutoSize = true;
-		radioButtonNone.Checked = true;
 		radioButtonNone.Dock = DockStyle.Top;
 		radioButtonNone.ForeColor = SystemColors.ControlText;
 		radioButtonNone.Location = new Point(3, 19);
 		radioButtonNone.Name = "radioButtonNone";
 		radioButtonNone.Size = new Size(144, 19);
 		radioButtonNone.TabIndex = 7;
-		radioButtonNone.TabStop = true;
 		radioButtonNone.Text = "Неопределен";
 		radioButtonNone.UseVisualStyleBackColor = true;
 		radioButtonNone.CheckedChanged += RadioButtonNone_CheckedChanged;

@@ -12,6 +12,8 @@ public partial class FormMain : Form
 	private readonly Color _sourceColor;
 
 	private bool _isTableSelected = false;
+	private bool _buttonAddIsCancel = false;
+	private List<DtElement> elementsForAddDatabase;
 
 	public FormMain()
 	{
@@ -139,7 +141,6 @@ public partial class FormMain : Form
 		groupBoxNewDatabases.SuspendLayout();
 		groupBoxNewDatabases.Controls.Clear();
 		groupBoxNewDatabases.Controls.Add(radioButtonNone);
-		radioButtonNone.Checked = true;
 
 		foreach (var db in convert.GetConfig().Databases)
 		{
@@ -155,8 +156,31 @@ public partial class FormMain : Form
 			radioButtonDb.Text = $"{db}";
 			radioButtonDb.UseVisualStyleBackColor = true;
 			radioButtonDb.Tag = db;
+			radioButtonDb.CheckedChanged += RadioButtonDb_CheckedChanged;
 		}
 		groupBoxNewDatabases.ResumeLayout();
+		radioButtonNone.Checked = true;
+	}
+
+	private void RadioButtonDb_CheckedChanged(object sender, EventArgs e)
+	{
+		if (sender is not RadioButton control ||
+			!control.Checked ||
+			control.Tag is not OnePgDatabase dataBase)
+			return;
+
+		// добавление элементов к БД
+		if (_buttonAddIsCancel)
+		{
+			ConvertMsToPg.AddElementsToDatabase(dataBase, elementsForAddDatabase);
+			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
+			SetButtonAddToOriginal();
+		}
+		// показ уже добавленных к БД элементов
+		else
+		{
+			MessageBox.Show($"выбрана БД: {((sender as RadioButton)?.Tag as OnePgDatabase)?.ToString()}");
+		}
 	}
 
 	private static void ShowErrorMessage(string err) =>
@@ -251,9 +275,48 @@ public partial class FormMain : Form
 		buttonDelete.Enabled = !buttonAdd.Enabled;
 	}
 
+	/// <summary>
+	/// Добавить элемент в базу данных
+	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
+		if (_buttonAddIsCancel)
+		{
+			SetButtonAddToOriginal();
+			return;
+		}
 
+		var itemsCount = checkedListBoxTable.CheckedItems.Count;
+		if (itemsCount < 1)
+			return;
+
+		elementsForAddDatabase = new List<DtElement>();
+		for (int i = 0; i < itemsCount; i++)
+		{
+			elementsForAddDatabase.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
+		}
+
+		if (elementsForAddDatabase.Any())
+		{
+			buttonAdd.Text = "Отменить";
+			_buttonAddIsCancel = true;
+			EnableDisableControls(false);
+		}
+	}
+
+	private void SetButtonAddToOriginal()
+	{
+		buttonAdd.Text = "Добавить";
+		_buttonAddIsCancel = false;
+		elementsForAddDatabase = null;
+		EnableDisableControls(true);
+	}
+
+	private void EnableDisableControls(bool isEnable)
+	{
+		panelTop.Enabled =
+			splitContainerEltText.Enabled =
+			groupBoxCheckElmType.Enabled = isEnable;
 	}
 
 	private void RadioButtonShowTables_CheckedChanged(object sender, EventArgs e)

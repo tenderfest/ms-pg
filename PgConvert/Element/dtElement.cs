@@ -4,7 +4,7 @@ using PgConvert.Config;
 
 namespace PgConvert.Element;
 
-public class DtElement : BaseSelectable
+public class DtElement : BaseSelectable, IEquatable<DtElement>
 {
 	public DtElement()
 	{
@@ -14,16 +14,13 @@ public class DtElement : BaseSelectable
 	public DtElement(string[] lines)
 	{
 		Lines = lines;
-
 		// вычисление хэша для этого элемента
-		var hash = lines[0].GetHashCode();
-		foreach (var str in Lines.Skip(1))
-			hash ^= str.GetHashCode();
-		_hashCode = hash;
+		_hashCode = lines.Crc32();
 	}
 
 	public string[] Lines { get; }
 	public string[] CommentLines { get; private set; }
+	public string DatabaseName { get; private protected set; }
 
 	internal bool Ignore { get; private protected set; }
 	internal protected ElmOperation Operation { get; set; }
@@ -106,8 +103,8 @@ public class DtElement : BaseSelectable
 	//	CommentLines = fromElement.CommentLines;
 	//}
 
-	public override bool Equals(object obj) =>
-		obj is DtElement x && GetHashCode() == x.GetHashCode();
+	//public override bool Equals(object obj) =>
+	//	obj is DtElement x && GetHashCode() == x.GetHashCode();
 
 	[JsonIgnore]
 	public string GetEmenenlContent
@@ -134,6 +131,8 @@ public class DtElement : BaseSelectable
 	private readonly int _hashCode;
 	public override int GetHashCode() =>
 		_hashCode;
+	public int HashCode =>
+		_hashCode;
 
 	protected string IgnoreAsString =>
 		Ignore ? "-" : string.Empty;
@@ -142,6 +141,12 @@ public class DtElement : BaseSelectable
 		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
 	internal virtual string Parse() { return null; }
+
+	public bool Equals(DtElement other)
+	{
+		if (null == other) return false;
+		return GetHashCode() == other.GetHashCode();
+	}
 
 	private string linesAsString = null;
 	protected string LinesAsString

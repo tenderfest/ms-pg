@@ -12,7 +12,8 @@ namespace PgConvert;
 public class ConvertMsToPg
 {
 	const string _cfgFileName = "ConvertMsToPg.Cfg";
-	public const string _extProj = ".ms2pg";
+	//public const string _extProj = ".ms2pg";
+	public const string _extProj = ".zip";
 	public const string _extSql = ".sql";
 
 	const string GO = "GO";
@@ -37,7 +38,7 @@ public class ConvertMsToPg
 		Config;
 
 	public void SetConfig(
-		OnePgDatabase[] databases,
+		List<OnePgDatabase> databases,
 		DtElement[] freeElements,
 		string[] skipOperation,
 		string[] skipElement)
@@ -254,10 +255,10 @@ public class ConvertMsToPg
 			Config.Databases = Config.Databases
 				.Where(db =>
 					db != null)
-				.ToArray();
+				.ToList();
 
 		foreach (var db in Config.Databases)
-			db.Elements ??= Array.Empty<DtElement>();
+			db.Elements ??= new List<DtElement>();
 
 		int freeElementsNum = Config.FreeElements == null ? 0 : Config.FreeElements.Length;
 		try
@@ -265,11 +266,10 @@ public class ConvertMsToPg
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in Config.Databases
-					.Where(db =>
-						db.Elements.Contains(element)))
+				foreach (var db in Config.Databases.Where(db => db.IsContainsElementIds(element.HashCode)))
 				{
 					element.Database = db;
+					db.Elements.Add(element);
 				}
 
 				if (null == element.Database)
@@ -393,5 +393,18 @@ public class ConvertMsToPg
 
 		NeedUpdateFile = NeedUpdateConfig = false;
 		return null;
+	}
+
+	public static void AddElementsToDatabase(OnePgDatabase dataBase, List<DtElement> elementsForAddDatabase)
+	{
+		foreach (var element in elementsForAddDatabase)
+		{
+			if (element.Database != null && element.Database != dataBase)
+			{
+				element.Database.Elements.Remove(element);
+			}
+			element.Database = dataBase;
+			dataBase.Elements.Add(element);
+		}
 	}
 }

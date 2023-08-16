@@ -6,17 +6,36 @@ namespace PgConvert.Config;
 [Serializable]
 public class ConvertMsToPgCfg
 {
+	/// <summary>
+	/// Результат измения списка баз данных
+	/// </summary>
+	public enum ResultChangeDatabaseList
+	{
+		/// <summary>
+		/// Список не изменился без ошибки
+		/// </summary>
+		None,
+		/// <summary>
+		/// Список изменился
+		/// </summary>
+		Ok,
+		/// <summary>
+		/// Ошибка, список не изменился
+		/// </summary>
+		Error,
+	}
+
 	public ConvertMsToPgCfg()
 	{
 		if (null == Databases)
 		{
-			Databases = new OnePgDatabase[]
+			Databases = new List<OnePgDatabase>
 			{
 				new OnePgDatabase (OnePgDatabase.ThisIgnore)
 			};
 		}
 	}
-	public OnePgDatabase[] Databases { get; set; }
+	public List<OnePgDatabase> Databases { get; set; }
 	public DtElement[] FreeElements { get; set; }
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
@@ -37,17 +56,22 @@ public class ConvertMsToPgCfg
 		return sb.ToString();
 	}
 
-	public void AddDelDatabase(OnePgDatabase db, bool isAdd)
+	public ResultChangeDatabaseList AddDelDatabase(OnePgDatabase db, bool isAdd)
 	{
 		if (null == db || db.IsDefault)
-			return;
+			return ResultChangeDatabaseList.None;
 
-		var databases = Databases.ToList();
 		if (isAdd)
-			databases.Add(db);
-		else
-			databases.Remove(db);
-		Databases = databases.ToArray();
+		{
+			if (Databases.Exists(ddd => ddd.Name == db.Name))
+				return ResultChangeDatabaseList.Error;
+			Databases.Add(db);
+			return ResultChangeDatabaseList.Ok;
+		}
+
+		return Databases.Remove(db)
+			? ResultChangeDatabaseList.Ok
+			: ResultChangeDatabaseList.None;
 	}
 
 	public string GetSkipElementAsText() =>

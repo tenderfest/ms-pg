@@ -18,7 +18,22 @@ public class OnePgDatabase
 
 	public string Name { get; set; }
 	public string ConnectionString { get; set; }
-	public DtElement[] Elements { get; set; }
+	[JsonIgnore]
+	public List<DtElement> Elements { get; set; }
+
+	private int[] _elementIds;
+	public int[] ElementIds
+	{
+#pragma warning disable S2365 // Properties should not make collection or array copies
+#pragma warning disable S4275 // Getters and setters should access the expected fields
+		get => Elements?.Select(e => e.HashCode).ToArray();
+#pragma warning restore S4275 // Getters and setters should access the expected fields
+#pragma warning restore S2365 // Properties should not make collection or array copies
+
+		set => _elementIds = value;
+	}
+	internal bool IsContainsElementIds(int hashCode) => 
+		_elementIds.Contains(hashCode);
 
 	public string TestConnectDatabase()
 	{
