@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -22,7 +23,7 @@ public class ConvertMsToPg
 	private bool NeedUpdateFile = false;
 	private bool NeedUpdateConfig = false;
 
-	ConvertMsToPgCfg Config { get; set; } = new();
+	public ConvertMsToPgCfg Config { get; private set; } = new();
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
 	List<DtElement> Elements { get; set; }
@@ -34,12 +35,10 @@ public class ConvertMsToPg
 	};
 
 	#region config
-	public ConvertMsToPgCfg GetConfig() =>
-		Config;
 
 	public void SetConfig(
 		List<OnePgDatabase> databases,
-		DtElement[] freeElements,
+		List<DtElement> freeElements,
 		string[] skipOperation,
 		string[] skipElement)
 	{
@@ -59,17 +58,19 @@ public class ConvertMsToPg
 		? Array.Empty<DtElement>()
 		: Elements.ToArray();
 
-	public DtElement[] GetElements(ElmType elmType, bool createOnly)
+	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly, OnePgDatabase selectedDataBase)
 	{
 		if (null == Elements)
 			return Array.Empty<DtElement>();
 
 		var elements = Elements.Where(s =>
-			elmType == s.ElementType);
+			s.ElementType == selectedElementType);
 
 		if (createOnly)
+		{
 			elements = elements.Where(t =>
-				ElmOperation.Create == t.Operation);
+				t.Operation == ElmOperation.Create);
+		}
 		//// для таблиц возвращаем только их создание
 		//if (ElmType.Table == elmType)
 		//	elements = elements.Where(t =>
@@ -113,6 +114,9 @@ public class ConvertMsToPg
 			return allTriggers;
 		}
 	}
+
+	public IEnumerable<OnePgDatabase> GetDatabases =>
+		Config.Databases;
 
 	public string LoadFile(string fileName) =>
 		Path.GetExtension(fileName) switch
@@ -260,7 +264,9 @@ public class ConvertMsToPg
 		foreach (var db in Config.Databases)
 			db.Elements ??= new List<DtElement>();
 
-		int freeElementsNum = Config.FreeElements == null ? 0 : Config.FreeElements.Length;
+		int freeElementsNum = null == Config.FreeElements
+			? 0
+			: Config.FreeElements.Count;
 		try
 		{
 			List<DtElement> freeElements = new();
@@ -275,8 +281,8 @@ public class ConvertMsToPg
 				if (null == element.Database)
 					freeElements.Add(element);
 			}
-			Config.FreeElements = freeElements.ToArray();
-			if (freeElementsNum != Config.FreeElements.Length)
+			Config.FreeElements = freeElements;
+			if (freeElementsNum != Config.FreeElements.Count)
 				NeedUpdateConfig = true;
 
 			return null;
@@ -395,14 +401,14 @@ public class ConvertMsToPg
 		return null;
 	}
 
-	public static void AddElementsToDatabase(OnePgDatabase dataBase, List<DtElement> elementsForAddDatabase)
+	public void AddSelectedElementsToDatabase(OnePgDatabase dataBase, List<DtElement> elementsForAddDatabase)
 	{
 		foreach (var element in elementsForAddDatabase)
 		{
 			if (element.Database != null && element.Database != dataBase)
-			{
 				element.Database.Elements.Remove(element);
-			}
+			else
+				Config.FreeElements.Remove(element);
 			element.Database = dataBase;
 			dataBase.Elements.Add(element);
 		}

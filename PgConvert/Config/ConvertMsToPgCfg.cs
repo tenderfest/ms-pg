@@ -25,18 +25,20 @@ public class ConvertMsToPgCfg
 		Error,
 	}
 
+	public readonly OnePgDatabase IgnoreDatabase;
+
 	public ConvertMsToPgCfg()
 	{
 		if (null == Databases)
 		{
-			Databases = new List<OnePgDatabase>
-			{
-				new OnePgDatabase (OnePgDatabase.ThisIgnore)
-			};
+			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore);
+			Databases = new List<OnePgDatabase> { IgnoreDatabase };
 		}
 	}
+
+
 	public List<OnePgDatabase> Databases { get; set; }
-	public DtElement[] FreeElements { get; set; }
+	public List<DtElement> FreeElements { get; set; }
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
 

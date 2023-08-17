@@ -48,7 +48,7 @@ partial class FormMain
 		textBoxContent = new TextBox();
 		splitContainerLeft = new SplitContainer();
 		groupBoxNewDatabases = new GroupBox();
-		radioButtonNone = new RadioButton();
+		radioButtonNoDatabase = new RadioButton();
 		buttonDelete = new Button();
 		buttonAdd = new Button();
 		groupBoxCheckElmType = new GroupBox();
@@ -319,7 +319,7 @@ partial class FormMain
 		// 
 		// groupBoxNewDatabases
 		// 
-		groupBoxNewDatabases.Controls.Add(radioButtonNone);
+		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 		groupBoxNewDatabases.Dock = DockStyle.Fill;
 		groupBoxNewDatabases.ForeColor = SystemColors.ControlText;
 		groupBoxNewDatabases.Location = new Point(0, 56);
@@ -331,16 +331,16 @@ partial class FormMain
 		// 
 		// radioButtonNone
 		// 
-		radioButtonNone.AutoSize = true;
-		radioButtonNone.Dock = DockStyle.Top;
-		radioButtonNone.ForeColor = SystemColors.ControlText;
-		radioButtonNone.Location = new Point(3, 19);
-		radioButtonNone.Name = "radioButtonNone";
-		radioButtonNone.Size = new Size(144, 19);
-		radioButtonNone.TabIndex = 7;
-		radioButtonNone.Text = "Неопределен";
-		radioButtonNone.UseVisualStyleBackColor = true;
-		radioButtonNone.CheckedChanged += RadioButtonNone_CheckedChanged;
+		radioButtonNoDatabase.AutoSize = true;
+		radioButtonNoDatabase.Dock = DockStyle.Top;
+		radioButtonNoDatabase.ForeColor = SystemColors.ControlText;
+		radioButtonNoDatabase.Location = new Point(3, 19);
+		radioButtonNoDatabase.Name = "radioButtonNone";
+		radioButtonNoDatabase.Size = new Size(144, 19);
+		radioButtonNoDatabase.TabIndex = 7;
+		radioButtonNoDatabase.Text = "Неопределен";
+		radioButtonNoDatabase.UseVisualStyleBackColor = true;
+		radioButtonNoDatabase.CheckedChanged += RadioButtonNone_CheckedChanged;
 		// 
 		// buttonDelete
 		// 
@@ -433,7 +433,7 @@ partial class FormMain
 	private Label labelResultTree;
 	private SplitContainer splitContainerLeft;
 	private GroupBox groupBoxNewDatabases;
-	private RadioButton radioButtonNone;
+	private RadioButton radioButtonNoDatabase;
 	private GroupBox groupBoxCheckElmType;
 	private TreeView treeView;
 	private Button buttonDelete;

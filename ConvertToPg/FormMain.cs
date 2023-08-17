@@ -1,6 +1,7 @@
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
+using System;
 
 namespace ConvertToPg;
 
@@ -13,6 +14,8 @@ public partial class FormMain : Form
 
 	private bool _isTableSelected = false;
 	private bool _buttonAddIsCancel = false;
+	private ElmType selectedElementType = ElmType.None;
+	private OnePgDatabase selectedDataBase;
 	private List<DtElement> elementsForAddDatabase;
 
 	public FormMain()
@@ -53,29 +56,9 @@ public partial class FormMain : Form
 		}
 	}
 
-	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
-	{
-		var checkBox = (RadioButton)sender;
-		if (!checkBox.Checked) return;
-		FillTables((ElmType)checkBox.Tag);
-	}
-
-	private void FillTables(ElmType elmType)
-	{
-		_isTableSelected = ElmType.Table == elmType;
-		groupBoxShowTable.Enabled = _isTableSelected;
-
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
-		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
-		var elements = convert.GetElements(elmType, showCreateTableOnly);
-		if (null != elements && elements.Any())
-		{
-			checkedListBoxTable.Items.AddRange(elements);
-		}
-		checkedListBoxTable.EndUpdate();
-	}
-
+	/// <summary>
+	/// Загрузка файла проекта
+	/// </summary>
 	private void ButtonLoad_Click(object sender, EventArgs e)
 	{
 		OpenFileDialog openFileDialog = new()
@@ -97,10 +80,38 @@ public partial class FormMain : Form
 			return;
 		}
 
-		ShowElements();
+		ShowAllElements();
 	}
 
-	private void ShowElements()
+	/// <summary>
+	/// Смена выбранного типа элементов
+	/// </summary>
+	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
+	{
+		var checkBox = (RadioButton)sender;
+		if (!checkBox.Checked) return;
+		selectedElementType = (ElmType)checkBox.Tag;
+		FillTables();
+	}
+
+	private void FillTables()
+	{
+		_isTableSelected = ElmType.Table == selectedElementType;
+		groupBoxShowTable.Enabled = _isTableSelected;
+
+		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
+		var elements = convert.GetElements(selectedElementType, showCreateTableOnly, selectedDataBase);
+		checkedListBoxTable.BeginUpdate();
+		checkedListBoxTable.Items.Clear();
+		if (null != elements && elements.Any())
+			checkedListBoxTable.Items.AddRange(elements);
+		checkedListBoxTable.EndUpdate();
+	}
+
+	/// <summary>
+	/// Показать все элементы после загрузки и разбора
+	/// </summary>
+	private void ShowAllElements()
 	{
 		SetDatabasesRadiobuttons();
 		string errorMessage = convert.ParseSource();
@@ -122,7 +133,7 @@ public partial class FormMain : Form
 
 	private void ButtonSetup_Click(object sender, EventArgs e)
 	{
-		ConvertMsToPgCfg cfg = convert.GetConfig();
+		ConvertMsToPgCfg cfg = convert.Config;
 		var formCfg = new FormCfg(cfg);
 		if (formCfg.ShowDialog(this) != DialogResult.OK)
 			return;
@@ -133,16 +144,16 @@ public partial class FormMain : Form
 			formCfg.SkipOperation,
 			formCfg.SkipElement);
 
-		ShowElements();
+		ShowAllElements();
 	}
 
 	private void SetDatabasesRadiobuttons()
 	{
 		groupBoxNewDatabases.SuspendLayout();
 		groupBoxNewDatabases.Controls.Clear();
-		groupBoxNewDatabases.Controls.Add(radioButtonNone);
+		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 
-		foreach (var db in convert.GetConfig().Databases)
+		foreach (var db in convert.GetDatabases)
 		{
 			var radioButtonDb = new RadioButton();
 			groupBoxNewDatabases.Controls.Add(radioButtonDb);
@@ -156,25 +167,29 @@ public partial class FormMain : Form
 			radioButtonDb.Text = $"{db}";
 			radioButtonDb.UseVisualStyleBackColor = true;
 			radioButtonDb.Tag = db;
-			radioButtonDb.CheckedChanged += RadioButtonDb_CheckedChanged;
+			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
 		}
 		groupBoxNewDatabases.ResumeLayout();
-		radioButtonNone.Checked = true;
+		radioButtonNoDatabase.Checked = true;
 	}
 
-	private void RadioButtonDb_CheckedChanged(object sender, EventArgs e)
+	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
 	{
 		if (sender is not RadioButton control ||
 			!control.Checked ||
 			control.Tag is not OnePgDatabase dataBase)
 			return;
 
+		selectedDataBase = dataBase;
+
 		// добавление элементов к БД
 		if (_buttonAddIsCancel)
 		{
-			ConvertMsToPg.AddElementsToDatabase(dataBase, elementsForAddDatabase);
+			convert.AddSelectedElementsToDatabase(selectedDataBase, elementsForAddDatabase);
 			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
 			SetButtonAddToOriginal();
+			// отобразить список элементов выбранной БД
+			FillTables();
 		}
 		// показ уже добавленных к БД элементов
 		else
@@ -276,7 +291,7 @@ public partial class FormMain : Form
 	}
 
 	/// <summary>
-	/// Добавить элемент в базу данных
+	/// Добавить выбранные элементы в базу данных
 	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
@@ -323,6 +338,6 @@ public partial class FormMain : Form
 	{
 		if (!_isTableSelected) return;
 		if (((RadioButton)sender).Checked)
-			FillTables(ElmType.Table);
+			FillTables();
 	}
 }
