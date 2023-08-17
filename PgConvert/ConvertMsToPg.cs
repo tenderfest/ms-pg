@@ -27,6 +27,15 @@ public class ConvertMsToPg
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
 	List<DtElement> Elements { get; set; }
+	/// <summary>
+	/// База данных, выбранная в настоящий момент ползователем
+	/// </summary>
+	public OnePgDatabase SelectedDataBase { get; set; }
+	/// <summary>
+	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
+	/// </summary>
+	public List<DtElement> ElementsForAddDatabase { get; set; }
+
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -58,23 +67,17 @@ public class ConvertMsToPg
 		? Array.Empty<DtElement>()
 		: Elements.ToArray();
 
-	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly, OnePgDatabase selectedDataBase)
+	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
 	{
-		if (null == Elements)
+		IEnumerable<DtElement> elements = SelectedDataBase != null ? SelectedDataBase.Elements : Elements;
+		if (null == elements)
 			return Array.Empty<DtElement>();
 
-		var elements = Elements.Where(s =>
+		elements = elements.Where(s =>
 			s.ElementType == selectedElementType);
-
 		if (createOnly)
-		{
 			elements = elements.Where(t =>
 				t.Operation == ElmOperation.Create);
-		}
-		//// для таблиц возвращаем только их создание
-		//if (ElmType.Table == elmType)
-		//	elements = elements.Where(t =>
-		//		ElmOperation.Create == t.Operation);
 
 		return elements.ToArray();
 	}
@@ -401,16 +404,22 @@ public class ConvertMsToPg
 		return null;
 	}
 
-	public void AddSelectedElementsToDatabase(OnePgDatabase dataBase, List<DtElement> elementsForAddDatabase)
+	public void AddSelectedElementsToDatabase()
 	{
-		foreach (var element in elementsForAddDatabase)
+		if (null == ElementsForAddDatabase)
+			return;
+
+		foreach (var element in ElementsForAddDatabase)
 		{
-			if (element.Database != null && element.Database != dataBase)
+			if (element.Database != null && element.Database != SelectedDataBase)
 				element.Database.Elements.Remove(element);
 			else
 				Config.FreeElements.Remove(element);
-			element.Database = dataBase;
-			dataBase.Elements.Add(element);
+			element.Database = SelectedDataBase;
+			SelectedDataBase.Elements.Add(element);
 		}
 	}
+
+	public void SetElementsForAddDatabase(List<DtElement> list) => 
+		ElementsForAddDatabase = list;
 }

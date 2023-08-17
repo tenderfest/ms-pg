@@ -340,7 +340,7 @@ partial class FormMain
 		radioButtonNoDatabase.TabIndex = 7;
 		radioButtonNoDatabase.Text = "Неопределен";
 		radioButtonNoDatabase.UseVisualStyleBackColor = true;
-		radioButtonNoDatabase.CheckedChanged += RadioButtonNone_CheckedChanged;
+		radioButtonNoDatabase.CheckedChanged += RadioButtonNoDatabase_CheckedChanged;
 		// 
 		// buttonDelete
 		// 

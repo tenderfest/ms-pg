@@ -1,7 +1,6 @@
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
-using System;
 
 namespace ConvertToPg;
 
@@ -15,8 +14,6 @@ public partial class FormMain : Form
 	private bool _isTableSelected = false;
 	private bool _buttonAddIsCancel = false;
 	private ElmType selectedElementType = ElmType.None;
-	private OnePgDatabase selectedDataBase;
-	private List<DtElement> elementsForAddDatabase;
 
 	public FormMain()
 	{
@@ -100,7 +97,7 @@ public partial class FormMain : Form
 		groupBoxShowTable.Enabled = _isTableSelected;
 
 		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
-		var elements = convert.GetElements(selectedElementType, showCreateTableOnly, selectedDataBase);
+		var elements = convert.GetElements(selectedElementType, showCreateTableOnly);
 		checkedListBoxTable.BeginUpdate();
 		checkedListBoxTable.Items.Clear();
 		if (null != elements && elements.Any())
@@ -180,12 +177,12 @@ public partial class FormMain : Form
 			control.Tag is not OnePgDatabase dataBase)
 			return;
 
-		selectedDataBase = dataBase;
+		convert.SelectedDataBase = dataBase;
 
 		// добавление элементов к БД
 		if (_buttonAddIsCancel)
 		{
-			convert.AddSelectedElementsToDatabase(selectedDataBase, elementsForAddDatabase);
+			convert.AddSelectedElementsToDatabase();
 			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
 			SetButtonAddToOriginal();
 			// отобразить список элементов выбранной БД
@@ -284,10 +281,14 @@ public partial class FormMain : Form
 		MessageBox.Show(errMessage);
 	}
 
-	private void RadioButtonNone_CheckedChanged(object sender, EventArgs e)
+	private void RadioButtonNoDatabase_CheckedChanged(object sender, EventArgs e)
 	{
-		buttonAdd.Enabled = ((RadioButton)sender).Checked;
-		buttonDelete.Enabled = !buttonAdd.Enabled;
+		bool IsSelectNoDatabase = ((RadioButton)sender).Checked;
+
+		buttonAdd.Enabled = IsSelectNoDatabase;
+		buttonDelete.Enabled = !IsSelectNoDatabase;
+		if (IsSelectNoDatabase)
+			convert.SelectedDataBase = null;
 	}
 
 	/// <summary>
@@ -305,13 +306,14 @@ public partial class FormMain : Form
 		if (itemsCount < 1)
 			return;
 
-		elementsForAddDatabase = new List<DtElement>();
+		var list = new List<DtElement>();
 		for (int i = 0; i < itemsCount; i++)
 		{
-			elementsForAddDatabase.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
+			list.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
 		}
+		convert.SetElementsForAddDatabase(list);
 
-		if (elementsForAddDatabase.Any())
+		if (list.Any())
 		{
 			buttonAdd.Text = "Отменить";
 			_buttonAddIsCancel = true;
@@ -323,7 +325,7 @@ public partial class FormMain : Form
 	{
 		buttonAdd.Text = "Добавить";
 		_buttonAddIsCancel = false;
-		elementsForAddDatabase = null;
+		convert.SetElementsForAddDatabase(null);
 		EnableDisableControls(true);
 	}
 
