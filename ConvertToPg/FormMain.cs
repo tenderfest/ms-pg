@@ -19,9 +19,7 @@ public partial class FormMain : Form
 		InitializeComponent();
 		_resultColor = labelResultTree.BackColor;
 		_sourceColor = labelSourceElte.BackColor;
-
 		convert = new ConvertMsToPg();
-		// показ типов элементов
 		MakeTypeCheckboxes();
 	}
 
@@ -44,13 +42,15 @@ public partial class FormMain : Form
 			radioButton.Text = elementType.ToString();
 			radioButton.UseVisualStyleBackColor = true;
 			radioButton.Tag = (ElmType)elementType;
-			radioButton.Checked = false;// (ElmType)elementType == ElmType.None;
+			radioButton.Checked = false;
 			radioButton.CheckedChanged += CheckBoxElmType_CheckedChanged;
 
 			i++;
 			y += 25;
 		}
 	}
+
+	#region Открытие исходного файла
 
 	/// <summary>
 	/// Загрузка файла проекта
@@ -76,8 +76,78 @@ public partial class FormMain : Form
 			return;
 		}
 
-		ShowAllElements();
+		AfterLoadElements();
 	}
+
+	#endregion
+
+	#region Обработка событий нажатия на кнопки
+
+	private void ButtonSetup_Click(object sender, EventArgs e)
+	{
+		ConvertMsToPgCfg cfg = convert.Config;
+		var formCfg = new FormCfg(cfg);
+		if (formCfg.ShowDialog(this) != DialogResult.OK)
+			return;
+
+		convert.SetConfig(
+			cfg.Databases,
+			cfg.FreeElements,
+			formCfg.SkipOperation,
+			formCfg.SkipElement);
+
+		AfterLoadElements();
+	}
+
+	private void ButtonSave_Click(object sender, EventArgs e)
+	{
+		FolderBrowserDialog saveFileDialog = new()
+		{
+			InitialDirectory = PrePathInFile,
+		};
+		if (saveFileDialog.ShowDialog() != DialogResult.OK)
+			return;
+
+		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
+		if (string.IsNullOrEmpty(errMessage))
+		{
+			errMessage = $"Проект сохранён в файле {projectFile}";
+		}
+		MessageBox.Show(errMessage);
+	}
+
+	/// <summary>
+	/// Добавить выбранные элементы в базу данных
+	/// </summary>
+	private void ButtonAdd_Click(object sender, EventArgs e)
+	{
+		if (convert.YesElementsForAddDatabase)
+		{
+			SetButtonAddToOriginal();
+			return;
+		}
+
+		var itemsCount = checkedListBoxTable.CheckedItems.Count;
+		if (itemsCount < 1)
+			return;
+
+		var list = new List<DtElement>();
+		for (int i = 0; i < itemsCount; i++)
+		{
+			list.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
+		}
+		convert.SetElementsForAddDatabase(list);
+
+		if (list.Any())
+		{
+			buttonAdd.Text = "Отменить";
+			EnableDisableControls(false);
+		}
+	}
+
+	#endregion
+
+	#region Обработка событий выбора чекбоксов
 
 	/// <summary>
 	/// Смена выбранного типа элементов
@@ -88,6 +158,82 @@ public partial class FormMain : Form
 		if (!checkBox.Checked) return;
 		selectedElementType = (ElmType)checkBox.Tag;
 		FillTables();
+	}
+
+	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
+	{
+		textBoxContent.Text = string.Empty;
+		if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		textBoxContent.Text = dtElement.GetEmenenlContent;
+
+		FillTreeView(dtElement);
+	}
+
+	#endregion
+
+	#region Обработка событий выбора радио-кнопок
+
+	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		if (sender is not RadioButton control ||
+			!control.Checked ||
+			control.Tag is not OnePgDatabase dataBase)
+			return;
+
+		convert.SelectedDataBase = dataBase;
+
+		// добавление элементов к БД
+		if (convert.YesElementsForAddDatabase)
+		{
+			convert.AddSelectedElementsToDatabase();
+			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
+			SetButtonAddToOriginal();
+		}
+		// отобразить список элементов выбранной БД
+		FillTables();
+	}
+
+	private void RadioButtonNoDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		bool IsSelectNoDatabase = ((RadioButton)sender).Checked;
+
+		buttonAdd.Enabled = IsSelectNoDatabase;
+		buttonDelete.Enabled = !IsSelectNoDatabase;
+		if (IsSelectNoDatabase)
+			convert.SelectedDataBase = null;
+		FillTables();
+	}
+
+	private void RadioButtonShowTables_CheckedChanged(object sender, EventArgs e)
+	{
+		if (!_isTableSelected) return;
+		if (((RadioButton)sender).Checked)
+			FillTables();
+	}
+
+	#endregion
+
+	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
+	{
+		textBoxContent.Text = string.Empty;
+
+		if (treeView.SelectedNode == null ||
+			treeView.SelectedNode.Tag == null)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		switch (treeView.SelectedNode.Tag)
+		{
+			case DtElement dtElement:
+				textBoxContent.Text = dtElement.GetEmenenlContent;
+				break;
+			case DtField dtField:
+				textBoxContent.Text = dtField.ToString();
+				break;
+		}
 	}
 
 	private void FillTables()
@@ -107,7 +253,7 @@ public partial class FormMain : Form
 	/// <summary>
 	/// Показать все элементы после загрузки и разбора
 	/// </summary>
-	private void ShowAllElements()
+	private void AfterLoadElements()
 	{
 		string errorMessage = convert.ParseSource();
 		if (!string.IsNullOrEmpty(errorMessage))
@@ -116,29 +262,7 @@ public partial class FormMain : Form
 			return;
 		}
 		SetDatabasesRadiobuttons();
-
-		//groupBoxCheckElmType.Enabled =
-		//buttonCreate.Enabled =
-		//buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
-
-		//FillTables();
 		EnableDisableControls(true);
-	}
-
-	private void ButtonSetup_Click(object sender, EventArgs e)
-	{
-		ConvertMsToPgCfg cfg = convert.Config;
-		var formCfg = new FormCfg(cfg);
-		if (formCfg.ShowDialog(this) != DialogResult.OK)
-			return;
-
-		convert.SetConfig(
-			cfg.Databases,
-			cfg.FreeElements,
-			formCfg.SkipOperation,
-			formCfg.SkipElement);
-
-		ShowAllElements();
 	}
 
 	private void SetDatabasesRadiobuttons()
@@ -165,41 +289,6 @@ public partial class FormMain : Form
 		}
 		groupBoxNewDatabases.ResumeLayout();
 		radioButtonNoDatabase.Checked = true;
-	}
-
-	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
-	{
-		if (sender is not RadioButton control ||
-			!control.Checked ||
-			control.Tag is not OnePgDatabase dataBase)
-			return;
-
-		convert.SelectedDataBase = dataBase;
-
-		// добавление элементов к БД
-		if (convert.YesElementsForAddDatabase)
-		{
-			convert.AddSelectedElementsToDatabase();
-			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
-			SetButtonAddToOriginal();
-		}
-		// отобразить список элементов выбранной БД
-		FillTables();
-	}
-
-	private static void ShowErrorMessage(string err) =>
-		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
-	{
-		textBoxContent.Text = string.Empty;
-		if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
-			return;
-
-		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetEmenenlContent;
-
-		FillTreeView(dtElement);
 	}
 
 	private void FillTreeView(DtElement dtElement)
@@ -236,83 +325,6 @@ public partial class FormMain : Form
 		}
 	}
 
-	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
-	{
-		textBoxContent.Text = string.Empty;
-
-		if (treeView.SelectedNode == null ||
-			treeView.SelectedNode.Tag == null)
-			return;
-
-		textBoxContent.BackColor = _sourceColor;
-		switch (treeView.SelectedNode.Tag)
-		{
-			case DtElement dtElement:
-				textBoxContent.Text = dtElement.GetEmenenlContent;
-				break;
-			case DtField dtField:
-				textBoxContent.Text = dtField.ToString();
-				break;
-		}
-	}
-
-	private void ButtonSave_Click(object sender, EventArgs e)
-	{
-		FolderBrowserDialog saveFileDialog = new()
-		{
-			InitialDirectory = PrePathInFile,
-		};
-		if (saveFileDialog.ShowDialog() != DialogResult.OK)
-			return;
-
-		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
-		if (string.IsNullOrEmpty(errMessage))
-		{
-			errMessage = $"Проект сохранён в файле {projectFile}";
-		}
-		MessageBox.Show(errMessage);
-	}
-
-	private void RadioButtonNoDatabase_CheckedChanged(object sender, EventArgs e)
-	{
-		bool IsSelectNoDatabase = ((RadioButton)sender).Checked;
-
-		buttonAdd.Enabled = IsSelectNoDatabase;
-		buttonDelete.Enabled = !IsSelectNoDatabase;
-		if (IsSelectNoDatabase)
-			convert.SelectedDataBase = null;
-		FillTables();
-	}
-
-	/// <summary>
-	/// Добавить выбранные элементы в базу данных
-	/// </summary>
-	private void ButtonAdd_Click(object sender, EventArgs e)
-	{
-		if (convert.YesElementsForAddDatabase)
-		{
-			SetButtonAddToOriginal();
-			return;
-		}
-
-		var itemsCount = checkedListBoxTable.CheckedItems.Count;
-		if (itemsCount < 1)
-			return;
-
-		var list = new List<DtElement>();
-		for (int i = 0; i < itemsCount; i++)
-		{
-			list.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
-		}
-		convert.SetElementsForAddDatabase(list);
-
-		if (list.Any())
-		{
-			buttonAdd.Text = "Отменить";
-			EnableDisableControls(false);
-		}
-	}
-
 	private void SetButtonAddToOriginal()
 	{
 		buttonAdd.Text = "Добавить";
@@ -327,10 +339,6 @@ public partial class FormMain : Form
 			groupBoxCheckElmType.Enabled = isEnable;
 	}
 
-	private void RadioButtonShowTables_CheckedChanged(object sender, EventArgs e)
-	{
-		if (!_isTableSelected) return;
-		if (((RadioButton)sender).Checked)
-			FillTables();
-	}
+	private static void ShowErrorMessage(string err) =>
+		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 }
