@@ -26,13 +26,13 @@ public class ElTable : ElBaseForTable
 	/// </summary>
 	public DtForeignKey ForeignKey { get; private set; }
 
-	public IEnumerable<DtElement> Indexes =>
+	public IEnumerable<ElBaseForTable> Indexes =>
 		IndexCreateTable
 			.Select(x =>
-				x as DtElement)
+				x as ElBaseForTable)
 		.Union(AlterTable
 			.Select(x =>
-				x as DtElement));
+				x as ElBaseForTable));
 
 	internal override string Parse()
 	{

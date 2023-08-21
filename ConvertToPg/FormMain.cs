@@ -216,6 +216,20 @@ public partial class FormMain : Form
 
 	#endregion
 
+	private void FillTables()
+	{
+		_isTableSelected = ElmType.Table == selectedElementType;
+		groupBoxShowTable.Enabled = _isTableSelected;
+
+		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
+		var elements = convert.GetElements(selectedElementType, showCreateTableOnly);
+		checkedListBoxTable.BeginUpdate();
+		checkedListBoxTable.Items.Clear();
+		if (null != elements && elements.Any())
+			checkedListBoxTable.Items.AddRange(elements);
+		checkedListBoxTable.EndUpdate();
+	}
+
 	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
 	{
 		textBoxContent.Text = string.Empty;
@@ -234,61 +248,6 @@ public partial class FormMain : Form
 				textBoxContent.Text = dtField.ToString();
 				break;
 		}
-	}
-
-	private void FillTables()
-	{
-		_isTableSelected = ElmType.Table == selectedElementType;
-		groupBoxShowTable.Enabled = _isTableSelected;
-
-		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
-		var elements = convert.GetElements(selectedElementType, showCreateTableOnly);
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
-		if (null != elements && elements.Any())
-			checkedListBoxTable.Items.AddRange(elements);
-		checkedListBoxTable.EndUpdate();
-	}
-
-	/// <summary>
-	/// Показать все элементы после загрузки и разбора
-	/// </summary>
-	private void AfterLoadElements()
-	{
-		string errorMessage = convert.ParseSource();
-		if (!string.IsNullOrEmpty(errorMessage))
-		{
-			ShowErrorMessage(errorMessage);
-			return;
-		}
-		SetDatabasesRadiobuttons();
-		EnableDisableControls(true);
-	}
-
-	private void SetDatabasesRadiobuttons()
-	{
-		groupBoxNewDatabases.SuspendLayout();
-		groupBoxNewDatabases.Controls.Clear();
-		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
-
-		foreach (var db in convert.GetDatabases)
-		{
-			var radioButtonDb = new RadioButton();
-			groupBoxNewDatabases.Controls.Add(radioButtonDb);
-			radioButtonDb.AutoSize = true;
-			radioButtonDb.Dock = DockStyle.Top;
-			radioButtonDb.ForeColor = Color.Blue;
-			radioButtonDb.Location = new Point(0, 38);
-			radioButtonDb.Name = $"radioButton{db}";
-			radioButtonDb.Size = new Size(107, 19);
-			radioButtonDb.TabIndex = 5;
-			radioButtonDb.Text = $"{db}";
-			radioButtonDb.UseVisualStyleBackColor = true;
-			radioButtonDb.Tag = db;
-			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
-		}
-		groupBoxNewDatabases.ResumeLayout();
-		radioButtonNoDatabase.Checked = true;
 	}
 
 	private void FillTreeView(DtElement dtElement)
@@ -323,6 +282,48 @@ public partial class FormMain : Form
 			treeView.ExpandAll();
 			treeView.EndUpdate();
 		}
+	}
+
+	/// <summary>
+	/// Выполнить действия после загрузки и разбора
+	/// </summary>
+	private void AfterLoadElements()
+	{
+		string errorMessage = convert.ParseSource();
+		if (!string.IsNullOrEmpty(errorMessage))
+		{
+			ShowErrorMessage(errorMessage);
+			return;
+		}
+		SetDatabasesRadiobuttons();
+		EnableDisableControls(true);
+		buttonSave.Enabled = true;
+	}
+
+	private void SetDatabasesRadiobuttons()
+	{
+		groupBoxNewDatabases.SuspendLayout();
+		groupBoxNewDatabases.Controls.Clear();
+		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
+
+		foreach (var db in convert.GetDatabases)
+		{
+			var radioButtonDb = new RadioButton();
+			groupBoxNewDatabases.Controls.Add(radioButtonDb);
+			radioButtonDb.AutoSize = true;
+			radioButtonDb.Dock = DockStyle.Top;
+			radioButtonDb.ForeColor = Color.Blue;
+			radioButtonDb.Location = new Point(0, 38);
+			radioButtonDb.Name = $"radioButton{db}";
+			radioButtonDb.Size = new Size(107, 19);
+			radioButtonDb.TabIndex = 5;
+			radioButtonDb.Text = $"{db}";
+			radioButtonDb.UseVisualStyleBackColor = true;
+			radioButtonDb.Tag = db;
+			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
+		}
+		groupBoxNewDatabases.ResumeLayout();
+		radioButtonNoDatabase.Checked = true;
 	}
 
 	private void SetButtonAddToOriginal()

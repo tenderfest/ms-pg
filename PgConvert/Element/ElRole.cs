@@ -6,10 +6,4 @@ internal class ElRole : DtElement
 	{
 		ElementType = ElmType.Role;
 	}
-
-	internal override string Parse()
-	{
-
-		return null;
-	}
 }

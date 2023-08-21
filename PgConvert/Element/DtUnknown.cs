@@ -6,6 +6,4 @@ public class DtUnknown : DtElement
 	{
 		ElementType = ElmType.None;
 	}
-
-	internal override string Parse() => null;
 }

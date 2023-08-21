@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -62,16 +63,11 @@ public class ConvertMsToPg
 	}
 	#endregion config
 
-	public DtElement[] GetAllElements() =>
-		null == Elements
-		? Array.Empty<DtElement>()
-		: Elements.ToArray();
-
 	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
 	{
-		IEnumerable<DtElement> elements = SelectedDataBase != null
+		IEnumerable<DtElement> elements = null != SelectedDataBase
 			? SelectedDataBase.Elements
-			: Config.FreeElements;// Elements;
+			: Config.FreeElements;
 		if (null == elements)
 			return Array.Empty<DtElement>();
 
@@ -411,20 +407,31 @@ public class ConvertMsToPg
 
 	public void AddSelectedElementsToDatabase()
 	{
-		if (null == ElementsForAddDatabase)
-			return;
+		SetElementsToDatabase(ElementsForAddDatabase);
 
-		foreach (var element in ElementsForAddDatabase)
+		void SetElementsToDatabase(IEnumerable<DtElement> elementsForAddDatabase)
 		{
-			if (SelectedDataBase.Elements.Contains(element))
-				continue;
+			if (null == elementsForAddDatabase ||
+				null == SelectedDataBase)
+				return;
 
-			if (element.Database != null && element.Database != SelectedDataBase)
-				element.Database.Elements.Remove(element);
-			else
-				Config.FreeElements.Remove(element);
-			element.Database = SelectedDataBase;
-			SelectedDataBase.Elements.Add(element);
+			foreach (var element in elementsForAddDatabase)
+			{
+				if (SelectedDataBase.Elements.Contains(element))
+					continue;
+
+				if (element.Database != null && element.Database != SelectedDataBase)
+					element.Database.Elements.Remove(element);
+				else
+					Config.FreeElements.Remove(element);
+				element.Database = SelectedDataBase;
+				SelectedDataBase.Elements.Add(element);
+				if (element is ElTable table)
+				{
+					SetElementsToDatabase(table.Indexes);
+					SetElementsToDatabase(table.Triggers);
+				}
+			}
 		}
 	}
 
