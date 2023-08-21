@@ -205,10 +205,12 @@ partial class FormMain
 		// radioButtonShowTablesCreate
 		// 
 		radioButtonShowTablesCreate.AutoSize = true;
+		radioButtonShowTablesCreate.Checked = true;
 		radioButtonShowTablesCreate.Location = new Point(56, 16);
 		radioButtonShowTablesCreate.Name = "radioButtonShowTablesCreate";
 		radioButtonShowTablesCreate.Size = new Size(117, 19);
 		radioButtonShowTablesCreate.TabIndex = 1;
+		radioButtonShowTablesCreate.TabStop = true;
 		radioButtonShowTablesCreate.Text = "Только создание";
 		radioButtonShowTablesCreate.UseVisualStyleBackColor = true;
 		radioButtonShowTablesCreate.CheckedChanged += RadioButtonShowTables_CheckedChanged;
@@ -216,12 +218,10 @@ partial class FormMain
 		// radioButtonShowTablesAll
 		// 
 		radioButtonShowTablesAll.AutoSize = true;
-		radioButtonShowTablesAll.Checked = true;
 		radioButtonShowTablesAll.Location = new Point(6, 16);
 		radioButtonShowTablesAll.Name = "radioButtonShowTablesAll";
 		radioButtonShowTablesAll.Size = new Size(44, 19);
 		radioButtonShowTablesAll.TabIndex = 0;
-		radioButtonShowTablesAll.TabStop = true;
 		radioButtonShowTablesAll.Text = "Все";
 		radioButtonShowTablesAll.UseVisualStyleBackColor = true;
 		radioButtonShowTablesAll.CheckedChanged += RadioButtonShowTables_CheckedChanged;
@@ -329,13 +329,13 @@ partial class FormMain
 		groupBoxNewDatabases.TabStop = false;
 		groupBoxNewDatabases.Text = "Новые базы данных";
 		// 
-		// radioButtonNone
+		// radioButtonNoDatabase
 		// 
 		radioButtonNoDatabase.AutoSize = true;
 		radioButtonNoDatabase.Dock = DockStyle.Top;
 		radioButtonNoDatabase.ForeColor = SystemColors.ControlText;
 		radioButtonNoDatabase.Location = new Point(3, 19);
-		radioButtonNoDatabase.Name = "radioButtonNone";
+		radioButtonNoDatabase.Name = "radioButtonNoDatabase";
 		radioButtonNoDatabase.Size = new Size(144, 19);
 		radioButtonNoDatabase.TabIndex = 7;
 		radioButtonNoDatabase.Text = "Неопределен";

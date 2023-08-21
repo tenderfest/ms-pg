@@ -12,7 +12,6 @@ public partial class FormMain : Form
 	private readonly Color _sourceColor;
 
 	private bool _isTableSelected = false;
-	private bool _buttonAddIsCancel = false;
 	private ElmType selectedElementType = ElmType.None;
 
 	public FormMain()
@@ -110,22 +109,20 @@ public partial class FormMain : Form
 	/// </summary>
 	private void ShowAllElements()
 	{
-		SetDatabasesRadiobuttons();
 		string errorMessage = convert.ParseSource();
 		if (!string.IsNullOrEmpty(errorMessage))
 		{
 			ShowErrorMessage(errorMessage);
 			return;
 		}
+		SetDatabasesRadiobuttons();
 
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
-		checkedListBoxTable.Items.AddRange(convert.GetAllElements());
-		checkedListBoxTable.EndUpdate();
+		//groupBoxCheckElmType.Enabled =
+		//buttonCreate.Enabled =
+		//buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
 
-		groupBoxCheckElmType.Enabled =
-		buttonCreate.Enabled =
-		buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
+		//FillTables();
+		EnableDisableControls(true);
 	}
 
 	private void ButtonSetup_Click(object sender, EventArgs e)
@@ -180,19 +177,14 @@ public partial class FormMain : Form
 		convert.SelectedDataBase = dataBase;
 
 		// добавление элементов к БД
-		if (_buttonAddIsCancel)
+		if (convert.YesElementsForAddDatabase)
 		{
 			convert.AddSelectedElementsToDatabase();
 			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
 			SetButtonAddToOriginal();
-			// отобразить список элементов выбранной БД
-			FillTables();
 		}
-		// показ уже добавленных к БД элементов
-		else
-		{
-			MessageBox.Show($"выбрана БД: {((sender as RadioButton)?.Tag as OnePgDatabase)?.ToString()}");
-		}
+		// отобразить список элементов выбранной БД
+		FillTables();
 	}
 
 	private static void ShowErrorMessage(string err) =>
@@ -216,7 +208,7 @@ public partial class FormMain : Form
 		{
 			var treeNode = new TreeNode(treeNodeName)
 			{
-				ForeColor = Color.Red,
+				ForeColor = Color.Blue,
 			};
 			treeNode.Nodes.AddRange(list
 				.Select(f => new TreeNode(f.ToString()) { Tag = f, })
@@ -289,6 +281,7 @@ public partial class FormMain : Form
 		buttonDelete.Enabled = !IsSelectNoDatabase;
 		if (IsSelectNoDatabase)
 			convert.SelectedDataBase = null;
+		FillTables();
 	}
 
 	/// <summary>
@@ -296,7 +289,7 @@ public partial class FormMain : Form
 	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
-		if (_buttonAddIsCancel)
+		if (convert.YesElementsForAddDatabase)
 		{
 			SetButtonAddToOriginal();
 			return;
@@ -316,7 +309,6 @@ public partial class FormMain : Form
 		if (list.Any())
 		{
 			buttonAdd.Text = "Отменить";
-			_buttonAddIsCancel = true;
 			EnableDisableControls(false);
 		}
 	}
@@ -324,7 +316,6 @@ public partial class FormMain : Form
 	private void SetButtonAddToOriginal()
 	{
 		buttonAdd.Text = "Добавить";
-		_buttonAddIsCancel = false;
 		convert.SetElementsForAddDatabase(null);
 		EnableDisableControls(true);
 	}

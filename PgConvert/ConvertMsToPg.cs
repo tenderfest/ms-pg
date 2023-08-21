@@ -69,7 +69,9 @@ public class ConvertMsToPg
 
 	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
 	{
-		IEnumerable<DtElement> elements = SelectedDataBase != null ? SelectedDataBase.Elements : Elements;
+		IEnumerable<DtElement> elements = SelectedDataBase != null
+			? SelectedDataBase.Elements
+			: Config.FreeElements;// Elements;
 		if (null == elements)
 			return Array.Empty<DtElement>();
 
@@ -120,6 +122,9 @@ public class ConvertMsToPg
 
 	public IEnumerable<OnePgDatabase> GetDatabases =>
 		Config.Databases;
+
+	public bool YesElementsForAddDatabase =>
+		null != ElementsForAddDatabase;
 
 	public string LoadFile(string fileName) =>
 		Path.GetExtension(fileName) switch
@@ -411,6 +416,9 @@ public class ConvertMsToPg
 
 		foreach (var element in ElementsForAddDatabase)
 		{
+			if (SelectedDataBase.Elements.Contains(element))
+				continue;
+
 			if (element.Database != null && element.Database != SelectedDataBase)
 				element.Database.Elements.Remove(element);
 			else
@@ -420,6 +428,6 @@ public class ConvertMsToPg
 		}
 	}
 
-	public void SetElementsForAddDatabase(List<DtElement> list) => 
+	public void SetElementsForAddDatabase(List<DtElement> list) =>
 		ElementsForAddDatabase = list;
 }
