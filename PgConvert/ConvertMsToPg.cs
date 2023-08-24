@@ -405,36 +405,58 @@ public class ConvertMsToPg
 		return null;
 	}
 
-	public void AddSelectedElementsToDatabase()
-	{
+	public void SetElementsForAddDatabase(List<DtElement> list) =>
+		ElementsForAddDatabase = list;
+
+	public void AddSelectedElementsToDatabase() =>
 		SetElementsToDatabase(ElementsForAddDatabase);
+	public void RemoveElementsFromDatabase(List<DtElement> selectedElements) =>
+		RemoveFromDatabase(selectedElements);
 
-		void SetElementsToDatabase(IEnumerable<DtElement> elementsForAddDatabase)
+	private void SetElementsToDatabase(IEnumerable<DtElement> elementsForAddDatabase)
+	{
+		if (null == elementsForAddDatabase ||
+			null == SelectedDataBase)
+			return;
+
+		foreach (var element in elementsForAddDatabase)
 		{
-			if (null == elementsForAddDatabase ||
-				null == SelectedDataBase)
-				return;
+			if (SelectedDataBase.Elements.Contains(element))
+				continue;
 
-			foreach (var element in elementsForAddDatabase)
+			if (element.Database != null && element.Database != SelectedDataBase)
+				element.Database.Elements.Remove(element);
+			else
+				Config.FreeElements.Remove(element);
+			element.Database = SelectedDataBase;
+			SelectedDataBase.Elements.Add(element);
+			if (element is ElTable table)
 			{
-				if (SelectedDataBase.Elements.Contains(element))
-					continue;
-
-				if (element.Database != null && element.Database != SelectedDataBase)
-					element.Database.Elements.Remove(element);
-				else
-					Config.FreeElements.Remove(element);
-				element.Database = SelectedDataBase;
-				SelectedDataBase.Elements.Add(element);
-				if (element is ElTable table)
-				{
-					SetElementsToDatabase(table.Indexes);
-					SetElementsToDatabase(table.Triggers);
-				}
+				SetElementsToDatabase(table.AlterTable);
+				SetElementsToDatabase(table.Triggers);
 			}
 		}
 	}
 
-	public void SetElementsForAddDatabase(List<DtElement> list) =>
-		ElementsForAddDatabase = list;
+	private void RemoveFromDatabase(IEnumerable<DtElement> elementsForAddDatabase)
+	{
+		if (null == elementsForAddDatabase)
+			return;
+
+		foreach (var element in elementsForAddDatabase)
+		{
+			if (!Config.FreeElements.Contains(element))
+				Config.FreeElements.Add(element);
+			if (element.Database != null)
+			{
+				element.Database.Elements.Remove(element);
+				element.Database = null;
+			}
+			if (element is ElTable table)
+			{
+				RemoveFromDatabase(table.AlterTable);
+				RemoveFromDatabase(table.Triggers);
+			}
+		}
+	}
 }

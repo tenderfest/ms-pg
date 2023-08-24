@@ -36,7 +36,10 @@ partial class FormMain
 		buttonLoad = new Button();
 		splitContainerEltAll = new SplitContainer();
 		splitContainerEltSelect = new SplitContainer();
-		checkedListBoxTable = new CheckedListBox();
+		checkedListBoxElements = new CheckedListBox();
+		groupBoxManySelect = new GroupBox();
+		linkLabelInvertSelect = new LinkLabel();
+		linkLabelSelectAll = new LinkLabel();
 		groupBoxShowTable = new GroupBox();
 		radioButtonShowTablesCreate = new RadioButton();
 		radioButtonShowTablesAll = new RadioButton();
@@ -61,6 +64,7 @@ partial class FormMain
 		splitContainerEltSelect.Panel1.SuspendLayout();
 		splitContainerEltSelect.Panel2.SuspendLayout();
 		splitContainerEltSelect.SuspendLayout();
+		groupBoxManySelect.SuspendLayout();
 		groupBoxShowTable.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerEltText).BeginInit();
 		splitContainerEltText.Panel1.SuspendLayout();
@@ -167,7 +171,8 @@ partial class FormMain
 		// 
 		// splitContainerEltSelect.Panel1
 		// 
-		splitContainerEltSelect.Panel1.Controls.Add(checkedListBoxTable);
+		splitContainerEltSelect.Panel1.Controls.Add(checkedListBoxElements);
+		splitContainerEltSelect.Panel1.Controls.Add(groupBoxManySelect);
 		splitContainerEltSelect.Panel1.Controls.Add(groupBoxShowTable);
 		splitContainerEltSelect.Panel1.Controls.Add(labelSourceElte);
 		// 
@@ -179,15 +184,50 @@ partial class FormMain
 		splitContainerEltSelect.SplitterDistance = 283;
 		splitContainerEltSelect.TabIndex = 0;
 		// 
-		// checkedListBoxTable
+		// checkedListBoxElements
 		// 
-		checkedListBoxTable.Dock = DockStyle.Fill;
-		checkedListBoxTable.FormattingEnabled = true;
-		checkedListBoxTable.Location = new Point(0, 56);
-		checkedListBoxTable.Name = "checkedListBoxTable";
-		checkedListBoxTable.Size = new Size(283, 353);
-		checkedListBoxTable.TabIndex = 0;
-		checkedListBoxTable.SelectedValueChanged += CheckedListBoxTable_SelectedValueChanged;
+		checkedListBoxElements.Dock = DockStyle.Fill;
+		checkedListBoxElements.FormattingEnabled = true;
+		checkedListBoxElements.Location = new Point(0, 97);
+		checkedListBoxElements.Name = "checkedListBoxElements";
+		checkedListBoxElements.Size = new Size(283, 312);
+		checkedListBoxElements.TabIndex = 0;
+		checkedListBoxElements.SelectedValueChanged += CheckedListBoxTable_SelectedValueChanged;
+		// 
+		// groupBoxManySelect
+		// 
+		groupBoxManySelect.Controls.Add(linkLabelInvertSelect);
+		groupBoxManySelect.Controls.Add(linkLabelSelectAll);
+		groupBoxManySelect.Dock = DockStyle.Top;
+		groupBoxManySelect.Location = new Point(0, 56);
+		groupBoxManySelect.Name = "groupBoxManySelect";
+		groupBoxManySelect.Size = new Size(283, 41);
+		groupBoxManySelect.TabIndex = 3;
+		groupBoxManySelect.TabStop = false;
+		groupBoxManySelect.Text = "Множественный выбор";
+		// 
+		// linkLabelInvertSelect
+		// 
+		linkLabelInvertSelect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		linkLabelInvertSelect.AutoSize = true;
+		linkLabelInvertSelect.Location = new Point(147, 19);
+		linkLabelInvertSelect.Name = "linkLabelInvertSelect";
+		linkLabelInvertSelect.Size = new Size(130, 15);
+		linkLabelInvertSelect.TabIndex = 1;
+		linkLabelInvertSelect.TabStop = true;
+		linkLabelInvertSelect.Text = "Инвертировать выбор";
+		linkLabelInvertSelect.LinkClicked += LinkLabelInvertSelect_LinkClicked;
+		// 
+		// linkLabelSelectAll
+		// 
+		linkLabelSelectAll.AutoSize = true;
+		linkLabelSelectAll.Location = new Point(6, 19);
+		linkLabelSelectAll.Name = "linkLabelSelectAll";
+		linkLabelSelectAll.Size = new Size(75, 15);
+		linkLabelSelectAll.TabIndex = 0;
+		linkLabelSelectAll.TabStop = true;
+		linkLabelSelectAll.Text = "Выбрать все";
+		linkLabelSelectAll.LinkClicked += LinkLabelSelectAll_LinkClicked;
 		// 
 		// groupBoxShowTable
 		// 
@@ -353,6 +393,7 @@ partial class FormMain
 		buttonDelete.TabIndex = 6;
 		buttonDelete.Text = "Удалить";
 		buttonDelete.UseVisualStyleBackColor = true;
+		buttonDelete.Click += ButtonDelete_Click;
 		// 
 		// buttonAdd
 		// 
@@ -400,6 +441,8 @@ partial class FormMain
 		splitContainerEltSelect.Panel2.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)splitContainerEltSelect).EndInit();
 		splitContainerEltSelect.ResumeLayout(false);
+		groupBoxManySelect.ResumeLayout(false);
+		groupBoxManySelect.PerformLayout();
 		groupBoxShowTable.ResumeLayout(false);
 		groupBoxShowTable.PerformLayout();
 		splitContainerEltText.Panel1.ResumeLayout(false);
@@ -424,7 +467,7 @@ partial class FormMain
 	private Button buttonLoad;
 	private SplitContainer splitContainerEltAll;
 	private SplitContainer splitContainerEltSelect;
-	private CheckedListBox checkedListBoxTable;
+	private CheckedListBox checkedListBoxElements;
 	private Button buttonSetup;
 	private SplitContainer splitContainerEltText;
 	private TextBox textBoxContent;
@@ -442,4 +485,7 @@ partial class FormMain
 	private GroupBox groupBoxShowTable;
 	private RadioButton radioButtonShowTablesCreate;
 	private RadioButton radioButtonShowTablesAll;
+	private GroupBox groupBoxManySelect;
+	private LinkLabel linkLabelInvertSelect;
+	private LinkLabel linkLabelSelectAll;
 }

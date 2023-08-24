@@ -127,18 +127,10 @@ public partial class FormMain : Form
 			return;
 		}
 
-		var itemsCount = checkedListBoxTable.CheckedItems.Count;
-		if (itemsCount < 1)
-			return;
+		var selectedElements = GetSelectedElements();
+		convert.SetElementsForAddDatabase(selectedElements);
 
-		var list = new List<DtElement>();
-		for (int i = 0; i < itemsCount; i++)
-		{
-			list.Add(checkedListBoxTable.CheckedItems[i] as DtElement);
-		}
-		convert.SetElementsForAddDatabase(list);
-
-		if (list.Any())
+		if (selectedElements.Any())
 		{
 			buttonAdd.Text = "Отменить";
 			EnableDisableControls(false);
@@ -163,7 +155,7 @@ public partial class FormMain : Form
 	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
 	{
 		textBoxContent.Text = string.Empty;
-		if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
+		if (checkedListBoxElements.SelectedItem is not DtElement dtElement)
 			return;
 
 		textBoxContent.BackColor = _sourceColor;
@@ -223,11 +215,11 @@ public partial class FormMain : Form
 
 		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
 		var elements = convert.GetElements(selectedElementType, showCreateTableOnly);
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
+		checkedListBoxElements.BeginUpdate();
+		checkedListBoxElements.Items.Clear();
 		if (null != elements && elements.Any())
-			checkedListBoxTable.Items.AddRange(elements);
-		checkedListBoxTable.EndUpdate();
+			checkedListBoxElements.Items.AddRange(elements);
+		checkedListBoxElements.EndUpdate();
 	}
 
 	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
@@ -342,4 +334,41 @@ public partial class FormMain : Form
 
 	private static void ShowErrorMessage(string err) =>
 		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+	// ----------------------------------------------------
+	// отсортировать
+
+	private void ButtonDelete_Click(object sender, EventArgs e)
+	{
+		var selectedElements = GetSelectedElements();
+		convert.RemoveElementsFromDatabase(selectedElements);
+		FillTables();
+	}
+
+	private List<DtElement> GetSelectedElements()
+	{
+		var list = new List<DtElement>();
+		var itemsCount = checkedListBoxElements.CheckedItems.Count;
+		if (itemsCount >= 1)
+			for (int i = 0; i < itemsCount; i++)
+				list.Add(checkedListBoxElements.CheckedItems[i] as DtElement);
+
+		return list;
+	}
+
+	private void LinkLabelSelectAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		checkedListBoxElements.BeginUpdate();
+		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
+			checkedListBoxElements.SetItemChecked(i, true);
+		checkedListBoxElements.EndUpdate();
+	}
+
+	private void LinkLabelInvertSelect_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+	{
+		checkedListBoxElements.BeginUpdate();
+		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
+			checkedListBoxElements.SetItemChecked(i, !checkedListBoxElements.CheckedItems.Contains(checkedListBoxElements.Items[i]));
+		checkedListBoxElements.EndUpdate();
+	}
 }
