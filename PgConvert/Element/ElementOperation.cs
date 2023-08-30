@@ -24,13 +24,13 @@ internal static class ElementOperation
 		};
 
 	internal static string GetOperationSign(ElmOperation operation) =>
-	operation switch
-	{
-		ElmOperation.Create => "C",
-		ElmOperation.Set => "S",
-		ElmOperation.Alter => "A",
-		ElmOperation.Exec => "E",
-		ElmOperation.Use => "U",
-		_ => "?",
-	};
+		operation switch
+		{
+			ElmOperation.Create => "C",
+			ElmOperation.Set => "S",
+			ElmOperation.Alter => "A",
+			ElmOperation.Exec => "E",
+			ElmOperation.Use => "U",
+			_ => "?",
+		};
 }

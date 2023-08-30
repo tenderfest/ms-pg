@@ -1,7 +1,7 @@
 ﻿namespace PgConvert.Element;
 
 /// <summary>
-/// тип элемента
+/// Тип элемента
 /// </summary>
 public enum ElmType
 {
@@ -18,8 +18,25 @@ public enum ElmType
 	Exec,
 }
 
+/// <summary>
+/// Методы работы с типами элементов
+/// </summary>
 internal static class ElementType
 {
+	/// <summary>
+	/// Элементы, зависящие от таблиц
+	/// </summary>
+	public static readonly ElmType[] ElementTypesForTable = new ElmType[]
+	{
+		ElmType.Table,
+		ElmType.Trigger,
+		ElmType.Index,
+		ElmType.View,
+	};
+
+	/// <summary>
+	/// Получение типа этемента по его описанию
+	/// </summary>
 	internal static ElmType GetType(string elementKey, string operation) =>
 		("exec" == operation)
 		? ElmType.Exec

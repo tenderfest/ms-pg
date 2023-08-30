@@ -4,7 +4,7 @@ using PgConvert.Config;
 
 namespace PgConvert.Element;
 
-public class DtElement : BaseSelectable
+public class DtElement : BaseSelectable, IEquatable<DtElement>
 {
 	public DtElement()
 	{
@@ -14,21 +14,19 @@ public class DtElement : BaseSelectable
 	public DtElement(string[] lines)
 	{
 		Lines = lines;
-
-		var hash = lines[0].GetHashCode();
-		foreach (var str in Lines.Skip(1))
-			hash ^= str.GetHashCode();
-		_hashCode = hash;
+		// вычисление хэша для этого элемента
+		_hashCode = lines.Crc32();
 	}
 
-	internal bool Ignore { get; private protected set; }
 	public string[] Lines { get; }
 	public string[] CommentLines { get; private set; }
+	public string DatabaseName { get; private protected set; }
 
+	internal bool Ignore { get; private protected set; }
 	internal protected ElmOperation Operation { get; set; }
-	private protected string[] FirstLineWords { get; set; }
-
 	internal OnePgDatabase Database { get; set; }
+
+	private protected string[] FirstLineWords { get; set; }
 
 	private protected string name;
 	internal protected virtual string Name
@@ -48,7 +46,7 @@ public class DtElement : BaseSelectable
 		}
 	}
 
-	private protected static string ClearBraces(string draftName) =>
+	public static string ClearBraces(string draftName) =>
 		draftName
 			.Replace("(", string.Empty)
 			.Replace("[", string.Empty)
@@ -74,17 +72,16 @@ public class DtElement : BaseSelectable
 		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
 			ElmType.Database => new ElDatabase(lines),
-			ElmType.Index => new ElIndex(lines, false),
-			ElmType.Procedure => new ElProcedure(lines),
-			ElmType.Trigger => new ElTrigger(lines),
-			ElmType.Table => new ElTable(lines),
-			ElmType.View => new ElView(lines),
 			ElmType.User => new ElUser(lines),
 			ElmType.Role => new ElRole(lines),
 			ElmType.Schema => new ElSchema(lines),
+			ElmType.Table => new ElTable(lines),
+			ElmType.Procedure => new ElProcedure(lines),
+			ElmType.Trigger => new ElTrigger(lines),
+			ElmType.Index => new ElIndex(lines, false),
+			ElmType.View => new ElView(lines),
 			ElmType.Exec => new ElExec(lines),
-			ElmType.None => new DtUnknown(),
-			_ => new DtUnknown(),
+			_ => new DtUnknown(lines),
 		};
 		element.SetFields(operation, firstLineWords, comment.ToArray());
 
@@ -97,18 +94,19 @@ public class DtElement : BaseSelectable
 		FirstLineWords = firstLineWords;
 		CommentLines = comment;
 	}
-	public void SetFields(DtElement fromElement)
-	{
-		Operation = fromElement.Operation;
-		FirstLineWords = fromElement.FirstLineWords;
-		CommentLines = fromElement.CommentLines;
-	}
 
-	public override bool Equals(object obj)
-		=> obj is DtElement x && GetHashCode() == x.GetHashCode();
+	//public void SetFields(DtElement fromElement)
+	//{
+	//	Operation = fromElement.Operation;
+	//	FirstLineWords = fromElement.FirstLineWords;
+	//	CommentLines = fromElement.CommentLines;
+	//}
+
+	//public override bool Equals(object obj) =>
+	//	obj is DtElement x && GetHashCode() == x.GetHashCode();
 
 	[JsonIgnore]
-	public string GetEmenenlContent
+	public string GetElementContent
 	{
 		get
 		{
@@ -126,18 +124,26 @@ public class DtElement : BaseSelectable
 	}
 
 	[JsonIgnore]
-	public virtual DtField[] GetFields => Array.Empty<DtField>();
+	public virtual DtField[] GetFields =>
+		Array.Empty<DtField>();
 
 	private readonly int _hashCode;
-	public override int GetHashCode()
-	{
-		return _hashCode;
-	}
+	public override int GetHashCode() =>
+		_hashCode;
+	public int HashCode =>
+		_hashCode;
 
-	public override string ToString()
-		=> $"{(Ignore ? "-" : null)}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
+	protected string IgnoreAsString =>
+		Ignore ? "-" : string.Empty;
 
-	internal virtual string Parse() { return null; }
+	public override string ToString() =>
+		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
+
+	internal virtual string Parse() => 
+		null;
+
+	public bool Equals(DtElement other) =>
+		GetHashCode() == other?.GetHashCode();
 
 	private string linesAsString = null;
 	protected string LinesAsString
@@ -148,10 +154,17 @@ public class DtElement : BaseSelectable
 			{
 				var stringBuilder = new StringBuilder();
 				foreach (var str in Lines)
-					stringBuilder.Append(str);
-				linesAsString = stringBuilder.ToString();
+				{
+					stringBuilder.Append(str.Trim());
+					stringBuilder.Append(' ');
+				}
+				linesAsString = stringBuilder.ToString().Trim();
 			}
 			return linesAsString;
 		}
 	}
+
+	private string linesAsStringLower = null;
+	protected string LinesAsStringLower =>
+		linesAsStringLower ??= LinesAsString.ToLower();
 }

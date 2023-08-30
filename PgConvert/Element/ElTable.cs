@@ -1,37 +1,64 @@
 ﻿namespace PgConvert.Element;
 
-public class ElTable : DtElement
+public class ElTable : ElBaseForTable
 {
-	private readonly static string[] _indexSign = new string[]
-	{
-		"primary",
-		"constraint",
-		"unique",
-	};
-
 	public ElTable(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Table;
 	}
 
 	public List<DtField> Fields { get; private set; } = new List<DtField>();
+
 	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
 	/// <summary>
 	/// внутритабличные индексы
 	/// </summary>
 	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
+
 	/// <summary>
-	/// изменения таблицы
+	/// изменения таблицы: внешние ключи и индексы
 	/// </summary>
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
 
-	public IEnumerable<DtElement> Indexes =>
-		IndexCreateTable.Select(x => x as DtElement)
-		.Union(AlterTable.Select(x => x as DtElement));
+	/// <summary>
+	/// Параметры внешего ключа для ALTER TABLE
+	/// </summary>
+	public DtForeignKey ForeignKey { get; private set; }
+
+	public IEnumerable<ElBaseForTable> Indexes =>
+		IndexCreateTable
+			.Select(x =>
+				x as ElBaseForTable)
+		.Union(AlterTable
+			.Select(x =>
+				x as ElBaseForTable));
 
 	internal override string Parse()
 	{
+		// изменение таблицы
+		if (ElmOperation.Alter == Operation)
+		{
+			var pieces = LinesAsString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			if (pieces.Length < 4)
+				return $"ALTER TABLE таблицы {Name} содержит меньше четырёх элементов.";
+
+			// если эта запись ALTER TABLE не внешний ключ, просто ничего не делаем
+			if (!LinesAsStringLower.Contains(Const.FOREIGN_KEY))
+				return null;
+
+			var piecesLower = LinesAsStringLower.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			if (pieces.Length != piecesLower.Length)
+				return $"Длины итоговых строк ALTER TABLE не совпадают.";
+
+			ForeignKey = new DtForeignKey(piecesLower, pieces, Name);
+
+			SetTableName(ForeignKey.FromTableName);
+			SetTableName(ForeignKey.ToTableName);
+			return null;
+		}
+
+		// создание таблицы
 		if (ElmOperation.Create != Operation)
 			return null;
 
@@ -55,7 +82,7 @@ public class ElTable : DtElement
 			try
 			{
 				// индекс
-				if (_indexSign.Contains(pieces[0].ToLower()))
+				if (Const._indexSign.Contains(pieces[0].ToLower()))
 				{
 					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, true));
 				}
@@ -150,9 +177,16 @@ public class ElTable : DtElement
 		return commaIndexList;
 	}
 
-	internal void AddAlterTable(IEnumerable<ElTable> alterTables)
-		=> AlterTable.AddRange(alterTables);
+	internal void AddAlterTable(IEnumerable<ElTable> alterTables) =>
+		AlterTable.AddRange(alterTables);
 
-	internal void AddTriggers(ElTrigger[] trigger)
-		=> Triggers.AddRange(trigger);
+	internal void AddTriggers(ElTrigger[] trigger) =>
+		Triggers.AddRange(trigger);
+
+	public override string ToString()
+	{
+		return ForeignKey == null
+			? base.ToString()
+			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {ForeignKey.Name}";
+	}
 }

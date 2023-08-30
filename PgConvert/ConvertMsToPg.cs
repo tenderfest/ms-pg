@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -11,7 +10,8 @@ namespace PgConvert;
 public class ConvertMsToPg
 {
 	const string _cfgFileName = "ConvertMsToPg.Cfg";
-	public const string _extProj = ".ms2pg";
+	//public const string _extProj = ".ms2pg";
+	public const string _extProj = ".zip";
 	public const string _extSql = ".sql";
 
 	const string GO = "GO";
@@ -20,10 +20,19 @@ public class ConvertMsToPg
 	private bool NeedUpdateFile = false;
 	private bool NeedUpdateConfig = false;
 
-	ConvertMsToPgCfg Config { get; set; } = new();
+	public ConvertMsToPgCfg Config { get; private set; } = new();
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
 	List<DtElement> Elements { get; set; }
+	/// <summary>
+	/// База данных, выбранная в настоящий момент ползователем
+	/// </summary>
+	public OnePgDatabase SelectedDataBase { get; set; }
+	/// <summary>
+	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
+	/// </summary>
+	public List<DtElement> ElementsForAddDatabase { get; set; }
+
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -32,19 +41,17 @@ public class ConvertMsToPg
 	};
 
 	#region config
-	public ConvertMsToPgCfg GetConfig()
-		=> Config;
 
 	public void SetConfig(
-		OnePgDatabase[] databases,
-		DtElement[] freeElements,
+		List<OnePgDatabase> databases,
+		int[] freeElementIds,
 		string[] skipOperation,
 		string[] skipElement)
 	{
 		Config = new ConvertMsToPgCfg
 		{
 			Databases = databases,
-			FreeElements = freeElements,
+			FreeElementIds = freeElementIds,
 			SkipElement = skipOperation,
 			SkipOperation = skipElement,
 		};
@@ -52,22 +59,19 @@ public class ConvertMsToPg
 	}
 	#endregion config
 
-	public DtElement[] GetAllElements()
-		=> null == Elements
-		? Array.Empty<DtElement>()
-		: Elements
-		.ToArray();
-
-	public DtElement[] GetElements(ElmType elmType)
+	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
 	{
-		if (null == Elements)
+		IEnumerable<DtElement> elements = null != SelectedDataBase
+			? SelectedDataBase.Elements
+			: Config.FreeElements;
+		if (null == elements)
 			return Array.Empty<DtElement>();
 
-		var elements = Elements.Where(s => elmType == s.ElementType);
-
-		// для таблиц возвращаем только их создание
-		if (ElmType.Table == elmType)
-			elements = elements.Where(t => ElmOperation.Create == t.Operation);
+		elements = elements.Where(s =>
+			s.ElementType == selectedElementType);
+		if (createOnly)
+			elements = elements.Where(t =>
+				t.Operation == ElmOperation.Create);
 
 		return elements.ToArray();
 	}
@@ -80,8 +84,10 @@ public class ConvertMsToPg
 			if (null == allTables)
 			{
 				allTables = Elements
-				.Where(e => e.ElementType == ElmType.Table)
-				.Select(t => t as ElTable)
+				.Where(e =>
+					e.ElementType == ElmType.Table)
+				.Select(t =>
+					t as ElTable)
 				.ToArray();
 			}
 			return allTables;
@@ -96,16 +102,24 @@ public class ConvertMsToPg
 			if (null == allTriggers)
 			{
 				allTriggers = Elements
-				.Where(e => e.ElementType == ElmType.Trigger)
-				.Select(t => t as ElTrigger)
+				.Where(e =>
+					e.ElementType == ElmType.Trigger)
+				.Select(t =>
+					t as ElTrigger)
 				.ToArray();
 			}
 			return allTriggers;
 		}
 	}
 
-	public string LoadFile(string fileName)
-		=> Path.GetExtension(fileName) switch
+	public IEnumerable<OnePgDatabase> GetDatabases =>
+		Config.Databases;
+
+	public bool YesElementsForAddDatabase =>
+		null != ElementsForAddDatabase;
+
+	public string LoadFile(string fileName) =>
+		Path.GetExtension(fileName) switch
 		{
 			_extSql => LoadMsSql(fileName),
 			_extProj => LoadProj(fileName),
@@ -183,15 +197,17 @@ public class ConvertMsToPg
 	{
 		string errorMessage;
 
+		// чтение и разбор входного потока
 		errorMessage = ParseStrings();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
+		// разбор каждого элемента по составляющим
 		errorMessage = ParseElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
-		// установка взаимосвязей
+		// установка взаимосвязей между элементами
 		errorMessage = RelationElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
@@ -209,19 +225,25 @@ public class ConvertMsToPg
 	/// </summary>
 	private string RelationElements()
 	{
-		var createTables = Tables.Where(e => e.Operation == ElmOperation.Create).ToArray();
+		var createTables = Tables
+			.Where(e =>
+				e.Operation == ElmOperation.Create)
+			.ToArray();
 
 		foreach (var table in createTables)
 		{
 			// изменения таблицы
 			table.AddAlterTable(
 				Tables
-				.Where(e => e.Operation == ElmOperation.Alter && e.Name == table.Name));
+				.Where(at =>
+					at.Operation == ElmOperation.Alter && at.IsRelatedToTable(table.Name))
+				.ToArray());
 
 			// триггеры
 			table.AddTriggers(
 				Triggers
-				.Where(tr => table.Name == tr.TableName)
+				.Where(tr =>
+					tr.IsRelatedToTable(table.Name))
 				.ToArray());
 		}
 
@@ -234,25 +256,33 @@ public class ConvertMsToPg
 	private string SortingElements()
 	{
 		if (Config.Databases.Contains(null))
-			Config.Databases = Config.Databases.Where(db => db != null).ToArray();
+			Config.Databases = Config.Databases
+				.Where(db =>
+					db != null)
+				.ToList();
 
 		foreach (var db in Config.Databases)
-			db.Elements ??= Array.Empty<DtElement>();
+			db.Elements ??= new List<DtElement>();
 
-		int freeElementsNum = Config.FreeElements == null ? 0 : Config.FreeElements.Length;
+		int freeElementsNum = null == Config.FreeElementIds
+			? 0
+			: Config.FreeElementIds.Length;
 		try
 		{
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in Config.Databases.Where(db => db.Elements.Contains(element)))
+				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.HashCode)))
+				{
 					element.Database = db;
+					db.Elements.Add(element);
+				}
 
 				if (null == element.Database)
 					freeElements.Add(element);
 			}
-			Config.FreeElements = freeElements.ToArray();
-			if (freeElementsNum != Config.FreeElements.Length)
+			Config.FreeElements = freeElements;
+			if (freeElementsNum != Config.FreeElementIds.Length)
 				NeedUpdateConfig = true;
 
 			return null;
@@ -276,6 +306,11 @@ public class ConvertMsToPg
 				return errorMessage;
 			}
 		}
+
+		// сортировка элементов по имени
+		Elements
+			.Sort((a, b) =>
+				a.Name.CompareTo(b.Name));
 		return null;
 	}
 
@@ -298,11 +333,11 @@ public class ConvertMsToPg
 				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
 				if (default != dicValue)
 				{
-					var equalElement = dtElements.Find(e => e.Equals(dicValue));
-					if (equalElement == default)
+					var equalElement = dtElements
+						.Find(e =>
+							e.Equals(dicValue));
+					if (default == equalElement)
 						dtElements.Add(dicValue);
-					else
-						return $"Элемент {dicValue} уже есть в общем списке элементов";
 				}
 
 				inLines = new();
@@ -316,7 +351,7 @@ public class ConvertMsToPg
 					inLines.Add(inLine);
 			}
 		}
-		dtElements.Sort((a, b) => a.Name.CompareTo(b.Name));
+
 		Elements = dtElements;
 		return null;
 	}
@@ -362,5 +397,60 @@ public class ConvertMsToPg
 
 		NeedUpdateFile = NeedUpdateConfig = false;
 		return null;
+	}
+
+	public void SetElementsForAddDatabase(List<DtElement> list) =>
+		ElementsForAddDatabase = list;
+
+	public void AddSelectedElementsToDatabase() =>
+		SetElementsToDatabase(ElementsForAddDatabase);
+	public void RemoveElementsFromDatabase(List<DtElement> selectedElements) =>
+		RemoveFromDatabase(selectedElements);
+
+	private void SetElementsToDatabase(IEnumerable<DtElement> elementsForAddDatabase)
+	{
+		if (null == elementsForAddDatabase ||
+			null == SelectedDataBase)
+			return;
+
+		foreach (var element in elementsForAddDatabase)
+		{
+			if (SelectedDataBase.Elements.Contains(element))
+				continue;
+
+			if (element.Database != null && element.Database != SelectedDataBase)
+				element.Database.Elements.Remove(element);
+			else
+				Config.FreeElements.Remove(element);
+
+			element.Database = SelectedDataBase;
+			SelectedDataBase.Elements.Add(element);
+			if (element is ElTable table)
+			{
+				SetElementsToDatabase(table.AlterTable);
+				SetElementsToDatabase(table.Triggers);
+			}
+		}
+	}
+
+	private void RemoveFromDatabase(IEnumerable<DtElement> elementsForAddDatabase)
+	{
+		if (null == elementsForAddDatabase)
+			return;
+
+		foreach (var element in elementsForAddDatabase)
+		{
+			Config.AddFreeElements(element);
+			if (element.Database != null)
+			{
+				element.Database.Elements.Remove(element);
+				element.Database = null;
+			}
+			if (element is ElTable table)
+			{
+				RemoveFromDatabase(table.AlterTable);
+				RemoveFromDatabase(table.Triggers);
+			}
+		}
 	}
 }

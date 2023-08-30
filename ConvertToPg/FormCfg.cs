@@ -79,13 +79,16 @@ namespace ConvertToPg
 			{
 				if (db.IsDefault) return;
 
-				Cfg.AddDelDatabase(db, false);
-				HeightChange(false);
-				ShowDatabases(false);
+				if (Cfg.AddDelDatabase(db, false) == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+				{
+					HeightChange(false);
+					ShowDatabases(false);
+				}
 			});
 
 		private void ConnectionStringChanged(object sender, EventArgs e) =>
-			DatabaseFromControl(sender, (db) => db.ConnectionString = ((TextBox)sender).Text);
+			DatabaseFromControl(sender, (db) =>
+				db.ConnectionString = ((TextBox)sender).Text);
 
 		private void ButtonSave_Click(object sender, EventArgs e)
 		{
@@ -116,9 +119,16 @@ namespace ConvertToPg
 				}
 			}
 
-			Cfg.AddDelDatabase(newDatabase, true);
-			HeightChange(true);
-			ShowDatabases(false);
+			var addResult = Cfg.AddDelDatabase(newDatabase, true);
+			if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+			{
+				HeightChange(true);
+				ShowDatabases(false);
+			}
+			else if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Error)
+			{
+				MessageBox.Show($"База данных с именем '{newDatabase.Name}' уже существует.");
+			}
 		}
 
 		public string[] SkipOperation =>

@@ -29,25 +29,31 @@ partial class FormMain
 	private void InitializeComponent()
 	{
 		panelTop = new Panel();
+		labelInfo = new Label();
 		buttonSave = new Button();
-		buttonDelete = new Button();
-		buttonAdd = new Button();
 		buttonCreate = new Button();
 		buttonSetup = new Button();
 		buttonLoad = new Button();
 		splitContainerEltAll = new SplitContainer();
 		splitContainerEltSelect = new SplitContainer();
-		checkedListBoxTable = new CheckedListBox();
+		checkedListBoxElements = new CheckedListBox();
+		groupBoxManySelect = new GroupBox();
+		linkLabelInvertSelect = new LinkLabel();
+		linkLabelSelectAll = new LinkLabel();
+		groupBoxShowTable = new GroupBox();
+		radioButtonShowTablesCreate = new RadioButton();
+		radioButtonShowTablesAll = new RadioButton();
 		labelSourceElte = new Label();
-		checkedListBoxFkey = new CheckedListBox();
-		labelFkeys = new Label();
 		treeView = new TreeView();
+		labelFkeys = new Label();
 		labelResultTree = new Label();
 		splitContainerEltText = new SplitContainer();
 		textBoxContent = new TextBox();
 		splitContainerLeft = new SplitContainer();
 		groupBoxNewDatabases = new GroupBox();
-		radioButtonNone = new RadioButton();
+		radioButtonNoDatabase = new RadioButton();
+		buttonDelete = new Button();
+		buttonAdd = new Button();
 		groupBoxCheckElmType = new GroupBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerEltAll).BeginInit();
@@ -58,6 +64,8 @@ partial class FormMain
 		splitContainerEltSelect.Panel1.SuspendLayout();
 		splitContainerEltSelect.Panel2.SuspendLayout();
 		splitContainerEltSelect.SuspendLayout();
+		groupBoxManySelect.SuspendLayout();
+		groupBoxShowTable.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerEltText).BeginInit();
 		splitContainerEltText.Panel1.SuspendLayout();
 		splitContainerEltText.Panel2.SuspendLayout();
@@ -71,9 +79,8 @@ partial class FormMain
 		// 
 		// panelTop
 		// 
+		panelTop.Controls.Add(labelInfo);
 		panelTop.Controls.Add(buttonSave);
-		panelTop.Controls.Add(buttonDelete);
-		panelTop.Controls.Add(buttonAdd);
 		panelTop.Controls.Add(buttonCreate);
 		panelTop.Controls.Add(buttonSetup);
 		panelTop.Controls.Add(buttonLoad);
@@ -83,41 +90,27 @@ partial class FormMain
 		panelTop.Size = new Size(1045, 34);
 		panelTop.TabIndex = 0;
 		// 
+		// labelInfo
+		// 
+		labelInfo.AutoSize = true;
+		labelInfo.Location = new Point(230, 10);
+		labelInfo.Name = "labelInfo";
+		labelInfo.Size = new Size(444, 15);
+		labelInfo.TabIndex = 4;
+		labelInfo.Text = "Разнести элементы по БД, изменить тексты процедур, сформировать скрипты.";
+		// 
 		// buttonSave
 		// 
-		buttonSave.Dock = DockStyle.Fill;
+		buttonSave.Dock = DockStyle.Left;
 		buttonSave.Enabled = false;
-		buttonSave.Location = new Point(283, 0);
+		buttonSave.ForeColor = Color.Blue;
+		buttonSave.Location = new Point(149, 0);
 		buttonSave.Name = "buttonSave";
-		buttonSave.Size = new Size(647, 34);
+		buttonSave.Size = new Size(75, 34);
 		buttonSave.TabIndex = 2;
 		buttonSave.Text = "Сохранить";
 		buttonSave.UseVisualStyleBackColor = true;
 		buttonSave.Click += ButtonSave_Click;
-		// 
-		// buttonDelete
-		// 
-		buttonDelete.Dock = DockStyle.Left;
-		buttonDelete.Enabled = false;
-		buttonDelete.ForeColor = Color.Red;
-		buttonDelete.Location = new Point(216, 0);
-		buttonDelete.Name = "buttonDelete";
-		buttonDelete.Size = new Size(67, 34);
-		buttonDelete.TabIndex = 5;
-		buttonDelete.Text = "Удалить";
-		buttonDelete.UseVisualStyleBackColor = true;
-		// 
-		// buttonAdd
-		// 
-		buttonAdd.Dock = DockStyle.Left;
-		buttonAdd.Enabled = false;
-		buttonAdd.ForeColor = Color.Green;
-		buttonAdd.Location = new Point(149, 0);
-		buttonAdd.Name = "buttonAdd";
-		buttonAdd.Size = new Size(67, 34);
-		buttonAdd.TabIndex = 4;
-		buttonAdd.Text = "Добавить";
-		buttonAdd.UseVisualStyleBackColor = true;
 		// 
 		// buttonCreate
 		// 
@@ -165,7 +158,6 @@ partial class FormMain
 		// 
 		// splitContainerEltAll.Panel2
 		// 
-		splitContainerEltAll.Panel2.Controls.Add(treeView);
 		splitContainerEltAll.Panel2.Controls.Add(labelResultTree);
 		splitContainerEltAll.Size = new Size(895, 409);
 		splitContainerEltAll.SplitterDistance = 585;
@@ -179,26 +171,100 @@ partial class FormMain
 		// 
 		// splitContainerEltSelect.Panel1
 		// 
-		splitContainerEltSelect.Panel1.Controls.Add(checkedListBoxTable);
+		splitContainerEltSelect.Panel1.Controls.Add(checkedListBoxElements);
+		splitContainerEltSelect.Panel1.Controls.Add(groupBoxManySelect);
+		splitContainerEltSelect.Panel1.Controls.Add(groupBoxShowTable);
 		splitContainerEltSelect.Panel1.Controls.Add(labelSourceElte);
 		// 
 		// splitContainerEltSelect.Panel2
 		// 
-		splitContainerEltSelect.Panel2.Controls.Add(checkedListBoxFkey);
+		splitContainerEltSelect.Panel2.Controls.Add(treeView);
 		splitContainerEltSelect.Panel2.Controls.Add(labelFkeys);
 		splitContainerEltSelect.Size = new Size(585, 409);
 		splitContainerEltSelect.SplitterDistance = 283;
 		splitContainerEltSelect.TabIndex = 0;
 		// 
-		// checkedListBoxTable
+		// checkedListBoxElements
 		// 
-		checkedListBoxTable.Dock = DockStyle.Fill;
-		checkedListBoxTable.FormattingEnabled = true;
-		checkedListBoxTable.Location = new Point(0, 15);
-		checkedListBoxTable.Name = "checkedListBoxTable";
-		checkedListBoxTable.Size = new Size(283, 394);
-		checkedListBoxTable.TabIndex = 0;
-		checkedListBoxTable.SelectedValueChanged += CheckedListBoxTable_SelectedValueChanged;
+		checkedListBoxElements.Dock = DockStyle.Fill;
+		checkedListBoxElements.FormattingEnabled = true;
+		checkedListBoxElements.Location = new Point(0, 97);
+		checkedListBoxElements.Name = "checkedListBoxElements";
+		checkedListBoxElements.Size = new Size(283, 312);
+		checkedListBoxElements.TabIndex = 0;
+		checkedListBoxElements.SelectedValueChanged += CheckedListBoxTable_SelectedValueChanged;
+		// 
+		// groupBoxManySelect
+		// 
+		groupBoxManySelect.Controls.Add(linkLabelInvertSelect);
+		groupBoxManySelect.Controls.Add(linkLabelSelectAll);
+		groupBoxManySelect.Dock = DockStyle.Top;
+		groupBoxManySelect.Location = new Point(0, 56);
+		groupBoxManySelect.Name = "groupBoxManySelect";
+		groupBoxManySelect.Size = new Size(283, 41);
+		groupBoxManySelect.TabIndex = 3;
+		groupBoxManySelect.TabStop = false;
+		groupBoxManySelect.Text = "Множественный выбор";
+		// 
+		// linkLabelInvertSelect
+		// 
+		linkLabelInvertSelect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		linkLabelInvertSelect.AutoSize = true;
+		linkLabelInvertSelect.Location = new Point(147, 19);
+		linkLabelInvertSelect.Name = "linkLabelInvertSelect";
+		linkLabelInvertSelect.Size = new Size(130, 15);
+		linkLabelInvertSelect.TabIndex = 1;
+		linkLabelInvertSelect.TabStop = true;
+		linkLabelInvertSelect.Text = "Инвертировать выбор";
+		linkLabelInvertSelect.LinkClicked += LinkLabelInvertSelect_LinkClicked;
+		// 
+		// linkLabelSelectAll
+		// 
+		linkLabelSelectAll.AutoSize = true;
+		linkLabelSelectAll.Location = new Point(6, 19);
+		linkLabelSelectAll.Name = "linkLabelSelectAll";
+		linkLabelSelectAll.Size = new Size(75, 15);
+		linkLabelSelectAll.TabIndex = 0;
+		linkLabelSelectAll.TabStop = true;
+		linkLabelSelectAll.Text = "Выбрать все";
+		linkLabelSelectAll.LinkClicked += LinkLabelSelectAll_LinkClicked;
+		// 
+		// groupBoxShowTable
+		// 
+		groupBoxShowTable.Controls.Add(radioButtonShowTablesCreate);
+		groupBoxShowTable.Controls.Add(radioButtonShowTablesAll);
+		groupBoxShowTable.Dock = DockStyle.Top;
+		groupBoxShowTable.Enabled = false;
+		groupBoxShowTable.Location = new Point(0, 15);
+		groupBoxShowTable.Name = "groupBoxShowTable";
+		groupBoxShowTable.Size = new Size(283, 41);
+		groupBoxShowTable.TabIndex = 2;
+		groupBoxShowTable.TabStop = false;
+		groupBoxShowTable.Text = "Показывать таблицы:";
+		// 
+		// radioButtonShowTablesCreate
+		// 
+		radioButtonShowTablesCreate.AutoSize = true;
+		radioButtonShowTablesCreate.Checked = true;
+		radioButtonShowTablesCreate.Location = new Point(56, 16);
+		radioButtonShowTablesCreate.Name = "radioButtonShowTablesCreate";
+		radioButtonShowTablesCreate.Size = new Size(117, 19);
+		radioButtonShowTablesCreate.TabIndex = 1;
+		radioButtonShowTablesCreate.TabStop = true;
+		radioButtonShowTablesCreate.Text = "Только создание";
+		radioButtonShowTablesCreate.UseVisualStyleBackColor = true;
+		radioButtonShowTablesCreate.CheckedChanged += RadioButtonShowTables_CheckedChanged;
+		// 
+		// radioButtonShowTablesAll
+		// 
+		radioButtonShowTablesAll.AutoSize = true;
+		radioButtonShowTablesAll.Location = new Point(6, 16);
+		radioButtonShowTablesAll.Name = "radioButtonShowTablesAll";
+		radioButtonShowTablesAll.Size = new Size(44, 19);
+		radioButtonShowTablesAll.TabIndex = 0;
+		radioButtonShowTablesAll.Text = "Все";
+		radioButtonShowTablesAll.UseVisualStyleBackColor = true;
+		radioButtonShowTablesAll.CheckedChanged += RadioButtonShowTables_CheckedChanged;
 		// 
 		// labelSourceElte
 		// 
@@ -211,15 +277,14 @@ partial class FormMain
 		labelSourceElte.Text = "Исходные элементы";
 		labelSourceElte.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// checkedListBoxFkey
+		// treeView
 		// 
-		checkedListBoxFkey.Dock = DockStyle.Fill;
-		checkedListBoxFkey.FormattingEnabled = true;
-		checkedListBoxFkey.Location = new Point(0, 15);
-		checkedListBoxFkey.Name = "checkedListBoxFkey";
-		checkedListBoxFkey.Size = new Size(298, 394);
-		checkedListBoxFkey.TabIndex = 0;
-		checkedListBoxFkey.SelectedValueChanged += CheckedListBoxFkey_SelectedValueChanged;
+		treeView.Dock = DockStyle.Fill;
+		treeView.Location = new Point(0, 15);
+		treeView.Name = "treeView";
+		treeView.Size = new Size(298, 394);
+		treeView.TabIndex = 3;
+		treeView.AfterSelect += TreeView_AfterSelect;
 		// 
 		// labelFkeys
 		// 
@@ -231,15 +296,6 @@ partial class FormMain
 		labelFkeys.TabIndex = 2;
 		labelFkeys.Text = "Зависимые элементы";
 		labelFkeys.TextAlign = ContentAlignment.TopCenter;
-		// 
-		// treeView
-		// 
-		treeView.Dock = DockStyle.Fill;
-		treeView.Location = new Point(0, 15);
-		treeView.Name = "treeView";
-		treeView.Size = new Size(306, 394);
-		treeView.TabIndex = 0;
-		treeView.AfterSelect += TreeView_AfterSelect;
 		// 
 		// labelResultTree
 		// 
@@ -291,6 +347,8 @@ partial class FormMain
 		// splitContainerLeft.Panel1
 		// 
 		splitContainerLeft.Panel1.Controls.Add(groupBoxNewDatabases);
+		splitContainerLeft.Panel1.Controls.Add(buttonDelete);
+		splitContainerLeft.Panel1.Controls.Add(buttonAdd);
 		// 
 		// splitContainerLeft.Panel2
 		// 
@@ -301,30 +359,54 @@ partial class FormMain
 		// 
 		// groupBoxNewDatabases
 		// 
-		groupBoxNewDatabases.Controls.Add(radioButtonNone);
+		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 		groupBoxNewDatabases.Dock = DockStyle.Fill;
 		groupBoxNewDatabases.ForeColor = SystemColors.ControlText;
-		groupBoxNewDatabases.Location = new Point(0, 0);
+		groupBoxNewDatabases.Location = new Point(0, 56);
 		groupBoxNewDatabases.Name = "groupBoxNewDatabases";
-		groupBoxNewDatabases.Size = new Size(150, 205);
+		groupBoxNewDatabases.Size = new Size(150, 149);
 		groupBoxNewDatabases.TabIndex = 4;
 		groupBoxNewDatabases.TabStop = false;
 		groupBoxNewDatabases.Text = "Новые базы данных";
 		// 
-		// radioButtonNone
+		// radioButtonNoDatabase
 		// 
-		radioButtonNone.AutoSize = true;
-		radioButtonNone.Checked = true;
-		radioButtonNone.Dock = DockStyle.Top;
-		radioButtonNone.ForeColor = SystemColors.ControlText;
-		radioButtonNone.Location = new Point(3, 19);
-		radioButtonNone.Name = "radioButtonNone";
-		radioButtonNone.Size = new Size(144, 19);
-		radioButtonNone.TabIndex = 7;
-		radioButtonNone.TabStop = true;
-		radioButtonNone.Text = "Неопределен";
-		radioButtonNone.UseVisualStyleBackColor = true;
-		radioButtonNone.CheckedChanged += RadioButtonNone_CheckedChanged;
+		radioButtonNoDatabase.AutoSize = true;
+		radioButtonNoDatabase.Dock = DockStyle.Top;
+		radioButtonNoDatabase.ForeColor = SystemColors.ControlText;
+		radioButtonNoDatabase.Location = new Point(3, 19);
+		radioButtonNoDatabase.Name = "radioButtonNoDatabase";
+		radioButtonNoDatabase.Size = new Size(144, 19);
+		radioButtonNoDatabase.TabIndex = 7;
+		radioButtonNoDatabase.Text = "Неопределен";
+		radioButtonNoDatabase.UseVisualStyleBackColor = true;
+		radioButtonNoDatabase.CheckedChanged += RadioButtonNoDatabase_CheckedChanged;
+		// 
+		// buttonDelete
+		// 
+		buttonDelete.Dock = DockStyle.Top;
+		buttonDelete.Enabled = false;
+		buttonDelete.ForeColor = Color.Red;
+		buttonDelete.Location = new Point(0, 28);
+		buttonDelete.Name = "buttonDelete";
+		buttonDelete.Size = new Size(150, 28);
+		buttonDelete.TabIndex = 6;
+		buttonDelete.Text = "Удалить";
+		buttonDelete.UseVisualStyleBackColor = true;
+		buttonDelete.Click += ButtonDelete_Click;
+		// 
+		// buttonAdd
+		// 
+		buttonAdd.Dock = DockStyle.Top;
+		buttonAdd.Enabled = false;
+		buttonAdd.ForeColor = Color.Green;
+		buttonAdd.Location = new Point(0, 0);
+		buttonAdd.Name = "buttonAdd";
+		buttonAdd.Size = new Size(150, 28);
+		buttonAdd.TabIndex = 5;
+		buttonAdd.Text = "Добавить";
+		buttonAdd.UseVisualStyleBackColor = true;
+		buttonAdd.Click += ButtonAdd_Click;
 		// 
 		// groupBoxCheckElmType
 		// 
@@ -336,7 +418,7 @@ partial class FormMain
 		groupBoxCheckElmType.Size = new Size(150, 382);
 		groupBoxCheckElmType.TabIndex = 3;
 		groupBoxCheckElmType.TabStop = false;
-		groupBoxCheckElmType.Text = "Фильтр";
+		groupBoxCheckElmType.Text = "Типы элементов";
 		// 
 		// FormMain
 		// 
@@ -350,6 +432,7 @@ partial class FormMain
 		StartPosition = FormStartPosition.CenterScreen;
 		Text = "Преобразование из MS SQL в PostgreSQL";
 		panelTop.ResumeLayout(false);
+		panelTop.PerformLayout();
 		splitContainerEltAll.Panel1.ResumeLayout(false);
 		splitContainerEltAll.Panel2.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)splitContainerEltAll).EndInit();
@@ -358,6 +441,10 @@ partial class FormMain
 		splitContainerEltSelect.Panel2.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)splitContainerEltSelect).EndInit();
 		splitContainerEltSelect.ResumeLayout(false);
+		groupBoxManySelect.ResumeLayout(false);
+		groupBoxManySelect.PerformLayout();
+		groupBoxShowTable.ResumeLayout(false);
+		groupBoxShowTable.PerformLayout();
 		splitContainerEltText.Panel1.ResumeLayout(false);
 		splitContainerEltText.Panel2.ResumeLayout(false);
 		splitContainerEltText.Panel2.PerformLayout();
@@ -380,12 +467,8 @@ partial class FormMain
 	private Button buttonLoad;
 	private SplitContainer splitContainerEltAll;
 	private SplitContainer splitContainerEltSelect;
-	private CheckedListBox checkedListBoxTable;
-	private CheckedListBox checkedListBoxFkey;
-	private TreeView treeView;
+	private CheckedListBox checkedListBoxElements;
 	private Button buttonSetup;
-	private Button buttonDelete;
-	private Button buttonAdd;
 	private SplitContainer splitContainerEltText;
 	private TextBox textBoxContent;
 	private Label labelSourceElte;
@@ -393,6 +476,16 @@ partial class FormMain
 	private Label labelResultTree;
 	private SplitContainer splitContainerLeft;
 	private GroupBox groupBoxNewDatabases;
-	private RadioButton radioButtonNone;
+	private RadioButton radioButtonNoDatabase;
 	private GroupBox groupBoxCheckElmType;
+	private TreeView treeView;
+	private Button buttonDelete;
+	private Button buttonAdd;
+	private Label labelInfo;
+	private GroupBox groupBoxShowTable;
+	private RadioButton radioButtonShowTablesCreate;
+	private RadioButton radioButtonShowTablesAll;
+	private GroupBox groupBoxManySelect;
+	private LinkLabel linkLabelInvertSelect;
+	private LinkLabel linkLabelSelectAll;
 }

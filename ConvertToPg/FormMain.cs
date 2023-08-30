@@ -11,14 +11,15 @@ public partial class FormMain : Form
 	private readonly Color _resultColor;
 	private readonly Color _sourceColor;
 
+	private bool _isTableSelected = false;
+	private ElmType selectedElementType = ElmType.None;
+
 	public FormMain()
 	{
 		InitializeComponent();
 		_resultColor = labelResultTree.BackColor;
 		_sourceColor = labelSourceElte.BackColor;
-
 		convert = new ConvertMsToPg();
-		// показ типов элементов
 		MakeTypeCheckboxes();
 	}
 
@@ -41,33 +42,19 @@ public partial class FormMain : Form
 			radioButton.Text = elementType.ToString();
 			radioButton.UseVisualStyleBackColor = true;
 			radioButton.Tag = (ElmType)elementType;
-			radioButton.Checked = false;// (ElmType)elementType == ElmType.None;
-			radioButton.CheckedChanged += CheckBox_CheckedChanged;
+			radioButton.Checked = false;
+			radioButton.CheckedChanged += CheckBoxElmType_CheckedChanged;
 
 			i++;
 			y += 25;
 		}
 	}
 
-	private void CheckBox_CheckedChanged(object sender, EventArgs e)
-	{
-		var checkBox = (RadioButton)sender;
-		if (!checkBox.Checked) return;
-		FillTables((ElmType)checkBox.Tag);
-	}
+	#region Открытие исходного файла
 
-	private void FillTables(ElmType elmType)
-	{
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
-		var elements = convert.GetElements(elmType);
-		if (null != elements && elements.Any())
-		{
-			checkedListBoxTable.Items.AddRange(elements);
-		}
-		checkedListBoxTable.EndUpdate();
-	}
-
+	/// <summary>
+	/// Загрузка файла проекта
+	/// </summary>
 	private void ButtonLoad_Click(object sender, EventArgs e)
 	{
 		OpenFileDialog openFileDialog = new()
@@ -89,53 +76,229 @@ public partial class FormMain : Form
 			return;
 		}
 
-		ShowElements();
+		AfterLoadElements();
 	}
 
-	private void ShowElements()
-	{
-		SetDatabasesRadiobuttons();
-		string errorMessage = convert.ParseSource();
-		if (!string.IsNullOrEmpty(errorMessage))
-		{
-			ShowErrorMessage(errorMessage);
-			return;
-		}
+	#endregion
 
-		checkedListBoxTable.BeginUpdate();
-		checkedListBoxTable.Items.Clear();
-		checkedListBoxTable.Items.AddRange(convert.GetAllElements());
-		checkedListBoxTable.EndUpdate();
-
-		groupBoxCheckElmType.Enabled =
-		buttonCreate.Enabled =
-		buttonSave.Enabled = checkedListBoxTable.Items.Count > 0;
-	}
+	#region Обработка событий нажатия на кнопки
 
 	private void ButtonSetup_Click(object sender, EventArgs e)
 	{
-		ConvertMsToPgCfg cfg = convert.GetConfig();
+		ConvertMsToPgCfg cfg = convert.Config;
 		var formCfg = new FormCfg(cfg);
 		if (formCfg.ShowDialog(this) != DialogResult.OK)
 			return;
 
 		convert.SetConfig(
 			cfg.Databases,
-			cfg.FreeElements,
+			cfg.FreeElementIds,
 			formCfg.SkipOperation,
 			formCfg.SkipElement);
 
-		ShowElements();
+		AfterLoadElements();
+	}
+
+	private void ButtonSave_Click(object sender, EventArgs e)
+	{
+		FolderBrowserDialog saveFileDialog = new()
+		{
+			InitialDirectory = PrePathInFile,
+		};
+		if (saveFileDialog.ShowDialog() != DialogResult.OK)
+			return;
+
+		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
+		if (string.IsNullOrEmpty(errMessage))
+		{
+			errMessage = $"Проект сохранён в файле {projectFile}";
+		}
+		MessageBox.Show(errMessage);
+	}
+
+	/// <summary>
+	/// Добавить выбранные элементы в базу данных
+	/// </summary>
+	private void ButtonAdd_Click(object sender, EventArgs e)
+	{
+		if (convert.YesElementsForAddDatabase)
+		{
+			SetButtonAddToOriginal();
+			return;
+		}
+
+		var selectedElements = GetSelectedElements();
+		convert.SetElementsForAddDatabase(selectedElements);
+
+		if (selectedElements.Any())
+		{
+			buttonAdd.Text = "Отменить";
+			EnableDisableControls(false);
+		}
+	}
+
+	#endregion
+
+	#region Обработка событий выбора чекбоксов
+
+	/// <summary>
+	/// Смена выбранного типа элементов
+	/// </summary>
+	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
+	{
+		var checkBox = (RadioButton)sender;
+		if (!checkBox.Checked) return;
+		selectedElementType = (ElmType)checkBox.Tag;
+		FillTables();
+	}
+
+	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
+	{
+		textBoxContent.Text = string.Empty;
+		if (checkedListBoxElements.SelectedItem is not DtElement dtElement)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		textBoxContent.Text = dtElement.GetElementContent;
+
+		FillTreeView(dtElement);
+	}
+
+	#endregion
+
+	#region Обработка событий выбора радио-кнопок
+
+	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		if (sender is not RadioButton control ||
+			!control.Checked ||
+			control.Tag is not OnePgDatabase dataBase)
+			return;
+
+		convert.SelectedDataBase = dataBase;
+
+		// добавление элементов к БД
+		if (convert.YesElementsForAddDatabase)
+		{
+			convert.AddSelectedElementsToDatabase();
+			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
+			SetButtonAddToOriginal();
+		}
+		// отобразить список элементов выбранной БД
+		FillTables();
+	}
+
+	private void RadioButtonNoDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		bool IsSelectNoDatabase = ((RadioButton)sender).Checked;
+
+		buttonAdd.Enabled = IsSelectNoDatabase;
+		buttonDelete.Enabled = !IsSelectNoDatabase;
+		if (IsSelectNoDatabase)
+			convert.SelectedDataBase = null;
+		FillTables();
+	}
+
+	private void RadioButtonShowTables_CheckedChanged(object sender, EventArgs e)
+	{
+		if (!_isTableSelected) return;
+		if (((RadioButton)sender).Checked)
+			FillTables();
+	}
+
+	#endregion
+
+	private void FillTables()
+	{
+		_isTableSelected = ElmType.Table == selectedElementType;
+		groupBoxShowTable.Enabled = _isTableSelected;
+
+		var showCreateTableOnly = _isTableSelected && radioButtonShowTablesCreate.Checked;
+		var elements = convert.GetElements(selectedElementType, showCreateTableOnly);
+		checkedListBoxElements.BeginUpdate();
+		checkedListBoxElements.Items.Clear();
+		if (null != elements && elements.Any())
+			checkedListBoxElements.Items.AddRange(elements);
+		checkedListBoxElements.EndUpdate();
+	}
+
+	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
+	{
+		textBoxContent.Text = string.Empty;
+
+		if (treeView.SelectedNode == null ||
+			treeView.SelectedNode.Tag == null)
+			return;
+
+		textBoxContent.BackColor = _sourceColor;
+		switch (treeView.SelectedNode.Tag)
+		{
+			case DtElement dtElement:
+				textBoxContent.Text = dtElement.GetElementContent;
+				break;
+			case DtField dtField:
+				textBoxContent.Text = dtField.ToString();
+				break;
+		}
+	}
+
+	private void FillTreeView(DtElement dtElement)
+	{
+		static TreeNode MakeTreeNode(string treeNodeName, IEnumerable<object> list)
+		{
+			var treeNode = new TreeNode(treeNodeName)
+			{
+				ForeColor = Color.Blue,
+			};
+			treeNode.Nodes.AddRange(list
+				.Select(f => new TreeNode(f.ToString()) { Tag = f, })
+				.ToArray());
+			return treeNode;
+		}
+
+		treeView.BeginUpdate();
+		treeView.Nodes.Clear();
+		try
+		{
+			if (dtElement is not ElTable elTable)
+				return;
+			if (elTable.Fields.Any())
+				treeView.Nodes.Add(MakeTreeNode("поля", elTable.Fields));
+			if (elTable.Indexes.Any())
+				treeView.Nodes.Add(MakeTreeNode("индексы", elTable.Indexes));
+			if (elTable.Triggers.Any())
+				treeView.Nodes.Add(MakeTreeNode("триггеры", elTable.Triggers));
+		}
+		finally
+		{
+			treeView.ExpandAll();
+			treeView.EndUpdate();
+		}
+	}
+
+	/// <summary>
+	/// Выполнить действия после загрузки и разбора
+	/// </summary>
+	private void AfterLoadElements()
+	{
+		string errorMessage = convert.ParseSource();
+		if (!string.IsNullOrEmpty(errorMessage))
+		{
+			ShowErrorMessage(errorMessage);
+			return;
+		}
+		SetDatabasesRadiobuttons();
+		EnableDisableControls(true);
+		buttonSave.Enabled = true;
 	}
 
 	private void SetDatabasesRadiobuttons()
 	{
 		groupBoxNewDatabases.SuspendLayout();
 		groupBoxNewDatabases.Controls.Clear();
-		groupBoxNewDatabases.Controls.Add(radioButtonNone);
-		radioButtonNone.Checked = true;
+		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 
-		foreach (var db in convert.GetConfig().Databases)
+		foreach (var db in convert.GetDatabases)
 		{
 			var radioButtonDb = new RadioButton();
 			groupBoxNewDatabases.Controls.Add(radioButtonDb);
@@ -149,129 +312,63 @@ public partial class FormMain : Form
 			radioButtonDb.Text = $"{db}";
 			radioButtonDb.UseVisualStyleBackColor = true;
 			radioButtonDb.Tag = db;
+			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
 		}
 		groupBoxNewDatabases.ResumeLayout();
+		radioButtonNoDatabase.Checked = true;
 	}
 
-	private static void ShowErrorMessage(string err)
-		=> MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-	private void CheckedListBoxTable_SelectedValueChanged(object sender, EventArgs e)
+	private void SetButtonAddToOriginal()
 	{
-		//FillListFKey();
-		FillTreeView();
+		buttonAdd.Text = "Добавить";
+		convert.SetElementsForAddDatabase(null);
+		EnableDisableControls(true);
 	}
 
-	private void FillTreeView()
+	private void EnableDisableControls(bool isEnable)
 	{
-		treeView.BeginUpdate();
-		treeView.Nodes.Clear();
-		textBoxContent.Text = string.Empty;
-		try
-		{
-			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
-				return;
-
-			if (dtElement is ElTable elTable)
-			{
-				var fields = new TreeNode("поля") { ForeColor = Color.Red };
-				treeView.Nodes.Add(fields);
-				fields.Nodes.AddRange(elTable.Fields.Select(f => new TreeNode(f.Name) { Tag = f }).ToArray());
-			}
-		}
-		finally
-		{
-			treeView.EndUpdate();
-		}
+		panelTop.Enabled =
+			splitContainerEltText.Enabled =
+			groupBoxCheckElmType.Enabled = isEnable;
 	}
 
-	private void FillListFKey()
+	private static void ShowErrorMessage(string err) =>
+		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+	// ----------------------------------------------------
+	// отсортировать
+
+	private void ButtonDelete_Click(object sender, EventArgs e)
 	{
-		checkedListBoxFkey.BeginUpdate();
-		try
-		{
-			checkedListBoxFkey.Items.Clear();
-			textBoxContent.Text = string.Empty;
-
-			if (checkedListBoxTable.SelectedItem is not DtElement dtElement)
-				return;
-
-			if (dtElement is ElTable elTable)
-			{
-				if (elTable.Fields.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- поля ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Fields.ToArray());
-				}
-				if (elTable.Indexes.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- индексы ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Indexes.ToArray());
-				}
-				if (elTable.Triggers.Any())
-				{
-					checkedListBoxFkey.Items.Add("--- триггеры ---", CheckState.Indeterminate);
-					checkedListBoxFkey.Items.AddRange(elTable.Triggers.ToArray());
-				}
-			}
-
-			textBoxContent.BackColor = _sourceColor;
-			textBoxContent.Text = dtElement.GetEmenenlContent;
-		}
-		finally
-		{
-			checkedListBoxFkey.EndUpdate();
-		}
+		var selectedElements = GetSelectedElements();
+		convert.RemoveElementsFromDatabase(selectedElements);
+		FillTables();
 	}
 
-	private void ButtonSave_Click(object sender, EventArgs e)
+	private List<DtElement> GetSelectedElements()
 	{
-		FolderBrowserDialog saveFileDialog = new()
-		{
-			InitialDirectory = PrePathInFile,
-		};
-		var save = saveFileDialog.ShowDialog();
-		if (save != DialogResult.OK)
-			return;
+		var list = new List<DtElement>();
+		var itemsCount = checkedListBoxElements.CheckedItems.Count;
+		if (itemsCount >= 1)
+			for (int i = 0; i < itemsCount; i++)
+				list.Add(checkedListBoxElements.CheckedItems[i] as DtElement);
 
-		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
-		if (string.IsNullOrEmpty(errMessage))
-		{
-			errMessage = $"Проект сохранён в файле {projectFile}";
-		}
-		MessageBox.Show(errMessage);
+		return list;
 	}
 
-	private void TreeView_AfterSelect(object sender, TreeViewEventArgs e)
+	private void LinkLabelSelectAll_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 	{
-		textBoxContent.Text = string.Empty;
-
-		if (treeView.SelectedNode == null ||
-			treeView.SelectedNode.Tag == null ||
-			treeView.SelectedNode.Tag is not PgElement dtTable)
-			return;
-
-		textBoxContent.BackColor = _resultColor;
-		textBoxContent.Text = dtTable.GetEmenenlContentPostgreSql;
+		checkedListBoxElements.BeginUpdate();
+		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
+			checkedListBoxElements.SetItemChecked(i, true);
+		checkedListBoxElements.EndUpdate();
 	}
 
-	private void RadioButtonNone_CheckedChanged(object sender, EventArgs e)
+	private void LinkLabelInvertSelect_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 	{
-		buttonAdd.Enabled = ((RadioButton)sender).Checked;
-		buttonDelete.Enabled = !buttonAdd.Enabled;
-	}
-
-	private void CheckedListBoxFkey_SelectedValueChanged(object sender, EventArgs e)
-	{
-		var selectedItem = checkedListBoxFkey.SelectedItem;
-		if (null == selectedItem)
-			return;
-		textBoxContent.Text = string.Empty;
-
-		if (selectedItem is not DtElement dtElement)
-			return;
-
-		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetEmenenlContent;
+		checkedListBoxElements.BeginUpdate();
+		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
+			checkedListBoxElements.SetItemChecked(i, !checkedListBoxElements.CheckedItems.Contains(checkedListBoxElements.Items[i]));
+		checkedListBoxElements.EndUpdate();
 	}
 }
