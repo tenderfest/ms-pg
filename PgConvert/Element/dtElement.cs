@@ -71,7 +71,6 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 
 		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
-			ElmType.None => new DtUnknown(),
 			ElmType.Database => new ElDatabase(lines),
 			ElmType.User => new ElUser(lines),
 			ElmType.Role => new ElRole(lines),
@@ -82,7 +81,7 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 			ElmType.Index => new ElIndex(lines, false),
 			ElmType.View => new ElView(lines),
 			ElmType.Exec => new ElExec(lines),
-			_ => new DtUnknown(),
+			_ => new DtUnknown(lines),
 		};
 		element.SetFields(operation, firstLineWords, comment.ToArray());
 
@@ -107,7 +106,7 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	//	obj is DtElement x && GetHashCode() == x.GetHashCode();
 
 	[JsonIgnore]
-	public string GetEmenenlContent
+	public string GetElementContent
 	{
 		get
 		{
@@ -140,13 +139,11 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	public override string ToString() =>
 		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
-	internal virtual string Parse() { return null; }
+	internal virtual string Parse() => 
+		null;
 
-	public bool Equals(DtElement other)
-	{
-		if (null == other) return false;
-		return GetHashCode() == other.GetHashCode();
-	}
+	public bool Equals(DtElement other) =>
+		GetHashCode() == other?.GetHashCode();
 
 	private string linesAsString = null;
 	protected string LinesAsString

@@ -92,7 +92,7 @@ public partial class FormMain : Form
 
 		convert.SetConfig(
 			cfg.Databases,
-			cfg.FreeElements,
+			cfg.FreeElementIds,
 			formCfg.SkipOperation,
 			formCfg.SkipElement);
 
@@ -159,7 +159,7 @@ public partial class FormMain : Form
 			return;
 
 		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetEmenenlContent;
+		textBoxContent.Text = dtElement.GetElementContent;
 
 		FillTreeView(dtElement);
 	}
@@ -234,7 +234,7 @@ public partial class FormMain : Form
 		switch (treeView.SelectedNode.Tag)
 		{
 			case DtElement dtElement:
-				textBoxContent.Text = dtElement.GetEmenenlContent;
+				textBoxContent.Text = dtElement.GetElementContent;
 				break;
 			case DtField dtField:
 				textBoxContent.Text = dtField.ToString();

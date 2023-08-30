@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
+﻿using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -48,14 +44,14 @@ public class ConvertMsToPg
 
 	public void SetConfig(
 		List<OnePgDatabase> databases,
-		List<DtElement> freeElements,
+		int[] freeElementIds,
 		string[] skipOperation,
 		string[] skipElement)
 	{
 		Config = new ConvertMsToPgCfg
 		{
 			Databases = databases,
-			FreeElements = freeElements,
+			FreeElementIds = freeElementIds,
 			SkipElement = skipOperation,
 			SkipOperation = skipElement,
 		};
@@ -268,15 +264,15 @@ public class ConvertMsToPg
 		foreach (var db in Config.Databases)
 			db.Elements ??= new List<DtElement>();
 
-		int freeElementsNum = null == Config.FreeElements
+		int freeElementsNum = null == Config.FreeElementIds
 			? 0
-			: Config.FreeElements.Count;
+			: Config.FreeElementIds.Length;
 		try
 		{
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in Config.Databases.Where(db => db.IsContainsElementIds(element.HashCode)))
+				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.HashCode)))
 				{
 					element.Database = db;
 					db.Elements.Add(element);
@@ -286,7 +282,7 @@ public class ConvertMsToPg
 					freeElements.Add(element);
 			}
 			Config.FreeElements = freeElements;
-			if (freeElementsNum != Config.FreeElements.Count)
+			if (freeElementsNum != Config.FreeElementIds.Length)
 				NeedUpdateConfig = true;
 
 			return null;
@@ -340,10 +336,8 @@ public class ConvertMsToPg
 					var equalElement = dtElements
 						.Find(e =>
 							e.Equals(dicValue));
-					if (equalElement == default)
+					if (default == equalElement)
 						dtElements.Add(dicValue);
-					else
-						return $"Элемент {dicValue} уже есть в общем списке элементов";
 				}
 
 				inLines = new();
@@ -428,6 +422,7 @@ public class ConvertMsToPg
 				element.Database.Elements.Remove(element);
 			else
 				Config.FreeElements.Remove(element);
+
 			element.Database = SelectedDataBase;
 			SelectedDataBase.Elements.Add(element);
 			if (element is ElTable table)
@@ -445,8 +440,7 @@ public class ConvertMsToPg
 
 		foreach (var element in elementsForAddDatabase)
 		{
-			if (!Config.FreeElements.Contains(element))
-				Config.FreeElements.Add(element);
+			Config.AddFreeElements(element);
 			if (element.Database != null)
 			{
 				element.Database.Elements.Remove(element);

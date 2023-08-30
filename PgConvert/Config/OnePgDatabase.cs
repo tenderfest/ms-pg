@@ -32,8 +32,8 @@ public class OnePgDatabase
 
 		set => _elementIds = value;
 	}
-	internal bool IsContainsElementIds(int hashCode) => 
-		_elementIds.Contains(hashCode);
+	internal bool IsContainsElementIds(int hashCode) =>
+		null != _elementIds && _elementIds.Contains(hashCode);
 
 	public string TestConnectDatabase()
 	{

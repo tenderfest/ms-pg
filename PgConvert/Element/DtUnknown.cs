@@ -2,7 +2,7 @@
 
 public class DtUnknown : DtElement
 {
-	public DtUnknown()
+	public DtUnknown(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.None;
 	}

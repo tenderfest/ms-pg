@@ -1,5 +1,6 @@
 ﻿using PgConvert.Element;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace PgConvert.Config;
 
@@ -37,10 +38,24 @@ public class ConvertMsToPgCfg
 	}
 
 
-	public List<OnePgDatabase> Databases { get; set; }
-	public List<DtElement> FreeElements { get; set; }
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
+	public List<OnePgDatabase> Databases { get; set; }
+
+	[JsonIgnore]
+	public List<DtElement> FreeElements { get; set; }
+
+	private int[] _freeElementIds;
+	public int[] FreeElementIds
+	{
+#pragma warning disable S2365 // Properties should not make collection or array copies
+#pragma warning disable S4275 // Getters and setters should access the expected fields
+		get => FreeElements?.Select(e => e.HashCode).ToArray();
+#pragma warning restore S4275 // Getters and setters should access the expected fields
+#pragma warning restore S2365 // Properties should not make collection or array copies
+
+		set => _freeElementIds = value;
+	}
 
 	public static string[] GetSkipArrayFromText(string text) =>
 		text?.Split('\n')
@@ -81,4 +96,10 @@ public class ConvertMsToPgCfg
 
 	public string GetSkipOperationAsText() =>
 		GetStringArrayAsText(SkipOperation);
+
+	internal void AddFreeElements(DtElement element)
+	{
+		if (!FreeElements.Contains(element))
+			FreeElements.Add(element);
+	}
 }
