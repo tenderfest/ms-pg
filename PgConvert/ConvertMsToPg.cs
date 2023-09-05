@@ -302,9 +302,7 @@ public class ConvertMsToPg
 		{
 			var errorMessage = element.Parse();
 			if (!string.IsNullOrEmpty(errorMessage))
-			{
 				return errorMessage;
-			}
 		}
 
 		// сортировка элементов по имени

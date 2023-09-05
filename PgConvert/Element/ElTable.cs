@@ -58,9 +58,9 @@ public class ElTable : ElBaseForTable
 			return null;
 		}
 
-		// создание таблицы
 		if (ElmOperation.Create != Operation)
 			return null;
+		// ниже по коду - обработка создания таблицы
 
 		// определение позиций запятых внутри внешних круглых скобок
 		var commaIndexList = GetSymbolIndexes(out int? indexFieldsOpen, out int lengthFieldsClose);
@@ -82,9 +82,9 @@ public class ElTable : ElBaseForTable
 			try
 			{
 				// индекс
-				if (Const._indexSign.Contains(pieces[0].ToLower()))
+				if (Const.IndexSign.Contains(pieces[0].ToLower()))
 				{
-					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, true));
+					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, Name, pieces[1]));
 				}
 				else
 					// обычное поле

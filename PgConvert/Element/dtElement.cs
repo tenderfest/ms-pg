@@ -33,11 +33,11 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	{
 		get
 		{
-			if (null == FirstLineWords || !FirstLineWords.Any())
-				return null;
-
 			if (null == name)
 			{
+				if (null == FirstLineWords || !FirstLineWords.Any())
+					return null;
+
 				name = ClearBraces(FirstLineWords.Length < 3
 					? "FirstLineWords.Length < 3"
 					: FirstLineWords[2]);
@@ -78,7 +78,7 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 			ElmType.Table => new ElTable(lines),
 			ElmType.Procedure => new ElProcedure(lines),
 			ElmType.Trigger => new ElTrigger(lines),
-			ElmType.Index => new ElIndex(lines, false),
+			ElmType.Index => new ElIndex(lines, null),
 			ElmType.View => new ElView(lines),
 			ElmType.Exec => new ElExec(lines),
 			_ => new DtUnknown(lines),
@@ -139,7 +139,7 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	public override string ToString() =>
 		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
 
-	internal virtual string Parse() => 
+	internal virtual string Parse() =>
 		null;
 
 	public bool Equals(DtElement other) =>
