@@ -71,7 +71,18 @@ namespace ConvertToPg
 			DatabaseFromControl(sender, (db) =>
 			{
 				var result = db.TestConnectDatabase();
-				MessageBox.Show(string.IsNullOrEmpty(result) ? "OK" : result);
+				if (string.IsNullOrEmpty(result))
+					MessageBox.Show("OK");
+				else
+				{
+					var tryCreateDatabaseAnswer = MessageBox
+						.Show($"{result}\n\nНадо ли попытаться создать базу данных?", "Ошибка", MessageBoxButtons.YesNo);
+					if (tryCreateDatabaseAnswer == DialogResult.Yes)
+					{
+						result = db.TryCreate();
+						MessageBox.Show(result);
+					}
+				}
 			});
 
 		private void DeleteDatabase(object sender, EventArgs e) =>

@@ -49,8 +49,8 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	public static string ClearBraces(string draftName) =>
 		draftName
 			.Replace("(", string.Empty)
-			.Replace("[", string.Empty)
-			.Replace("]", string.Empty);
+			.Replace("[", "\"")
+			.Replace("]", "\"");
 
 	/// <summary>
 	/// Определение типа элемента и создание экземпляров элементов
