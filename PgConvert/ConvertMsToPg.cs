@@ -24,15 +24,16 @@ public class ConvertMsToPg
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
 	List<DtElement> Elements { get; set; }
+
 	/// <summary>
 	/// База данных, выбранная в настоящий момент ползователем
 	/// </summary>
 	public OnePgDatabase SelectedDataBase { get; set; }
+
 	/// <summary>
 	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
 	/// </summary>
 	public List<DtElement> ElementsForAddDatabase { get; set; }
-
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -115,7 +116,10 @@ public class ConvertMsToPg
 	public IEnumerable<OnePgDatabase> GetDatabases =>
 		Config.Databases;
 
-	public bool YesElementsForAddDatabase =>
+	/// <summary>
+	/// Есть ли выбранные элементы для перемещения в базу данных
+	/// </summary>
+	public bool IsPresentElementsForAddDatabase =>
 		null != ElementsForAddDatabase;
 
 	public string LoadFile(string fileName) =>

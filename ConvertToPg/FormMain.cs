@@ -20,13 +20,13 @@ public partial class FormMain : Form
 		_resultColor = labelResultTree.BackColor;
 		_sourceColor = labelSourceElte.BackColor;
 		convert = new ConvertMsToPg();
-		MakeTypeCheckboxes();
+		CreateElementsTypeCheckboxes();
 	}
 
 	/// <summary>
 	/// Создание чекбоксов всех типов элементов
 	/// </summary>
-	private void MakeTypeCheckboxes()
+	private void CreateElementsTypeCheckboxes()
 	{
 		int i = 0, y = 0;
 		foreach (var elementType in Enum.GetValues(typeof(ElmType)))
@@ -121,7 +121,7 @@ public partial class FormMain : Form
 	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
-		if (convert.YesElementsForAddDatabase)
+		if (convert.IsPresentElementsForAddDatabase)
 		{
 			SetButtonAddToOriginal();
 			return;
@@ -178,7 +178,7 @@ public partial class FormMain : Form
 		convert.SelectedDataBase = dataBase;
 
 		// добавление элементов к БД
-		if (convert.YesElementsForAddDatabase)
+		if (convert.IsPresentElementsForAddDatabase)
 		{
 			convert.AddSelectedElementsToDatabase();
 			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
@@ -328,8 +328,11 @@ public partial class FormMain : Form
 	private void EnableDisableControls(bool isEnable)
 	{
 		panelTop.Enabled =
-			splitContainerEltText.Enabled =
-			groupBoxCheckElmType.Enabled = isEnable;
+		textBoxContent.Enabled =
+		groupBoxCheckElmType.Enabled =
+		splitContainerSource.Enabled =
+		splitContainerEltAll.Panel2.Enabled =
+			isEnable;
 	}
 
 	private static void ShowErrorMessage(string err) =>
