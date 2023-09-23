@@ -6,7 +6,7 @@ namespace ConvertToPg;
 
 public partial class FormMain : Form
 {
-	private const string PrePathInFile = "..\\..\\..\\..\\..\\!Дополнительно\\2postgres";
+	private const string PrePathInFile = "..\\..\\..\\..\\..\\!Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ\\2postgres";
 	private readonly ConvertMsToPg convert;
 	private readonly Color _resultColor;
 	private readonly Color _sourceColor;
@@ -24,7 +24,7 @@ public partial class FormMain : Form
 	}
 
 	/// <summary>
-	/// Создание чекбоксов всех типов элементов
+	/// РЎРѕР·РґР°РЅРёРµ С‡РµРєР±РѕРєСЃРѕРІ РІСЃРµС… С‚РёРїРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
 	/// </summary>
 	private void CreateElementsTypeCheckboxes()
 	{
@@ -50,10 +50,10 @@ public partial class FormMain : Form
 		}
 	}
 
-	#region Открытие исходного файла
+	#region РћС‚РєСЂС‹С‚РёРµ РёСЃС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 
 	/// <summary>
-	/// Загрузка файла проекта
+	/// Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»Р° РїСЂРѕРµРєС‚Р°
 	/// </summary>
 	private void ButtonLoad_Click(object sender, EventArgs e)
 	{
@@ -81,7 +81,7 @@ public partial class FormMain : Form
 
 	#endregion
 
-	#region Обработка событий нажатия на кнопки
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РЅР°Р¶Р°С‚РёСЏ РЅР° РєРЅРѕРїРєРё
 
 	private void ButtonSetup_Click(object sender, EventArgs e)
 	{
@@ -111,13 +111,13 @@ public partial class FormMain : Form
 		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
 		if (string.IsNullOrEmpty(errMessage))
 		{
-			errMessage = $"Проект сохранён в файле {projectFile}";
+			errMessage = $"РџСЂРѕРµРєС‚ СЃРѕС…СЂР°РЅС‘РЅ РІ С„Р°Р№Р»Рµ {projectFile}";
 		}
 		MessageBox.Show(errMessage);
 	}
 
 	/// <summary>
-	/// Добавить выбранные элементы в базу данных
+	/// Р”РѕР±Р°РІРёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
 	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
@@ -132,17 +132,17 @@ public partial class FormMain : Form
 
 		if (selectedElements.Any())
 		{
-			buttonAdd.Text = "Отменить";
+			buttonAdd.Text = "РћС‚РјРµРЅРёС‚СЊ";
 			EnableDisableControls(false);
 		}
 	}
 
 	#endregion
 
-	#region Обработка событий выбора чекбоксов
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РІС‹Р±РѕСЂР° С‡РµРєР±РѕРєСЃРѕРІ
 
 	/// <summary>
-	/// Смена выбранного типа элементов
+	/// РЎРјРµРЅР° РІС‹Р±СЂР°РЅРЅРѕРіРѕ С‚РёРїР° СЌР»РµРјРµРЅС‚РѕРІ
 	/// </summary>
 	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
 	{
@@ -166,7 +166,7 @@ public partial class FormMain : Form
 
 	#endregion
 
-	#region Обработка событий выбора радио-кнопок
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РІС‹Р±РѕСЂР° СЂР°РґРёРѕ-РєРЅРѕРїРѕРє
 
 	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
 	{
@@ -177,14 +177,14 @@ public partial class FormMain : Form
 
 		convert.SelectedDataBase = dataBase;
 
-		// добавление элементов к БД
+		// РґРѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ Рє Р‘Р”
 		if (convert.IsPresentElementsForAddDatabase)
 		{
 			convert.AddSelectedElementsToDatabase();
-			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
+			// СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РєРѕРЅС‚СЂРѕР»С‹, РІРµСЂРЅСѓС‚СЊ РєРЅРѕРїРєСѓ "Р”РѕР±Р°РІРёС‚СЊ" РІ РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ РІРёРґ
 			SetButtonAddToOriginal();
 		}
-		// отобразить список элементов выбранной БД
+		// РѕС‚РѕР±СЂР°Р·РёС‚СЊ СЃРїРёСЃРѕРє СЌР»РµРјРµРЅС‚РѕРІ РІС‹Р±СЂР°РЅРЅРѕР№ Р‘Р”
 		FillTables();
 	}
 
@@ -263,11 +263,11 @@ public partial class FormMain : Form
 			if (dtElement is not ElTable elTable)
 				return;
 			if (elTable.Fields.Any())
-				treeView.Nodes.Add(MakeTreeNode("поля", elTable.Fields));
+				treeView.Nodes.Add(MakeTreeNode("РїРѕР»СЏ", elTable.Fields));
 			if (elTable.Indexes.Any())
-				treeView.Nodes.Add(MakeTreeNode("индексы", elTable.Indexes));
+				treeView.Nodes.Add(MakeTreeNode("РёРЅРґРµРєСЃС‹", elTable.Indexes));
 			if (elTable.Triggers.Any())
-				treeView.Nodes.Add(MakeTreeNode("триггеры", elTable.Triggers));
+				treeView.Nodes.Add(MakeTreeNode("С‚СЂРёРіРіРµСЂС‹", elTable.Triggers));
 		}
 		finally
 		{
@@ -277,7 +277,7 @@ public partial class FormMain : Form
 	}
 
 	/// <summary>
-	/// Выполнить действия после загрузки и разбора
+	/// Р’С‹РїРѕР»РЅРёС‚СЊ РґРµР№СЃС‚РІРёСЏ РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё Рё СЂР°Р·Р±РѕСЂР°
 	/// </summary>
 	private void AfterLoadElements()
 	{
@@ -320,7 +320,7 @@ public partial class FormMain : Form
 
 	private void SetButtonAddToOriginal()
 	{
-		buttonAdd.Text = "Добавить";
+		buttonAdd.Text = "Р”РѕР±Р°РІРёС‚СЊ";
 		convert.SetElementsForAddDatabase(null);
 		EnableDisableControls(true);
 	}
@@ -336,10 +336,10 @@ public partial class FormMain : Form
 	}
 
 	private static void ShowErrorMessage(string err) =>
-		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		MessageBox.Show(err, "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 	// ----------------------------------------------------
-	// отсортировать
+	// РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°С‚СЊ
 
 	private void ButtonDelete_Click(object sender, EventArgs e)
 	{
