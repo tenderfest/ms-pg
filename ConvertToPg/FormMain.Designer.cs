@@ -34,8 +34,8 @@ partial class FormMain
 		buttonCreate = new Button();
 		buttonSetup = new Button();
 		buttonLoad = new Button();
-		splitContainerEltAll = new SplitContainer();
-		splitContainerCentral = new SplitContainer();
+		splitContainerSourceElements = new SplitContainer();
+		splitContainerElementsTypesDatabases = new SplitContainer();
 		groupBoxNewDatabases = new GroupBox();
 		radioButtonNoDatabase = new RadioButton();
 		buttonDelete = new Button();
@@ -52,7 +52,7 @@ partial class FormMain
 		labelSourceElte = new Label();
 		treeView = new TreeView();
 		labelFkeys = new Label();
-		splitContainerEltText = new SplitContainer();
+		splitContainerElementsToDatabases = new SplitContainer();
 		textBoxContent = new TextBox();
 		tabControlMain = new TabControl();
 		tabPageToDatabases = new TabPage();
@@ -64,14 +64,14 @@ partial class FormMain
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
 		panelTop.SuspendLayout();
-		((System.ComponentModel.ISupportInitialize)splitContainerEltAll).BeginInit();
-		splitContainerEltAll.Panel1.SuspendLayout();
-		splitContainerEltAll.Panel2.SuspendLayout();
-		splitContainerEltAll.SuspendLayout();
-		((System.ComponentModel.ISupportInitialize)splitContainerCentral).BeginInit();
-		splitContainerCentral.Panel1.SuspendLayout();
-		splitContainerCentral.Panel2.SuspendLayout();
-		splitContainerCentral.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
+		splitContainerSourceElements.Panel1.SuspendLayout();
+		splitContainerSourceElements.Panel2.SuspendLayout();
+		splitContainerSourceElements.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerElementsTypesDatabases).BeginInit();
+		splitContainerElementsTypesDatabases.Panel1.SuspendLayout();
+		splitContainerElementsTypesDatabases.Panel2.SuspendLayout();
+		splitContainerElementsTypesDatabases.SuspendLayout();
 		groupBoxNewDatabases.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSource).BeginInit();
 		splitContainerSource.Panel1.SuspendLayout();
@@ -79,10 +79,10 @@ partial class FormMain
 		splitContainerSource.SuspendLayout();
 		groupBoxManySelect.SuspendLayout();
 		groupBoxShowTable.SuspendLayout();
-		((System.ComponentModel.ISupportInitialize)splitContainerEltText).BeginInit();
-		splitContainerEltText.Panel1.SuspendLayout();
-		splitContainerEltText.Panel2.SuspendLayout();
-		splitContainerEltText.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerElementsToDatabases).BeginInit();
+		splitContainerElementsToDatabases.Panel1.SuspendLayout();
+		splitContainerElementsToDatabases.Panel2.SuspendLayout();
+		splitContainerElementsToDatabases.SuspendLayout();
 		tabControlMain.SuspendLayout();
 		tabPageToDatabases.SuspendLayout();
 		tabPageResult.SuspendLayout();
@@ -93,7 +93,6 @@ partial class FormMain
 		// 
 		panelTop.Controls.Add(labelInfo);
 		panelTop.Controls.Add(buttonSave);
-		panelTop.Controls.Add(buttonCreate);
 		panelTop.Controls.Add(buttonSetup);
 		panelTop.Controls.Add(buttonLoad);
 		panelTop.Dock = DockStyle.Top;
@@ -128,9 +127,9 @@ partial class FormMain
 		// 
 		buttonCreate.Dock = DockStyle.Right;
 		buttonCreate.Enabled = false;
-		buttonCreate.Location = new Point(930, 0);
+		buttonCreate.Location = new Point(919, 19);
 		buttonCreate.Name = "buttonCreate";
-		buttonCreate.Size = new Size(115, 34);
+		buttonCreate.Size = new Size(115, 27);
 		buttonCreate.TabIndex = 1;
 		buttonCreate.Text = "Сформировать";
 		buttonCreate.UseVisualStyleBackColor = true;
@@ -158,41 +157,41 @@ partial class FormMain
 		buttonLoad.UseVisualStyleBackColor = true;
 		buttonLoad.Click += ButtonLoad_Click;
 		// 
-		// splitContainerEltAll
+		// splitContainerSourceElements
 		// 
-		splitContainerEltAll.Dock = DockStyle.Fill;
-		splitContainerEltAll.Location = new Point(0, 0);
-		splitContainerEltAll.Name = "splitContainerEltAll";
+		splitContainerSourceElements.Dock = DockStyle.Fill;
+		splitContainerSourceElements.Location = new Point(0, 0);
+		splitContainerSourceElements.Name = "splitContainerSourceElements";
 		// 
-		// splitContainerEltAll.Panel1
+		// splitContainerSourceElements.Panel1
 		// 
-		splitContainerEltAll.Panel1.Controls.Add(splitContainerCentral);
+		splitContainerSourceElements.Panel1.Controls.Add(splitContainerElementsTypesDatabases);
 		// 
-		// splitContainerEltAll.Panel2
+		// splitContainerSourceElements.Panel2
 		// 
-		splitContainerEltAll.Panel2.Controls.Add(splitContainerSource);
-		splitContainerEltAll.Size = new Size(1031, 360);
-		splitContainerEltAll.SplitterDistance = 311;
-		splitContainerEltAll.TabIndex = 1;
+		splitContainerSourceElements.Panel2.Controls.Add(splitContainerSource);
+		splitContainerSourceElements.Size = new Size(1031, 360);
+		splitContainerSourceElements.SplitterDistance = 311;
+		splitContainerSourceElements.TabIndex = 1;
 		// 
-		// splitContainerCentral
+		// splitContainerElementsTypesDatabases
 		// 
-		splitContainerCentral.Dock = DockStyle.Fill;
-		splitContainerCentral.Location = new Point(0, 0);
-		splitContainerCentral.Name = "splitContainerCentral";
+		splitContainerElementsTypesDatabases.Dock = DockStyle.Fill;
+		splitContainerElementsTypesDatabases.Location = new Point(0, 0);
+		splitContainerElementsTypesDatabases.Name = "splitContainerElementsTypesDatabases";
 		// 
-		// splitContainerCentral.Panel1
+		// splitContainerElementsTypesDatabases.Panel1
 		// 
-		splitContainerCentral.Panel1.Controls.Add(groupBoxNewDatabases);
-		splitContainerCentral.Panel1.Controls.Add(buttonDelete);
-		splitContainerCentral.Panel1.Controls.Add(buttonAdd);
+		splitContainerElementsTypesDatabases.Panel1.Controls.Add(groupBoxNewDatabases);
+		splitContainerElementsTypesDatabases.Panel1.Controls.Add(buttonDelete);
+		splitContainerElementsTypesDatabases.Panel1.Controls.Add(buttonAdd);
 		// 
-		// splitContainerCentral.Panel2
+		// splitContainerElementsTypesDatabases.Panel2
 		// 
-		splitContainerCentral.Panel2.Controls.Add(groupBoxCheckElmType);
-		splitContainerCentral.Size = new Size(311, 360);
-		splitContainerCentral.SplitterDistance = 151;
-		splitContainerCentral.TabIndex = 7;
+		splitContainerElementsTypesDatabases.Panel2.Controls.Add(groupBoxCheckElmType);
+		splitContainerElementsTypesDatabases.Size = new Size(311, 360);
+		splitContainerElementsTypesDatabases.SplitterDistance = 151;
+		splitContainerElementsTypesDatabases.TabIndex = 7;
 		// 
 		// groupBoxNewDatabases
 		// 
@@ -391,23 +390,23 @@ partial class FormMain
 		labelFkeys.Text = "Зависимые элементы";
 		labelFkeys.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// splitContainerEltText
+		// splitContainerElementsToDatabases
 		// 
-		splitContainerEltText.Dock = DockStyle.Fill;
-		splitContainerEltText.Location = new Point(3, 3);
-		splitContainerEltText.Name = "splitContainerEltText";
-		splitContainerEltText.Orientation = Orientation.Horizontal;
+		splitContainerElementsToDatabases.Dock = DockStyle.Fill;
+		splitContainerElementsToDatabases.Location = new Point(3, 3);
+		splitContainerElementsToDatabases.Name = "splitContainerElementsToDatabases";
+		splitContainerElementsToDatabases.Orientation = Orientation.Horizontal;
 		// 
-		// splitContainerEltText.Panel1
+		// splitContainerElementsToDatabases.Panel1
 		// 
-		splitContainerEltText.Panel1.Controls.Add(splitContainerEltAll);
+		splitContainerElementsToDatabases.Panel1.Controls.Add(splitContainerSourceElements);
 		// 
-		// splitContainerEltText.Panel2
+		// splitContainerElementsToDatabases.Panel2
 		// 
-		splitContainerEltText.Panel2.Controls.Add(textBoxContent);
-		splitContainerEltText.Size = new Size(1031, 521);
-		splitContainerEltText.SplitterDistance = 360;
-		splitContainerEltText.TabIndex = 5;
+		splitContainerElementsToDatabases.Panel2.Controls.Add(textBoxContent);
+		splitContainerElementsToDatabases.Size = new Size(1031, 521);
+		splitContainerElementsToDatabases.SplitterDistance = 360;
+		splitContainerElementsToDatabases.TabIndex = 5;
 		// 
 		// textBoxContent
 		// 
@@ -434,7 +433,7 @@ partial class FormMain
 		// 
 		// tabPageToDatabases
 		// 
-		tabPageToDatabases.Controls.Add(splitContainerEltText);
+		tabPageToDatabases.Controls.Add(splitContainerElementsToDatabases);
 		tabPageToDatabases.Location = new Point(4, 24);
 		tabPageToDatabases.Name = "tabPageToDatabases";
 		tabPageToDatabases.Padding = new Padding(3);
@@ -468,11 +467,12 @@ partial class FormMain
 		// 
 		groupBoxResultFilter.Controls.Add(radioButtonResultOk);
 		groupBoxResultFilter.Controls.Add(radioButtonResultAlert);
+		groupBoxResultFilter.Controls.Add(buttonCreate);
 		groupBoxResultFilter.Controls.Add(radioButtonResultShowAll);
 		groupBoxResultFilter.Dock = DockStyle.Top;
 		groupBoxResultFilter.Location = new Point(0, 15);
 		groupBoxResultFilter.Name = "groupBoxResultFilter";
-		groupBoxResultFilter.Size = new Size(1037, 41);
+		groupBoxResultFilter.Size = new Size(1037, 49);
 		groupBoxResultFilter.TabIndex = 4;
 		groupBoxResultFilter.TabStop = false;
 		groupBoxResultFilter.Text = "Показать результат";
@@ -483,7 +483,7 @@ partial class FormMain
 		radioButtonResultOk.Dock = DockStyle.Left;
 		radioButtonResultOk.Location = new Point(196, 19);
 		radioButtonResultOk.Name = "radioButtonResultOk";
-		radioButtonResultOk.Size = new Size(106, 19);
+		radioButtonResultOk.Size = new Size(106, 27);
 		radioButtonResultOk.TabIndex = 3;
 		radioButtonResultOk.Text = "Утверждённые";
 		radioButtonResultOk.UseVisualStyleBackColor = true;
@@ -494,7 +494,7 @@ partial class FormMain
 		radioButtonResultAlert.Dock = DockStyle.Left;
 		radioButtonResultAlert.Location = new Point(47, 19);
 		radioButtonResultAlert.Name = "radioButtonResultAlert";
-		radioButtonResultAlert.Size = new Size(149, 19);
+		radioButtonResultAlert.Size = new Size(149, 27);
 		radioButtonResultAlert.TabIndex = 2;
 		radioButtonResultAlert.Text = "Требующие внимания";
 		radioButtonResultAlert.UseVisualStyleBackColor = true;
@@ -506,7 +506,7 @@ partial class FormMain
 		radioButtonResultShowAll.Dock = DockStyle.Left;
 		radioButtonResultShowAll.Location = new Point(3, 19);
 		radioButtonResultShowAll.Name = "radioButtonResultShowAll";
-		radioButtonResultShowAll.Size = new Size(44, 19);
+		radioButtonResultShowAll.Size = new Size(44, 27);
 		radioButtonResultShowAll.TabIndex = 1;
 		radioButtonResultShowAll.TabStop = true;
 		radioButtonResultShowAll.Text = "Все";
@@ -535,14 +535,14 @@ partial class FormMain
 		Text = "Преобразование из MS SQL в PostgreSQL";
 		panelTop.ResumeLayout(false);
 		panelTop.PerformLayout();
-		splitContainerEltAll.Panel1.ResumeLayout(false);
-		splitContainerEltAll.Panel2.ResumeLayout(false);
-		((System.ComponentModel.ISupportInitialize)splitContainerEltAll).EndInit();
-		splitContainerEltAll.ResumeLayout(false);
-		splitContainerCentral.Panel1.ResumeLayout(false);
-		splitContainerCentral.Panel2.ResumeLayout(false);
-		((System.ComponentModel.ISupportInitialize)splitContainerCentral).EndInit();
-		splitContainerCentral.ResumeLayout(false);
+		splitContainerSourceElements.Panel1.ResumeLayout(false);
+		splitContainerSourceElements.Panel2.ResumeLayout(false);
+		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).EndInit();
+		splitContainerSourceElements.ResumeLayout(false);
+		splitContainerElementsTypesDatabases.Panel1.ResumeLayout(false);
+		splitContainerElementsTypesDatabases.Panel2.ResumeLayout(false);
+		((System.ComponentModel.ISupportInitialize)splitContainerElementsTypesDatabases).EndInit();
+		splitContainerElementsTypesDatabases.ResumeLayout(false);
 		groupBoxNewDatabases.ResumeLayout(false);
 		groupBoxNewDatabases.PerformLayout();
 		splitContainerSource.Panel1.ResumeLayout(false);
@@ -553,11 +553,11 @@ partial class FormMain
 		groupBoxManySelect.PerformLayout();
 		groupBoxShowTable.ResumeLayout(false);
 		groupBoxShowTable.PerformLayout();
-		splitContainerEltText.Panel1.ResumeLayout(false);
-		splitContainerEltText.Panel2.ResumeLayout(false);
-		splitContainerEltText.Panel2.PerformLayout();
-		((System.ComponentModel.ISupportInitialize)splitContainerEltText).EndInit();
-		splitContainerEltText.ResumeLayout(false);
+		splitContainerElementsToDatabases.Panel1.ResumeLayout(false);
+		splitContainerElementsToDatabases.Panel2.ResumeLayout(false);
+		splitContainerElementsToDatabases.Panel2.PerformLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerElementsToDatabases).EndInit();
+		splitContainerElementsToDatabases.ResumeLayout(false);
 		tabControlMain.ResumeLayout(false);
 		tabPageToDatabases.ResumeLayout(false);
 		tabPageResult.ResumeLayout(false);
@@ -572,9 +572,9 @@ partial class FormMain
 	private Button buttonSave;
 	private Button buttonCreate;
 	private Button buttonLoad;
-	private SplitContainer splitContainerEltAll;
+	private SplitContainer splitContainerSourceElements;
 	private Button buttonSetup;
-	private SplitContainer splitContainerEltText;
+	private SplitContainer splitContainerElementsToDatabases;
 	private TextBox textBoxContent;
 	private Label labelInfo;
 	private SplitContainer splitContainerSource;
@@ -588,7 +588,7 @@ partial class FormMain
 	private Label labelSourceElte;
 	private TreeView treeView;
 	private Label labelFkeys;
-	private SplitContainer splitContainerCentral;
+	private SplitContainer splitContainerElementsTypesDatabases;
 	private GroupBox groupBoxNewDatabases;
 	private RadioButton radioButtonNoDatabase;
 	private Button buttonDelete;

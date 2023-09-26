@@ -331,7 +331,7 @@ public partial class FormMain : Form
 		textBoxContent.Enabled =
 		groupBoxCheckElmType.Enabled =
 		splitContainerSource.Enabled =
-		splitContainerEltAll.Panel2.Enabled =
+		splitContainerSourceElements.Panel2.Enabled =
 			isEnable;
 	}
 
