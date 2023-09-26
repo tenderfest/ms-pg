@@ -31,9 +31,9 @@ partial class FormMain
 		panelTop = new Panel();
 		labelInfo = new Label();
 		buttonSave = new Button();
-		buttonCreate = new Button();
 		buttonSetup = new Button();
 		buttonLoad = new Button();
+		buttonCreate = new Button();
 		splitContainerSourceElements = new SplitContainer();
 		splitContainerElementsTypesDatabases = new SplitContainer();
 		groupBoxNewDatabases = new GroupBox();
@@ -57,12 +57,28 @@ partial class FormMain
 		tabControlMain = new TabControl();
 		tabPageToDatabases = new TabPage();
 		tabPageProcedureText = new TabPage();
+		splitContainerEditSources = new SplitContainer();
+		groupBoxEditDatabasesList = new GroupBox();
+		radioButtonEditDatabaseAll = new RadioButton();
 		tabPageResult = new TabPage();
 		groupBoxResultFilter = new GroupBox();
 		radioButtonResultOk = new RadioButton();
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		groupBoxEditElementStates = new GroupBox();
+		radioButtonEditOk = new RadioButton();
+		radioButtonEditAlert = new RadioButton();
+		buttonEditConfirmElement = new Button();
+		radioButtonEditAll = new RadioButton();
+		splitContainerEditElement = new SplitContainer();
+		groupBoxEditElementsType = new GroupBox();
+		radioButtonEditElementView = new RadioButton();
+		radioButtonEditElementTable = new RadioButton();
+		radioButtonEditTypeAll = new RadioButton();
+		radioButtonEditElementProcedure = new RadioButton();
+		listViewEditElements = new ListView();
+		textBoxEditElement = new TextBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -85,8 +101,20 @@ partial class FormMain
 		splitContainerElementsToDatabases.SuspendLayout();
 		tabControlMain.SuspendLayout();
 		tabPageToDatabases.SuspendLayout();
+		tabPageProcedureText.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerEditSources).BeginInit();
+		splitContainerEditSources.Panel1.SuspendLayout();
+		splitContainerEditSources.Panel2.SuspendLayout();
+		splitContainerEditSources.SuspendLayout();
+		groupBoxEditDatabasesList.SuspendLayout();
 		tabPageResult.SuspendLayout();
 		groupBoxResultFilter.SuspendLayout();
+		groupBoxEditElementStates.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerEditElement).BeginInit();
+		splitContainerEditElement.Panel1.SuspendLayout();
+		splitContainerEditElement.Panel2.SuspendLayout();
+		splitContainerEditElement.SuspendLayout();
+		groupBoxEditElementsType.SuspendLayout();
 		SuspendLayout();
 		// 
 		// panelTop
@@ -123,17 +151,6 @@ partial class FormMain
 		buttonSave.UseVisualStyleBackColor = true;
 		buttonSave.Click += ButtonSave_Click;
 		// 
-		// buttonCreate
-		// 
-		buttonCreate.Dock = DockStyle.Right;
-		buttonCreate.Enabled = false;
-		buttonCreate.Location = new Point(919, 19);
-		buttonCreate.Name = "buttonCreate";
-		buttonCreate.Size = new Size(115, 27);
-		buttonCreate.TabIndex = 1;
-		buttonCreate.Text = "Сформировать";
-		buttonCreate.UseVisualStyleBackColor = true;
-		// 
 		// buttonSetup
 		// 
 		buttonSetup.BackColor = SystemColors.ControlDark;
@@ -156,6 +173,17 @@ partial class FormMain
 		buttonLoad.Text = "Открыть";
 		buttonLoad.UseVisualStyleBackColor = true;
 		buttonLoad.Click += ButtonLoad_Click;
+		// 
+		// buttonCreate
+		// 
+		buttonCreate.Dock = DockStyle.Right;
+		buttonCreate.Enabled = false;
+		buttonCreate.Location = new Point(919, 19);
+		buttonCreate.Name = "buttonCreate";
+		buttonCreate.Size = new Size(115, 27);
+		buttonCreate.TabIndex = 1;
+		buttonCreate.Text = "Сформировать";
+		buttonCreate.UseVisualStyleBackColor = true;
 		// 
 		// splitContainerSourceElements
 		// 
@@ -444,6 +472,7 @@ partial class FormMain
 		// 
 		// tabPageProcedureText
 		// 
+		tabPageProcedureText.Controls.Add(splitContainerEditSources);
 		tabPageProcedureText.Location = new Point(4, 24);
 		tabPageProcedureText.Name = "tabPageProcedureText";
 		tabPageProcedureText.Padding = new Padding(3);
@@ -451,6 +480,48 @@ partial class FormMain
 		tabPageProcedureText.TabIndex = 1;
 		tabPageProcedureText.Text = "Доработка текстов процедур";
 		tabPageProcedureText.UseVisualStyleBackColor = true;
+		// 
+		// splitContainerEditSources
+		// 
+		splitContainerEditSources.Dock = DockStyle.Fill;
+		splitContainerEditSources.Location = new Point(3, 3);
+		splitContainerEditSources.Name = "splitContainerEditSources";
+		// 
+		// splitContainerEditSources.Panel1
+		// 
+		splitContainerEditSources.Panel1.Controls.Add(groupBoxEditDatabasesList);
+		// 
+		// splitContainerEditSources.Panel2
+		// 
+		splitContainerEditSources.Panel2.Controls.Add(splitContainerEditElement);
+		splitContainerEditSources.Panel2.Controls.Add(groupBoxEditElementsType);
+		splitContainerEditSources.Panel2.Controls.Add(groupBoxEditElementStates);
+		splitContainerEditSources.Size = new Size(1031, 521);
+		splitContainerEditSources.SplitterDistance = 140;
+		splitContainerEditSources.TabIndex = 0;
+		// 
+		// groupBoxEditDatabasesList
+		// 
+		groupBoxEditDatabasesList.Controls.Add(radioButtonEditDatabaseAll);
+		groupBoxEditDatabasesList.Dock = DockStyle.Fill;
+		groupBoxEditDatabasesList.Location = new Point(0, 0);
+		groupBoxEditDatabasesList.Name = "groupBoxEditDatabasesList";
+		groupBoxEditDatabasesList.Size = new Size(140, 521);
+		groupBoxEditDatabasesList.TabIndex = 0;
+		groupBoxEditDatabasesList.TabStop = false;
+		groupBoxEditDatabasesList.Text = "Базы данных";
+		// 
+		// radioButtonEditDatabaseAll
+		// 
+		radioButtonEditDatabaseAll.AutoSize = true;
+		radioButtonEditDatabaseAll.Dock = DockStyle.Top;
+		radioButtonEditDatabaseAll.ForeColor = SystemColors.ControlText;
+		radioButtonEditDatabaseAll.Location = new Point(3, 19);
+		radioButtonEditDatabaseAll.Name = "radioButtonEditDatabaseAll";
+		radioButtonEditDatabaseAll.Size = new Size(134, 19);
+		radioButtonEditDatabaseAll.TabIndex = 8;
+		radioButtonEditDatabaseAll.Text = "Все";
+		radioButtonEditDatabaseAll.UseVisualStyleBackColor = true;
 		// 
 		// tabPageResult
 		// 
@@ -523,6 +594,162 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// groupBoxEditElementStates
+		// 
+		groupBoxEditElementStates.Controls.Add(radioButtonEditOk);
+		groupBoxEditElementStates.Controls.Add(radioButtonEditAlert);
+		groupBoxEditElementStates.Controls.Add(buttonEditConfirmElement);
+		groupBoxEditElementStates.Controls.Add(radioButtonEditAll);
+		groupBoxEditElementStates.Dock = DockStyle.Top;
+		groupBoxEditElementStates.Location = new Point(0, 0);
+		groupBoxEditElementStates.Name = "groupBoxEditElementStates";
+		groupBoxEditElementStates.Size = new Size(887, 50);
+		groupBoxEditElementStates.TabIndex = 5;
+		groupBoxEditElementStates.TabStop = false;
+		groupBoxEditElementStates.Text = "Элементы для доработки";
+		// 
+		// radioButtonEditOk
+		// 
+		radioButtonEditOk.AutoSize = true;
+		radioButtonEditOk.Dock = DockStyle.Left;
+		radioButtonEditOk.Location = new Point(196, 19);
+		radioButtonEditOk.Name = "radioButtonEditOk";
+		radioButtonEditOk.Size = new Size(106, 28);
+		radioButtonEditOk.TabIndex = 3;
+		radioButtonEditOk.Text = "Утверждённые";
+		radioButtonEditOk.UseVisualStyleBackColor = true;
+		// 
+		// radioButtonEditAlert
+		// 
+		radioButtonEditAlert.AutoSize = true;
+		radioButtonEditAlert.Dock = DockStyle.Left;
+		radioButtonEditAlert.Location = new Point(47, 19);
+		radioButtonEditAlert.Name = "radioButtonEditAlert";
+		radioButtonEditAlert.Size = new Size(149, 28);
+		radioButtonEditAlert.TabIndex = 2;
+		radioButtonEditAlert.Text = "Требующие внимания";
+		radioButtonEditAlert.UseVisualStyleBackColor = true;
+		// 
+		// buttonEditConfirmElement
+		// 
+		buttonEditConfirmElement.Dock = DockStyle.Right;
+		buttonEditConfirmElement.Enabled = false;
+		buttonEditConfirmElement.Location = new Point(769, 19);
+		buttonEditConfirmElement.Name = "buttonEditConfirmElement";
+		buttonEditConfirmElement.Size = new Size(115, 28);
+		buttonEditConfirmElement.TabIndex = 1;
+		buttonEditConfirmElement.Text = "Утвердить";
+		buttonEditConfirmElement.UseVisualStyleBackColor = true;
+		// 
+		// radioButtonEditAll
+		// 
+		radioButtonEditAll.AutoSize = true;
+		radioButtonEditAll.Checked = true;
+		radioButtonEditAll.Dock = DockStyle.Left;
+		radioButtonEditAll.Location = new Point(3, 19);
+		radioButtonEditAll.Name = "radioButtonEditAll";
+		radioButtonEditAll.Size = new Size(44, 28);
+		radioButtonEditAll.TabIndex = 1;
+		radioButtonEditAll.TabStop = true;
+		radioButtonEditAll.Text = "Все";
+		radioButtonEditAll.UseVisualStyleBackColor = true;
+		// 
+		// splitContainerEditElement
+		// 
+		splitContainerEditElement.Dock = DockStyle.Fill;
+		splitContainerEditElement.Location = new Point(0, 100);
+		splitContainerEditElement.Name = "splitContainerEditElement";
+		// 
+		// splitContainerEditElement.Panel1
+		// 
+		splitContainerEditElement.Panel1.Controls.Add(listViewEditElements);
+		// 
+		// splitContainerEditElement.Panel2
+		// 
+		splitContainerEditElement.Panel2.Controls.Add(textBoxEditElement);
+		splitContainerEditElement.Size = new Size(887, 421);
+		splitContainerEditElement.SplitterDistance = 237;
+		splitContainerEditElement.TabIndex = 6;
+		// 
+		// groupBoxEditElementsType
+		// 
+		groupBoxEditElementsType.Controls.Add(radioButtonEditElementProcedure);
+		groupBoxEditElementsType.Controls.Add(radioButtonEditElementView);
+		groupBoxEditElementsType.Controls.Add(radioButtonEditElementTable);
+		groupBoxEditElementsType.Controls.Add(radioButtonEditTypeAll);
+		groupBoxEditElementsType.Dock = DockStyle.Top;
+		groupBoxEditElementsType.Location = new Point(0, 50);
+		groupBoxEditElementsType.Name = "groupBoxEditElementsType";
+		groupBoxEditElementsType.Size = new Size(887, 50);
+		groupBoxEditElementsType.TabIndex = 7;
+		groupBoxEditElementsType.TabStop = false;
+		groupBoxEditElementsType.Text = "Тип элементов";
+		// 
+		// radioButtonEditElementView
+		// 
+		radioButtonEditElementView.AutoSize = true;
+		radioButtonEditElementView.Dock = DockStyle.Left;
+		radioButtonEditElementView.Location = new Point(121, 19);
+		radioButtonEditElementView.Name = "radioButtonEditElementView";
+		radioButtonEditElementView.Size = new Size(109, 28);
+		radioButtonEditElementView.TabIndex = 3;
+		radioButtonEditElementView.Text = "Представления";
+		radioButtonEditElementView.UseVisualStyleBackColor = true;
+		// 
+		// radioButtonEditElementTable
+		// 
+		radioButtonEditElementTable.AutoSize = true;
+		radioButtonEditElementTable.Dock = DockStyle.Left;
+		radioButtonEditElementTable.Location = new Point(47, 19);
+		radioButtonEditElementTable.Name = "radioButtonEditElementTable";
+		radioButtonEditElementTable.Size = new Size(74, 28);
+		radioButtonEditElementTable.TabIndex = 2;
+		radioButtonEditElementTable.Text = "Таблицы";
+		radioButtonEditElementTable.UseVisualStyleBackColor = true;
+		// 
+		// radioButtonEditTypeAll
+		// 
+		radioButtonEditTypeAll.AutoSize = true;
+		radioButtonEditTypeAll.Checked = true;
+		radioButtonEditTypeAll.Dock = DockStyle.Left;
+		radioButtonEditTypeAll.Location = new Point(3, 19);
+		radioButtonEditTypeAll.Name = "radioButtonEditTypeAll";
+		radioButtonEditTypeAll.Size = new Size(44, 28);
+		radioButtonEditTypeAll.TabIndex = 1;
+		radioButtonEditTypeAll.TabStop = true;
+		radioButtonEditTypeAll.Text = "Все";
+		radioButtonEditTypeAll.UseVisualStyleBackColor = true;
+		// 
+		// radioButtonEditElementProcedure
+		// 
+		radioButtonEditElementProcedure.AutoSize = true;
+		radioButtonEditElementProcedure.Dock = DockStyle.Left;
+		radioButtonEditElementProcedure.Location = new Point(230, 19);
+		radioButtonEditElementProcedure.Name = "radioButtonEditElementProcedure";
+		radioButtonEditElementProcedure.Size = new Size(89, 28);
+		radioButtonEditElementProcedure.TabIndex = 4;
+		radioButtonEditElementProcedure.Text = "Процедуры";
+		radioButtonEditElementProcedure.UseVisualStyleBackColor = true;
+		// 
+		// listViewEditElements
+		// 
+		listViewEditElements.Dock = DockStyle.Fill;
+		listViewEditElements.Location = new Point(0, 0);
+		listViewEditElements.Name = "listViewEditElements";
+		listViewEditElements.Size = new Size(237, 421);
+		listViewEditElements.TabIndex = 0;
+		listViewEditElements.UseCompatibleStateImageBehavior = false;
+		listViewEditElements.View = View.List;
+		// 
+		// textBoxEditElement
+		// 
+		textBoxEditElement.Dock = DockStyle.Fill;
+		textBoxEditElement.Location = new Point(0, 0);
+		textBoxEditElement.Multiline = true;
+		textBoxEditElement.Name = "textBoxEditElement";
+		textBoxEditElement.Size = new Size(646, 421);
+		textBoxEditElement.TabIndex = 0;
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -560,9 +787,25 @@ partial class FormMain
 		splitContainerElementsToDatabases.ResumeLayout(false);
 		tabControlMain.ResumeLayout(false);
 		tabPageToDatabases.ResumeLayout(false);
+		tabPageProcedureText.ResumeLayout(false);
+		splitContainerEditSources.Panel1.ResumeLayout(false);
+		splitContainerEditSources.Panel2.ResumeLayout(false);
+		((System.ComponentModel.ISupportInitialize)splitContainerEditSources).EndInit();
+		splitContainerEditSources.ResumeLayout(false);
+		groupBoxEditDatabasesList.ResumeLayout(false);
+		groupBoxEditDatabasesList.PerformLayout();
 		tabPageResult.ResumeLayout(false);
 		groupBoxResultFilter.ResumeLayout(false);
 		groupBoxResultFilter.PerformLayout();
+		groupBoxEditElementStates.ResumeLayout(false);
+		groupBoxEditElementStates.PerformLayout();
+		splitContainerEditElement.Panel1.ResumeLayout(false);
+		splitContainerEditElement.Panel2.ResumeLayout(false);
+		splitContainerEditElement.Panel2.PerformLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerEditElement).EndInit();
+		splitContainerEditElement.ResumeLayout(false);
+		groupBoxEditElementsType.ResumeLayout(false);
+		groupBoxEditElementsType.PerformLayout();
 		ResumeLayout(false);
 	}
 
@@ -603,4 +846,20 @@ partial class FormMain
 	private RadioButton radioButtonResultAlert;
 	private RadioButton radioButtonResultShowAll;
 	private Label labelResultTree;
+	private SplitContainer splitContainerEditSources;
+	private GroupBox groupBoxEditDatabasesList;
+	private RadioButton radioButtonEditDatabaseAll;
+	private GroupBox groupBoxEditElementStates;
+	private RadioButton radioButtonEditOk;
+	private RadioButton radioButtonEditAlert;
+	private Button buttonEditConfirmElement;
+	private RadioButton radioButtonEditAll;
+	private SplitContainer splitContainerEditElement;
+	private GroupBox groupBoxEditElementsType;
+	private RadioButton radioButtonEditElementProcedure;
+	private RadioButton radioButtonEditElementView;
+	private RadioButton radioButtonEditElementTable;
+	private RadioButton radioButtonEditTypeAll;
+	private ListView listViewEditElements;
+	private TextBox textBoxEditElement;
 }
