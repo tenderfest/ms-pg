@@ -520,7 +520,7 @@ partial class FormMain
 		labelResultTree.Name = "labelResultTree";
 		labelResultTree.Size = new Size(1037, 15);
 		labelResultTree.TabIndex = 3;
-		labelResultTree.Text = "Результат (порядок важен)";
+		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
 		// FormMain

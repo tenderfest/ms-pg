@@ -32,7 +32,10 @@ public class ConvertMsToPgCfg
 	{
 		if (null == Databases)
 		{
-			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore);
+			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore)
+			{
+				ConnectionString = "У этой базы данных нет строки подключения"
+			};
 			Databases = new List<OnePgDatabase> { IgnoreDatabase };
 		}
 	}

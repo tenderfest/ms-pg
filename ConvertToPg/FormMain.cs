@@ -304,7 +304,7 @@ public partial class FormMain : Form
 			groupBoxNewDatabases.Controls.Add(radioButtonDb);
 			radioButtonDb.AutoSize = true;
 			radioButtonDb.Dock = DockStyle.Top;
-			radioButtonDb.ForeColor = Color.Blue;
+			radioButtonDb.ForeColor = db.IsDefault ? Color.Red : Color.Blue;
 			radioButtonDb.Location = new Point(0, 38);
 			radioButtonDb.Name = $"radioButton{db}";
 			radioButtonDb.Size = new Size(107, 19);
