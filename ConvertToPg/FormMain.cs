@@ -396,6 +396,7 @@ public partial class FormMain : Form
 			editElements
 			.Select(e => new ListViewItem(e.ToString())
 			{
+				ForeColor = e.IsOk ? Color.Green : Color.Red,
 				Tag = e,
 			})
 			.ToArray());

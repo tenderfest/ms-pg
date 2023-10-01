@@ -1,5 +1,4 @@
 ﻿using System.IO.Compression;
-using System.Net.WebSockets;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -499,16 +498,16 @@ public class ConvertMsToPg
 
 	public List<DtElement> GetEditElements()
 	{
-		var editElements = Elements.AsEnumerable();
+		var editElements = Elements.AsEnumerable().Where(e => e.Operation == ElmOperation.Create);
 		if (CurrentEditDatabase != null)
 			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
 		switch (CurrentEditElementsType)
 		{
 			case EditElementsType.Table:
-				editElements = editElements.Where(e => e is ElTable);
+				editElements = editElements.Where(e => e.ElementType == ElmType.Table);
 				break;
 			case EditElementsType.Procedure:
-				editElements = editElements.Where(e => e is ElProcedure);
+				editElements = editElements.Where(e => e.ElementType == ElmType.Procedure);
 				break;
 		}
 		switch (CurrentShowEditElements)
