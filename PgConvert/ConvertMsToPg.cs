@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Net.WebSockets;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
@@ -6,6 +7,25 @@ using PgConvert.Config;
 using PgConvert.Element;
 
 namespace PgConvert;
+
+public enum EditElementsType
+{
+	/// <summary> Все </summary>
+	All,
+	/// <summary> Таблицы </summary>
+	Table,
+	/// <summary> Процедуры </summary>
+	Procedure,
+}
+public enum ShowEditElements
+{
+	/// <summary> Все </summary>
+	All,
+	/// <summary> Требующие внимания </summary>
+	Alert,
+	/// <summary> Утверждённые </summary>
+	Ok,
+}
 
 public class ConvertMsToPg
 {
@@ -34,6 +54,21 @@ public class ConvertMsToPg
 	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
 	/// </summary>
 	public List<DtElement> ElementsForAddDatabase { get; set; }
+
+	/// <summary>
+	/// Тип элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private EditElementsType CurrentEditElementsType { get; set; }
+
+	/// <summary>
+	/// Статус элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private ShowEditElements CurrentShowEditElements { get; set; }
+
+	/// <summary>
+	/// База данных, выбранная на вкладке "Доработка текстов процедур", null="все базы данных"
+	/// </summary>
+	public OnePgDatabase CurrentEditDatabase { get; set; }
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -454,5 +489,37 @@ public class ConvertMsToPg
 				RemoveFromDatabase(table.Triggers);
 			}
 		}
+	}
+
+	public void SetEditElementsType(EditElementsType editElementsType) =>
+		CurrentEditElementsType = editElementsType;
+
+	public void SetShowEditElements(ShowEditElements showEditElements) =>
+		CurrentShowEditElements = showEditElements;
+
+	public List<DtElement> GetEditElements()
+	{
+		var editElements = Elements.AsEnumerable();
+		if (CurrentEditDatabase != null)
+			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
+		switch (CurrentEditElementsType)
+		{
+			case EditElementsType.Table:
+				editElements = editElements.Where(e => e is ElTable);
+				break;
+			case EditElementsType.Procedure:
+				editElements = editElements.Where(e => e is ElProcedure);
+				break;
+		}
+		switch (CurrentShowEditElements)
+		{
+			case ShowEditElements.Alert:
+				editElements = editElements.Where(e => !e.IsOk);
+				break;
+			case ShowEditElements.Ok:
+				editElements = editElements.Where(e => e.IsOk);
+				break;
+		}
+		return editElements.ToList();
 	}
 }

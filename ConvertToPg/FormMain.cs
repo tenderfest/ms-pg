@@ -294,27 +294,38 @@ public partial class FormMain : Form
 
 	private void SetDatabasesRadiobuttons()
 	{
+		static RadioButton newRadioButtonDatabase(OnePgDatabase db, string name) => new()
+		{
+			Name = name,
+			AutoSize = true,
+			Dock = DockStyle.Top,
+			ForeColor = db.IsDefault ? Color.Red : Color.Blue,
+			Text = $"{db}",
+			UseVisualStyleBackColor = true,
+			Tag = db,
+		};
+
 		groupBoxNewDatabases.SuspendLayout();
 		groupBoxNewDatabases.Controls.Clear();
 		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 
+		groupBoxEditDatabasesList.SuspendLayout();
+		groupBoxEditDatabasesList.Controls.Clear();
+		groupBoxEditDatabasesList.Controls.Add(radioButtonEditDatabaseAll);
+
 		foreach (var db in convert.GetDatabases)
 		{
-			var radioButtonDb = new RadioButton();
-			groupBoxNewDatabases.Controls.Add(radioButtonDb);
-			radioButtonDb.AutoSize = true;
-			radioButtonDb.Dock = DockStyle.Top;
-			radioButtonDb.ForeColor = db.IsDefault ? Color.Red : Color.Blue;
-			radioButtonDb.Location = new Point(0, 38);
-			radioButtonDb.Name = $"radioButton{db}";
-			radioButtonDb.Size = new Size(107, 19);
-			radioButtonDb.TabIndex = 5;
-			radioButtonDb.Text = $"{db}";
-			radioButtonDb.UseVisualStyleBackColor = true;
-			radioButtonDb.Tag = db;
+			var radioButtonDb = newRadioButtonDatabase(db, $"radioButton{db}");
 			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
+			groupBoxNewDatabases.Controls.Add(radioButtonDb);
+
+			radioButtonDb = newRadioButtonDatabase(db, $"radioButtonEdit{db}");
+			radioButtonDb.CheckedChanged += RadioButtonEditDatabase_CheckedChanged;
+			groupBoxEditDatabasesList.Controls.Add(radioButtonDb);
 		}
+
 		groupBoxNewDatabases.ResumeLayout();
+		groupBoxEditDatabasesList.ResumeLayout();
 		radioButtonNoDatabase.Checked = true;
 	}
 
@@ -373,5 +384,74 @@ public partial class FormMain : Form
 		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
 			checkedListBoxElements.SetItemChecked(i, !checkedListBoxElements.CheckedItems.Contains(checkedListBoxElements.Items[i]));
 		checkedListBoxElements.EndUpdate();
+	}
+
+	private void ShowEditElements()
+	{
+		textBoxEditElement.Clear();
+		listViewEditElements.BeginUpdate();
+		listViewEditElements.Items.Clear();
+		var editElements = convert.GetEditElements();
+		listViewEditElements.Items.AddRange(
+			editElements
+			.Select(e => new ListViewItem(e.ToString())
+			{
+				Tag = e,
+			})
+			.ToArray());
+		listViewEditElements.EndUpdate();
+	}
+
+	private void RadioButtonEditDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+
+		convert.CurrentEditDatabase = radioButton.Tag as OnePgDatabase;
+		ShowEditElements();
+	}
+
+	private void RadioButtonEditElementsType_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+
+		EditElementsType editElementsType;
+		if (radioButton == radioButtonEditElementsTypeTable)
+			editElementsType = EditElementsType.Table;
+		else if (radioButton == radioButtonEditElementsTypeProcedure)
+			editElementsType = EditElementsType.Procedure;
+		else
+			editElementsType = EditElementsType.All;
+		convert.SetEditElementsType(editElementsType);
+		ShowEditElements();
+	}
+
+	private void RadioButtonEditElements_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+
+		ShowEditElements showEditElements;
+		if (radioButton == radioButtonEditElementsAlert)
+			showEditElements = PgConvert.ShowEditElements.Alert;
+		else if (radioButton == radioButtonEditElementsOk)
+			showEditElements = PgConvert.ShowEditElements.Ok;
+		else
+			showEditElements = PgConvert.ShowEditElements.All;
+		convert.SetShowEditElements(showEditElements);
+		ShowEditElements();
+	}
+
+	private void ListViewEditElements_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		textBoxEditElement.Clear();
+		if (listViewEditElements.SelectedItems.Count == 1)
+		{
+			textBoxEditElement.Text = ((DtElement)listViewEditElements.SelectedItems[0].Tag).GetElementContent;
+		}
 	}
 }

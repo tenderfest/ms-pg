@@ -22,6 +22,11 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	public string[] CommentLines { get; private set; }
 	public string DatabaseName { get; private protected set; }
 
+	/// <summary>
+	/// Признак того, что элемент проверен и, если необходимо, приведён в соответствие с требованиями T-SQL
+	/// </summary>
+	public bool IsOk { get; internal set; }
+
 	internal bool Ignore { get; private protected set; }
 	internal protected ElmOperation Operation { get; set; }
 	internal OnePgDatabase Database { get; set; }
