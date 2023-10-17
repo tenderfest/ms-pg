@@ -15,6 +15,8 @@ public enum EditElementsType
 	Table,
 	/// <summary> Процедуры </summary>
 	Procedure,
+	/// <summary> Триггер </summary>
+	Trigger,
 }
 public enum ShowEditElements
 {
@@ -310,7 +312,7 @@ public class ConvertMsToPg
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.HashCode)))
+				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.Id)))
 				{
 					element.Database = db;
 					db.Elements.Add(element);
@@ -501,15 +503,11 @@ public class ConvertMsToPg
 		var editElements = Elements.AsEnumerable().Where(e => e.Operation == ElmOperation.Create);
 		if (CurrentEditDatabase != null)
 			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
-		switch (CurrentEditElementsType)
-		{
-			case EditElementsType.Table:
-				editElements = editElements.Where(e => e.ElementType == ElmType.Table);
-				break;
-			case EditElementsType.Procedure:
-				editElements = editElements.Where(e => e.ElementType == ElmType.Procedure);
-				break;
-		}
+
+		var elmType = EditElementsTypeToElmType(CurrentEditElementsType);
+		if (elmType != ElmType.None)
+			editElements = editElements.Where(e => e.ElementType == elmType);
+
 		switch (CurrentShowEditElements)
 		{
 			case ShowEditElements.Alert:
@@ -521,4 +519,13 @@ public class ConvertMsToPg
 		}
 		return editElements.ToList();
 	}
+
+	private static ElmType EditElementsTypeToElmType(EditElementsType editElementsType) =>
+		 editElementsType switch
+		 {
+			 EditElementsType.Table => ElmType.Table,
+			 EditElementsType.Procedure => ElmType.Procedure,
+			 EditElementsType.Trigger => ElmType.Trigger,
+			 _ => ElmType.None,
+		 };
 }

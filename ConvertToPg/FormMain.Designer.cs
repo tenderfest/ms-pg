@@ -63,7 +63,12 @@ partial class FormMain
 		splitContainerEditElement = new SplitContainer();
 		listViewEditElements = new ListView();
 		textBoxEditElement = new TextBox();
+		panelEditText = new Panel();
+		buttonEditUndo = new Button();
+		buttonEditAllUndo = new Button();
+		buttonEditSave = new Button();
 		groupBoxEditElementsType = new GroupBox();
+		radioButtonEditElementsTypeTrigger = new RadioButton();
 		radioButtonEditElementsTypeProcedure = new RadioButton();
 		radioButtonEditElementsTypeTable = new RadioButton();
 		radioButtonEditElementsTypeAll = new RadioButton();
@@ -110,6 +115,7 @@ partial class FormMain
 		splitContainerEditElement.Panel1.SuspendLayout();
 		splitContainerEditElement.Panel2.SuspendLayout();
 		splitContainerEditElement.SuspendLayout();
+		panelEditText.SuspendLayout();
 		groupBoxEditElementsType.SuspendLayout();
 		groupBoxEditElementStates.SuspendLayout();
 		tabPageResult.SuspendLayout();
@@ -448,6 +454,7 @@ partial class FormMain
 		// 
 		// tabControlMain
 		// 
+		tabControlMain.Alignment = TabAlignment.Bottom;
 		tabControlMain.Controls.Add(tabPageToDatabases);
 		tabControlMain.Controls.Add(tabPageProcedureText);
 		tabControlMain.Controls.Add(tabPageResult);
@@ -461,7 +468,7 @@ partial class FormMain
 		// tabPageToDatabases
 		// 
 		tabPageToDatabases.Controls.Add(splitContainerElementsToDatabases);
-		tabPageToDatabases.Location = new Point(4, 24);
+		tabPageToDatabases.Location = new Point(4, 4);
 		tabPageToDatabases.Name = "tabPageToDatabases";
 		tabPageToDatabases.Padding = new Padding(3);
 		tabPageToDatabases.Size = new Size(1037, 527);
@@ -472,7 +479,7 @@ partial class FormMain
 		// tabPageProcedureText
 		// 
 		tabPageProcedureText.Controls.Add(splitContainerEditSources);
-		tabPageProcedureText.Location = new Point(4, 24);
+		tabPageProcedureText.Location = new Point(4, 4);
 		tabPageProcedureText.Name = "tabPageProcedureText";
 		tabPageProcedureText.Padding = new Padding(3);
 		tabPageProcedureText.Size = new Size(1037, 527);
@@ -536,6 +543,7 @@ partial class FormMain
 		// splitContainerEditElement.Panel2
 		// 
 		splitContainerEditElement.Panel2.Controls.Add(textBoxEditElement);
+		splitContainerEditElement.Panel2.Controls.Add(panelEditText);
 		splitContainerEditElement.Size = new Size(887, 421);
 		splitContainerEditElement.SplitterDistance = 237;
 		splitContainerEditElement.TabIndex = 6;
@@ -554,14 +562,61 @@ partial class FormMain
 		// textBoxEditElement
 		// 
 		textBoxEditElement.Dock = DockStyle.Fill;
-		textBoxEditElement.Location = new Point(0, 0);
+		textBoxEditElement.Location = new Point(0, 28);
 		textBoxEditElement.Multiline = true;
 		textBoxEditElement.Name = "textBoxEditElement";
-		textBoxEditElement.Size = new Size(646, 421);
+		textBoxEditElement.ScrollBars = ScrollBars.Both;
+		textBoxEditElement.Size = new Size(646, 393);
 		textBoxEditElement.TabIndex = 0;
+		textBoxEditElement.WordWrap = false;
+		// 
+		// panelEditText
+		// 
+		panelEditText.Controls.Add(buttonEditUndo);
+		panelEditText.Controls.Add(buttonEditAllUndo);
+		panelEditText.Controls.Add(buttonEditSave);
+		panelEditText.Dock = DockStyle.Top;
+		panelEditText.Location = new Point(0, 0);
+		panelEditText.Name = "panelEditText";
+		panelEditText.Size = new Size(646, 28);
+		panelEditText.TabIndex = 1;
+		// 
+		// buttonEditUndo
+		// 
+		buttonEditUndo.Dock = DockStyle.Left;
+		buttonEditUndo.Enabled = false;
+		buttonEditUndo.Location = new Point(115, 0);
+		buttonEditUndo.Name = "buttonEditUndo";
+		buttonEditUndo.Size = new Size(115, 28);
+		buttonEditUndo.TabIndex = 4;
+		buttonEditUndo.Text = "Отменить";
+		buttonEditUndo.UseVisualStyleBackColor = true;
+		// 
+		// buttonEditAllUndo
+		// 
+		buttonEditAllUndo.Dock = DockStyle.Left;
+		buttonEditAllUndo.Enabled = false;
+		buttonEditAllUndo.Location = new Point(0, 0);
+		buttonEditAllUndo.Name = "buttonEditAllUndo";
+		buttonEditAllUndo.Size = new Size(115, 28);
+		buttonEditAllUndo.TabIndex = 3;
+		buttonEditAllUndo.Text = "Отменить всё";
+		buttonEditAllUndo.UseVisualStyleBackColor = true;
+		// 
+		// buttonEditSave
+		// 
+		buttonEditSave.Dock = DockStyle.Right;
+		buttonEditSave.Enabled = false;
+		buttonEditSave.Location = new Point(531, 0);
+		buttonEditSave.Name = "buttonEditSave";
+		buttonEditSave.Size = new Size(115, 28);
+		buttonEditSave.TabIndex = 2;
+		buttonEditSave.Text = "Сохранить";
+		buttonEditSave.UseVisualStyleBackColor = true;
 		// 
 		// groupBoxEditElementsType
 		// 
+		groupBoxEditElementsType.Controls.Add(radioButtonEditElementsTypeTrigger);
 		groupBoxEditElementsType.Controls.Add(radioButtonEditElementsTypeProcedure);
 		groupBoxEditElementsType.Controls.Add(radioButtonEditElementsTypeTable);
 		groupBoxEditElementsType.Controls.Add(radioButtonEditElementsTypeAll);
@@ -572,6 +627,18 @@ partial class FormMain
 		groupBoxEditElementsType.TabIndex = 7;
 		groupBoxEditElementsType.TabStop = false;
 		groupBoxEditElementsType.Text = "Тип элементов";
+		// 
+		// radioButtonEditElementsTypeTrigger
+		// 
+		radioButtonEditElementsTypeTrigger.AutoSize = true;
+		radioButtonEditElementsTypeTrigger.Dock = DockStyle.Left;
+		radioButtonEditElementsTypeTrigger.Location = new Point(210, 19);
+		radioButtonEditElementsTypeTrigger.Name = "radioButtonEditElementsTypeTrigger";
+		radioButtonEditElementsTypeTrigger.Size = new Size(77, 28);
+		radioButtonEditElementsTypeTrigger.TabIndex = 5;
+		radioButtonEditElementsTypeTrigger.Text = "Триггеры";
+		radioButtonEditElementsTypeTrigger.UseVisualStyleBackColor = true;
+		radioButtonEditElementsTypeTrigger.CheckedChanged += RadioButtonEditElementsType_CheckedChanged;
 		// 
 		// radioButtonEditElementsTypeProcedure
 		// 
@@ -678,7 +745,7 @@ partial class FormMain
 		// 
 		tabPageResult.Controls.Add(groupBoxResultFilter);
 		tabPageResult.Controls.Add(labelResultTree);
-		tabPageResult.Location = new Point(4, 24);
+		tabPageResult.Location = new Point(4, 4);
 		tabPageResult.Name = "tabPageResult";
 		tabPageResult.Size = new Size(1037, 527);
 		tabPageResult.TabIndex = 2;
@@ -794,6 +861,7 @@ partial class FormMain
 		splitContainerEditElement.Panel2.PerformLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerEditElement).EndInit();
 		splitContainerEditElement.ResumeLayout(false);
+		panelEditText.ResumeLayout(false);
 		groupBoxEditElementsType.ResumeLayout(false);
 		groupBoxEditElementsType.PerformLayout();
 		groupBoxEditElementStates.ResumeLayout(false);
@@ -856,4 +924,9 @@ partial class FormMain
 	private RadioButton radioButtonEditElementsTypeAll;
 	private ListView listViewEditElements;
 	private TextBox textBoxEditElement;
+	private Panel panelEditText;
+	private Button buttonEditAllUndo;
+	private Button buttonEditSave;
+	private Button buttonEditUndo;
+	private RadioButton radioButtonEditElementsTypeTrigger;
 }

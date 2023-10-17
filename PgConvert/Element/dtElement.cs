@@ -4,20 +4,19 @@ using PgConvert.Config;
 
 namespace PgConvert.Element;
 
-public class DtElement : BaseSelectable, IEquatable<DtElement>
+public abstract class DtElement
 {
-	public DtElement()
-	{
+	protected DtElement() =>
 		_hashCode = 0;
-	}
 
-	public DtElement(string[] lines)
+	protected DtElement(string[] lines)
 	{
 		Lines = lines;
 		// вычисление хэша для этого элемента
 		_hashCode = lines.Crc32();
 	}
 
+	public ElmType ElementType { get; private protected set; }
 	public string[] Lines { get; }
 	public string[] CommentLines { get; private set; }
 	public string DatabaseName { get; private protected set; }
@@ -107,9 +106,6 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	//	CommentLines = fromElement.CommentLines;
 	//}
 
-	//public override bool Equals(object obj) =>
-	//	obj is DtElement x && GetHashCode() == x.GetHashCode();
-
 	[JsonIgnore]
 	public string GetElementContent
 	{
@@ -132,23 +128,24 @@ public class DtElement : BaseSelectable, IEquatable<DtElement>
 	public virtual DtField[] GetFields =>
 		Array.Empty<DtField>();
 
-	private readonly int _hashCode;
-	public override int GetHashCode() =>
-		_hashCode;
-	public int HashCode =>
-		_hashCode;
+	public override string ToString() =>
+		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
+
+	/// <summary>
+	/// Разбор элемента
+	/// </summary>
+	/// <returns>Сообщение об ошибке, или null в случае отсутствия ошибок</returns>
+	internal virtual string Parse() =>
+		null;
 
 	protected string IgnoreAsString =>
 		Ignore ? "-" : string.Empty;
 
-	public override string ToString() =>
-		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
-
-	internal virtual string Parse() =>
-		null;
-
-	public bool Equals(DtElement other) =>
-		GetHashCode() == other?.GetHashCode();
+	private readonly int _hashCode;
+	public int Id =>
+		_hashCode;
+	public bool Equals(DtElement dtElement) =>
+		dtElement != null && Id == dtElement.Id;
 
 	private string linesAsString = null;
 	protected string LinesAsString

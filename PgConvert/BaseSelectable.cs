@@ -2,7 +2,6 @@
 
 namespace PgConvert;
 
-public class BaseSelectable
+public abstract class BaseSelectable
 {
-	public ElmType ElementType { get; private protected set; } 
 }

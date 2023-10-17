@@ -418,16 +418,20 @@ public partial class FormMain : Form
 		var radioButton = (RadioButton)sender;
 		if (!radioButton.Checked)
 			return;
-
-		EditElementsType editElementsType;
-		if (radioButton == radioButtonEditElementsTypeTable)
-			editElementsType = EditElementsType.Table;
-		else if (radioButton == radioButtonEditElementsTypeProcedure)
-			editElementsType = EditElementsType.Procedure;
-		else
-			editElementsType = EditElementsType.All;
-		convert.SetEditElementsType(editElementsType);
+		convert.SetEditElementsType(CheckEditElementsType(radioButton));
 		ShowEditElements();
+	}
+
+	private EditElementsType CheckEditElementsType(RadioButton radioButton)
+	{
+		if (radioButton == radioButtonEditElementsTypeTable)
+			return EditElementsType.Table;
+		else if (radioButton == radioButtonEditElementsTypeProcedure)
+			return EditElementsType.Procedure;
+		else if (radioButton == radioButtonEditElementsTypeTrigger)
+			return EditElementsType.Trigger;
+		else
+			return EditElementsType.All;
 	}
 
 	private void RadioButtonEditElements_CheckedChanged(object sender, EventArgs e)

@@ -42,7 +42,7 @@ public class OnePgDatabase
 	{
 #pragma warning disable S2365 // Properties should not make collection or array copies
 #pragma warning disable S4275 // Getters and setters should access the expected fields
-		get => Elements?.Select(e => e.HashCode).ToArray();
+		get => Elements?.Select(e => e.Id).ToArray();
 #pragma warning restore S4275 // Getters and setters should access the expected fields
 #pragma warning restore S2365 // Properties should not make collection or array copies
 

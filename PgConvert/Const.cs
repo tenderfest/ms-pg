@@ -17,7 +17,7 @@ internal static class Const
 	internal const string CASCADE = "cascade";
 	internal const string DELETE = "delete";
 
-	private static string[] _indexSign = new string[]
+	private static readonly string[] _indexSign = new string[]
 	{
 		CONSTRAINT,
 		PRIMARY,
@@ -31,11 +31,11 @@ internal static class Const
 	internal static int Crc32(this string str)
 	{
 		var crcBytes = crc32.ComputeHash(Encoding.UTF8.GetBytes(str));
-		int result = crcBytes[0] << 24;
-		result += crcBytes[1] << 16;
-		result += crcBytes[2] << 8;
-		result += crcBytes[3];
-		return result;
+		return
+			crcBytes[0] << 24 +
+			crcBytes[1] << 16 +
+			crcBytes[2] << 8 +
+			crcBytes[3];
 	}
 	internal static int Crc32(this string[] lines)
 	{
