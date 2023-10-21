@@ -7,24 +7,6 @@ namespace PgConvert.Config;
 [Serializable]
 public class ConvertMsToPgCfg
 {
-	/// <summary>
-	/// Результат измения списка баз данных
-	/// </summary>
-	public enum ResultChangeDatabaseList
-	{
-		/// <summary>
-		/// Список не изменился без ошибки
-		/// </summary>
-		None,
-		/// <summary>
-		/// Список изменился
-		/// </summary>
-		Ok,
-		/// <summary>
-		/// Ошибка, список не изменился
-		/// </summary>
-		Error,
-	}
 
 	public readonly OnePgDatabase IgnoreDatabase;
 
@@ -44,6 +26,7 @@ public class ConvertMsToPgCfg
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
 	public List<OnePgDatabase> Databases { get; set; }
+	public List<NeedCorrect> NeedCorrect { get; set; } = new List<NeedCorrect>();
 
 	[JsonIgnore]
 	public List<DtElement> FreeElements { get; set; }
@@ -104,5 +87,11 @@ public class ConvertMsToPgCfg
 	{
 		if (!FreeElements.Contains(element))
 			FreeElements.Add(element);
+	}
+
+	internal void AddNeedCorrect(DtElement element)
+	{
+		if (NeedCorrect.Find(x => x.Id == element.Id) == default)
+			NeedCorrect.Add(new NeedCorrect(element));
 	}
 }

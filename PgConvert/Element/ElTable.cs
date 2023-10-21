@@ -8,6 +8,7 @@ public class ElTable : ElBaseForTable
 	}
 
 	public List<DtField> Fields { get; private set; } = new List<DtField>();
+	public bool IsGeneratedFields => Fields?.Count(x => x.IsGenerated) > 0;
 
 	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
@@ -68,7 +69,7 @@ public class ElTable : ElBaseForTable
 		if (!indexFieldsOpen.HasValue || 0 == lengthFieldsClose)
 			return null;
 
-		var fieldsDraft = ParseDrafgFields(commaIndexList, indexFieldsOpen, lengthFieldsClose);
+		var fieldsDraft = ParseDraftFields(commaIndexList, indexFieldsOpen, lengthFieldsClose);
 		if (!fieldsDraft.Any())
 			return null;
 
@@ -105,7 +106,7 @@ public class ElTable : ElBaseForTable
 	/// <param name="indexFieldsOpen">Позиция первой (внешней) открывающей круглой скобки</param>
 	/// <param name="lengthFieldsClose">Длина строки от внешней открывающей до внешней закрывающей круглой скобки</param>
 	/// <returns>Набор подстрок, соответстваующих полям траблицы</returns>
-	private List<string> ParseDrafgFields(List<int> commaIndexList, int? indexFieldsOpen, int lengthFieldsClose)
+	private List<string> ParseDraftFields(List<int> commaIndexList, int? indexFieldsOpen, int lengthFieldsClose)
 	{
 		var fieldsDraft = new List<string>();
 		var fieldsOpenIndex = indexFieldsOpen.Value;

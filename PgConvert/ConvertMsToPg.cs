@@ -243,7 +243,7 @@ public class ConvertMsToPg
 			return errorMessage;
 
 		// разбор каждого элемента по составляющим
-		errorMessage = ParseElements();
+		errorMessage = ParseElements(Config.AddNeedCorrect);
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
@@ -336,13 +336,21 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Разбор каждого элемента по составляющим
 	/// </summary>
-	private string ParseElements()
+	private string ParseElements(Action<DtElement> addNeedCorrect)
 	{
 		foreach (var element in Elements)
 		{
 			var errorMessage = element.Parse();
 			if (!string.IsNullOrEmpty(errorMessage))
 				return errorMessage;
+
+			// определение элементов, требующих доработки
+			if (element.ElementType == ElmType.Table && ((ElTable)element).IsGeneratedFields ||
+				element.ElementType == ElmType.Procedure ||
+				element.ElementType == ElmType.Trigger)
+			{
+				addNeedCorrect(element);
+			}
 		}
 
 		// сортировка элементов по имени
@@ -358,7 +366,6 @@ public class ConvertMsToPg
 	private string ParseStrings()
 	{
 		List<string> inLines = new();
-		List<string> commentBuffer = new();
 		List<DtElement> dtElements = new();
 		foreach (var inLine in InFile)
 		{
@@ -368,7 +375,7 @@ public class ConvertMsToPg
 				if (!inLines.Any())
 					continue;
 
-				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
+				var dicValue = DtElement.GetElement(inLines.ToArray(), Config);
 				if (default != dicValue)
 				{
 					var equalElement = dtElements
@@ -379,13 +386,9 @@ public class ConvertMsToPg
 				}
 
 				inLines = new();
-				commentBuffer = new();
 			}
 			else if (!string.IsNullOrEmpty(inLine))
 			{
-				if (inLine.TrimStart().StartsWith("--"))
-					commentBuffer.Add(inLine);
-				else
 					inLines.Add(inLine);
 			}
 		}

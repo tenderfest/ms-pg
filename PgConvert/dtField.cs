@@ -52,7 +52,7 @@ public class DtField
 		if (_generated == secondPiece)
 		// вычисляемое поле
 		{
-			FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
+			FormulaPg = FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
 			Persisted = isPersisted;
 			FieldType = new DtFieldType();
 		}
@@ -94,4 +94,7 @@ public class DtField
 		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
 			IsFieldTypeNone ? "???" : FieldType)}{(
 			NotNull ? " NotNull" : string.Empty)}";
+
+	public string NeedCorrect =>
+		$"{Name}^{FormulaPg}";
 }

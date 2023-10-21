@@ -17,14 +17,21 @@ public abstract class DtElement
 	}
 
 	public ElmType ElementType { get; private protected set; }
-	public string[] Lines { get; }
-	public string[] CommentLines { get; private set; }
 	public string DatabaseName { get; private protected set; }
+	public string[] Lines { get; }
+	public string[] ClearLines =>
+		Lines
+		.Where(x => !x.Trim().StartsWith("--"))
+		.ToArray();
 
 	/// <summary>
 	/// Признак того, что элемент проверен и, если необходимо, приведён в соответствие с требованиями T-SQL
 	/// </summary>
 	public bool IsOk { get; internal set; }
+	/// <summary>
+	/// Устанавливаемый человеком признак необходимости корректировки элемента
+	/// </summary>
+	public bool IsNeedCorrect { get; set; } = true;
 
 	internal bool Ignore { get; private protected set; }
 	internal protected ElmOperation Operation { get; set; }
@@ -59,9 +66,12 @@ public abstract class DtElement
 	/// <summary>
 	/// Определение типа элемента и создание экземпляров элементов
 	/// </summary>
-	internal static DtElement GetElement(List<string> inLines, List<string> comment, ConvertMsToPgCfg config)
+	internal static DtElement GetElement(string[] lines, ConvertMsToPgCfg config)
 	{
-		var firstLineWords = inLines[0].Split(' ', StringSplitOptions.RemoveEmptyEntries);
+		var firstNotCommentLine = Array.Find(lines, x => !x.StartsWith("--"));
+		if (firstNotCommentLine == null)
+			return new DtUnknown(lines);
+		var firstLineWords = firstNotCommentLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 		var operation = firstLineWords[0].ToLower();
 		var elementKey = firstLineWords.Length > 1 ? firstLineWords[1] : string.Empty;
 		elementKey = elementKey.ToLower();
@@ -70,8 +80,6 @@ public abstract class DtElement
 			return default;
 		if (null != config.SkipElement && config.SkipElement.Contains(elementKey))
 			return default;
-
-		var lines = inLines.ToArray();
 
 		DtElement element = Element.ElementType.GetType(elementKey, operation) switch
 		{
@@ -87,16 +95,15 @@ public abstract class DtElement
 			ElmType.Exec => new ElExec(lines),
 			_ => new DtUnknown(lines),
 		};
-		element.SetFields(operation, firstLineWords, comment.ToArray());
+		element.SetFields(operation, firstLineWords);
 
 		return element;
 	}
 
-	private void SetFields(string operation, string[] firstLineWords, string[] comment)
+	private void SetFields(string operation, string[] firstLineWords)
 	{
 		Operation = ElementOperation.GetOperation(operation);
 		FirstLineWords = firstLineWords;
-		CommentLines = comment;
 	}
 
 	//public void SetFields(DtElement fromElement)
@@ -112,14 +119,9 @@ public abstract class DtElement
 		get
 		{
 			StringBuilder sb = new();
-			if (null != CommentLines)
-				foreach (var str in CommentLines)
-					sb.AppendLine(str);
-
 			if (null != Lines)
 				foreach (var str in Lines)
 					sb.AppendLine(str);
-
 			return sb.ToString();
 		}
 	}

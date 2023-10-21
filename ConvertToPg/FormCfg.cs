@@ -90,7 +90,7 @@ namespace ConvertToPg
 			{
 				if (db.IsDefault) return;
 
-				if (Cfg.AddDelDatabase(db, false) == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+				if (Cfg.AddDelDatabase(db, false) == ResultChangeDatabaseList.Ok)
 				{
 					HeightChange(false);
 					ShowDatabases(false);
@@ -131,12 +131,12 @@ namespace ConvertToPg
 			}
 
 			var addResult = Cfg.AddDelDatabase(newDatabase, true);
-			if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+			if (addResult == ResultChangeDatabaseList.Ok)
 			{
 				HeightChange(true);
 				ShowDatabases(false);
 			}
-			else if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Error)
+			else if (addResult == ResultChangeDatabaseList.Error)
 			{
 				MessageBox.Show($"База данных с именем '{newDatabase.Name}' уже существует.");
 			}
