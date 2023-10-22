@@ -1,4 +1,5 @@
 ﻿namespace PgConvert.Element;
+#pragma warning disable S2365 // Properties should not make collection or array copies
 
 public class ElTable : ElBaseForTable
 {
@@ -34,6 +35,27 @@ public class ElTable : ElBaseForTable
 		.Union(AlterTable
 			.Select(x =>
 				x as ElBaseForTable));
+
+	public string[] GeneratedFields
+	{
+		get => Fields
+			.Where(x => x.IsGenerated)
+			.Select(x => x.NeedCorrect)
+			.ToArray();
+		set
+		{
+			foreach (var correctField in value)
+			{
+				var (name, formulaPg) = DtField.GetCorrectFieldName(correctField);
+				if (null == name)
+					continue;
+				var field = Fields.Find(x => x.Name == name);
+				if (null == field)
+					continue;
+				field.FormulaPg = formulaPg;
+			}
+		}
+	}
 
 	internal override string Parse()
 	{

@@ -2,6 +2,7 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Xml.Linq;
 using PgConvert.Config;
 using PgConvert.Element;
 
@@ -81,14 +82,14 @@ public class ConvertMsToPg
 
 	public void SetConfig(
 		List<OnePgDatabase> databases,
-		int[] freeElementIds,
+		//int[] freeElementIds,
 		string[] skipOperation,
 		string[] skipElement)
 	{
 		Config = new ConvertMsToPgCfg
 		{
 			Databases = databases,
-			FreeElementIds = freeElementIds,
+			//FreeElementIds = freeElementIds,
 			SkipElement = skipOperation,
 			SkipOperation = skipElement,
 		};
@@ -243,7 +244,7 @@ public class ConvertMsToPg
 			return errorMessage;
 
 		// разбор каждого элемента по составляющим
-		errorMessage = ParseElements(Config.AddNeedCorrect);
+		errorMessage = ParseElements();
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
@@ -253,7 +254,7 @@ public class ConvertMsToPg
 			return errorMessage;
 
 		// разнесение элементов по разным БД
-		errorMessage = SortingElements();
+		errorMessage = SortingElements(Config.AddNeedCorrect);
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
@@ -293,7 +294,7 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Разнесение элементов по базам данных
 	/// </summary>
-	private string SortingElements()
+	private string SortingElements(Action<DtElement, List<DtElement>> addNeedCorrect)
 	{
 		if (Config.Databases.Contains(null))
 			Config.Databases = Config.Databases
@@ -320,6 +321,14 @@ public class ConvertMsToPg
 
 				if (null == element.Database)
 					freeElements.Add(element);
+
+				// определение элементов, требующих доработки
+				if (element.ElementType == ElmType.Table && ((ElTable)element).IsGeneratedFields ||
+					element.ElementType == ElmType.Procedure ||
+					element.ElementType == ElmType.Trigger)
+				{
+					addNeedCorrect(element, Elements);
+				}
 			}
 			Config.FreeElements = freeElements;
 			if (freeElementsNum != Config.FreeElementIds.Length)
@@ -336,21 +345,13 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Разбор каждого элемента по составляющим
 	/// </summary>
-	private string ParseElements(Action<DtElement> addNeedCorrect)
+	private string ParseElements()
 	{
 		foreach (var element in Elements)
 		{
 			var errorMessage = element.Parse();
 			if (!string.IsNullOrEmpty(errorMessage))
 				return errorMessage;
-
-			// определение элементов, требующих доработки
-			if (element.ElementType == ElmType.Table && ((ElTable)element).IsGeneratedFields ||
-				element.ElementType == ElmType.Procedure ||
-				element.ElementType == ElmType.Trigger)
-			{
-				addNeedCorrect(element);
-			}
 		}
 
 		// сортировка элементов по имени

@@ -1,40 +1,69 @@
 ﻿using PgConvert.Element;
 
-namespace PgConvert.Config
-{
-#pragma warning disable S2365 // Properties should not make collection or array copies
+namespace PgConvert.Config;
+#pragma warning disable S4275 // Getters and setters should access the expected fields
 
-	/// <summary>
-	/// Элемент, требующий доработки
-	/// </summary>
-	public class NeedCorrect
-	{
-		public NeedCorrect(DtElement element) =>
+/// <summary>
+/// Элемент, требующий доработки
+/// </summary>
+public class NeedCorrect
+{
+	private DtElement Element { get; set; }
+	public NeedCorrect() { }
+	public NeedCorrect(DtElement element) =>
 			Element = element;
 
-		private DtElement Element { get; }
-
-		public int Id =>
-			Element.Id;
-
-		public string[] Lines =>
-			 Element.ElementType switch
-			 {
-				 ElmType.Procedure => ((ElProcedure)Element).LinesPg,
-				 ElmType.Trigger => Element.Lines,
-				 ElmType.Table => GeneratedFields,
-				 _ => Array.Empty<string>()
-			 };
-
-		private string[] GeneratedFields =>
-			((ElTable)Element).Fields
-			.Where(x => x.IsGenerated)
-			.Select(x => x.NeedCorrect)
-			.ToArray();
-
-		//public bool IsNeedCorrect =>
-		//	element.IsNeedCorrect;
-		//public ElmType ElementType =>
-		//	element.ElementType;
+	internal void SetElement(DtElement element)
+	{
+		Element = element;
+		switch (Element.ElementType)
+		{
+			case ElmType.Procedure:
+				((ElProcedure)Element).LinesPg = _savedLines;
+				break;
+			case ElmType.Trigger:
+				((ElTrigger)Element).LinesPg = _savedLines;
+				break;
+			case ElmType.Table:
+				((ElTable)Element).GeneratedFields = _savedLines;
+				break;
+		};
 	}
+
+	public int Id
+	{
+		get => Element.Id;
+		set => _id = value;
+	}
+
+	private string[] _savedLines;
+	private int _id;
+
+	public string[] Lines
+	{
+		get => Element.ElementType switch
+		{
+			ElmType.Procedure => ((ElProcedure)Element).LinesPg,
+			ElmType.Trigger => ((ElTrigger)Element).LinesPg,
+			ElmType.Table => GeneratedFields,
+			_ => Array.Empty<string>()
+		};
+		set
+		{
+			_savedLines = value;
+		}
+	}
+
+	private string[] GeneratedFields =>
+		Element is ElTable table
+		? table.GeneratedFields
+		: Array.Empty<string>();
+
+	internal bool Equal(int id) =>
+		id == _id;
+
+	//public bool IsNeedCorrect =>
+	//	element.IsNeedCorrect;
+	//public ElmType ElementType =>
+	//	element.ElementType;
 }

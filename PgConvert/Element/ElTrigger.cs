@@ -1,4 +1,6 @@
-﻿namespace PgConvert.Element;
+﻿using System.Text.Json.Serialization;
+
+namespace PgConvert.Element;
 
 public class ElTrigger : ElBaseForTable
 {
@@ -8,9 +10,20 @@ public class ElTrigger : ElBaseForTable
 	}
 
 	/// <summary>
-	/// Текст триггера в терминах PostgreSQL
+	/// Тип триггера
+	/// </summary>
+	[JsonIgnore]
+	public TriggerType TriggerType { get; }
+
+	/// <summary>
+	/// Текст тела функции для триггера в терминах PostgreSQL
 	/// </summary>
 	public string[] LinesPg { get; set; }
+
+	/// <summary>
+	/// Текст для самого триггера в терминах PostgreSQL
+	/// </summary>
+	public string TriggerPg { get; set; }
 
 	public override string ToString() =>
 		base.ToString() + $" ON ({string.Join(',', TableNames)})";

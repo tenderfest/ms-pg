@@ -1,13 +1,15 @@
 ﻿using PgConvert.Element;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Xml.Linq;
 
 namespace PgConvert.Config;
+#pragma warning disable S2365 // Properties should not make collection or array copies
+#pragma warning disable S4275 // Getters and setters should access the expected fields
 
 [Serializable]
 public class ConvertMsToPgCfg
 {
-
 	public readonly OnePgDatabase IgnoreDatabase;
 
 	public ConvertMsToPgCfg()
@@ -26,21 +28,16 @@ public class ConvertMsToPgCfg
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
 	public List<OnePgDatabase> Databases { get; set; }
-	public List<NeedCorrect> NeedCorrect { get; set; } = new List<NeedCorrect>();
+	public List<NeedCorrect> NeedCorrect { get; set; }
 
 	[JsonIgnore]
 	public List<DtElement> FreeElements { get; set; }
 
-	private int[] _freeElementIds;
+	//private int[] _freeElementIds;
 	public int[] FreeElementIds
 	{
-#pragma warning disable S2365 // Properties should not make collection or array copies
-#pragma warning disable S4275 // Getters and setters should access the expected fields
 		get => FreeElements?.Select(e => e.Id).ToArray();
-#pragma warning restore S4275 // Getters and setters should access the expected fields
-#pragma warning restore S2365 // Properties should not make collection or array copies
-
-		set => _freeElementIds = value;
+		//set => _freeElementIds = value;
 	}
 
 	public static string[] GetSkipArrayFromText(string text) =>
@@ -89,9 +86,13 @@ public class ConvertMsToPgCfg
 			FreeElements.Add(element);
 	}
 
-	internal void AddNeedCorrect(DtElement element)
+	internal void AddNeedCorrect(DtElement element, List<DtElement> elementList)
 	{
-		if (NeedCorrect.Find(x => x.Id == element.Id) == default)
+		NeedCorrect ??= new List<NeedCorrect>();
+		var presentElement = NeedCorrect.Find(x => x.Equal(element.Id));
+		if (default == presentElement)
 			NeedCorrect.Add(new NeedCorrect(element));
+		else
+			presentElement.SetElement(element);
 	}
 }

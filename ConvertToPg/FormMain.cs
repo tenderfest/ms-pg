@@ -92,7 +92,7 @@ public partial class FormMain : Form
 
 		convert.SetConfig(
 			cfg.Databases,
-			cfg.FreeElementIds,
+			//cfg.FreeElementIds,
 			formCfg.SkipOperation,
 			formCfg.SkipElement);
 

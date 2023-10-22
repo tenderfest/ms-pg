@@ -4,6 +4,7 @@ namespace PgConvert;
 
 public class DtField
 {
+	public const string _correctSygn = "^";
 	private const string _generated = "as";
 	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
@@ -95,6 +96,16 @@ public class DtField
 			IsFieldTypeNone ? "???" : FieldType)}{(
 			NotNull ? " NotNull" : string.Empty)}";
 
+	internal static (string, string) GetCorrectFieldName(string correctField)
+	{
+		if (string.IsNullOrEmpty(correctField))
+			return (null, null);
+		var name = correctField.Split(_correctSygn);
+		if (name.Length != 2)
+			return (null, null);
+		return (name[0], name[1]);
+	}
+
 	public string NeedCorrect =>
-		$"{Name}^{FormulaPg}";
+		$"{Name}{_correctSygn}{FormulaPg}";
 }

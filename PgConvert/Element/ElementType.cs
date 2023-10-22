@@ -19,6 +19,17 @@ public enum ElmType
 }
 
 /// <summary>
+/// Тип триггера
+/// </summary>
+public enum TriggerType
+{
+	None = 0,
+	Insert,
+	Update,
+	Delete,
+}
+
+/// <summary>
 /// Методы работы с типами элементов
 /// </summary>
 internal static class ElementType
