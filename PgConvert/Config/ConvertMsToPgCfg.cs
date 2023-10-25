@@ -5,7 +5,6 @@ using System.Xml.Linq;
 
 namespace PgConvert.Config;
 #pragma warning disable S2365 // Properties should not make collection or array copies
-#pragma warning disable S4275 // Getters and setters should access the expected fields
 
 [Serializable]
 public class ConvertMsToPgCfg
@@ -33,12 +32,8 @@ public class ConvertMsToPgCfg
 	[JsonIgnore]
 	public List<DtElement> FreeElements { get; set; }
 
-	//private int[] _freeElementIds;
-	public int[] FreeElementIds
-	{
-		get => FreeElements?.Select(e => e.Id).ToArray();
-		//set => _freeElementIds = value;
-	}
+	public int[] FreeElementIds =>
+		FreeElements?.Select(e => e.Id).ToArray();
 
 	public static string[] GetSkipArrayFromText(string text) =>
 		text?.Split('\n')
@@ -86,7 +81,7 @@ public class ConvertMsToPgCfg
 			FreeElements.Add(element);
 	}
 
-	internal void AddNeedCorrect(DtElement element, List<DtElement> elementList)
+	internal void AddNeedCorrect(DtElement element)
 	{
 		NeedCorrect ??= new List<NeedCorrect>();
 		var presentElement = NeedCorrect.Find(x => x.Equal(element.Id));

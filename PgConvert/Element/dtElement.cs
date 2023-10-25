@@ -4,6 +4,7 @@ using PgConvert.Config;
 
 namespace PgConvert.Element;
 
+#pragma warning disable S2365 // Properties should not make collection or array copies
 public abstract class DtElement
 {
 	protected DtElement() =>

@@ -294,7 +294,7 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Разнесение элементов по базам данных
 	/// </summary>
-	private string SortingElements(Action<DtElement, List<DtElement>> addNeedCorrect)
+	private string SortingElements(Action<DtElement> addNeedCorrect)
 	{
 		if (Config.Databases.Contains(null))
 			Config.Databases = Config.Databases
@@ -327,7 +327,7 @@ public class ConvertMsToPg
 					element.ElementType == ElmType.Procedure ||
 					element.ElementType == ElmType.Trigger)
 				{
-					addNeedCorrect(element, Elements);
+					addNeedCorrect(element);
 				}
 			}
 			Config.FreeElements = freeElements;

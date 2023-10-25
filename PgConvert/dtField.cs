@@ -2,6 +2,7 @@
 
 namespace PgConvert;
 
+#pragma warning disable IDE0056 // Использовать оператор индекса
 public class DtField
 {
 	public const string _correctSygn = "^";
@@ -9,6 +10,9 @@ public class DtField
 	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
 	private const string _null = "null";
+
+	private string GeneratedFieldPg => 
+		$"{Name} numeric GENERATED ALWAYS AS (height_cm / 2.54) STORED";
 
 	public string Name { get; set; }
 	public DtFieldType FieldType { get; set; }
@@ -34,7 +38,6 @@ public class DtField
 	public bool IsFieldTypeNone =>
 		FldType.None == FieldType?.FieldType;
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	public DtField(string[] pieces)
 	{
 		while (pieces.Length < 3)

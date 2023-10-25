@@ -1,7 +1,6 @@
 ﻿using PgConvert.Element;
 
 namespace PgConvert.Config;
-#pragma warning disable S4275 // Getters and setters should access the expected fields
 
 /// <summary>
 /// Элемент, требующий доработки
@@ -19,13 +18,13 @@ public class NeedCorrect
 		switch (Element.ElementType)
 		{
 			case ElmType.Procedure:
-				((ElProcedure)Element).LinesPg = _savedLines;
+				((ElProcedure)Element).LinesPg = SavedLines;
 				break;
 			case ElmType.Trigger:
-				((ElTrigger)Element).LinesPg = _savedLines;
+				((ElTrigger)Element).LinesPg = SavedLines;
 				break;
 			case ElmType.Table:
-				((ElTable)Element).GeneratedFields = _savedLines;
+				((ElTable)Element).GeneratedFields = SavedLines;
 				break;
 		};
 	}
@@ -33,25 +32,24 @@ public class NeedCorrect
 	public int Id
 	{
 		get => Element.Id;
-		set => _id = value;
+		set => IdTemp = value;
 	}
 
-	private string[] _savedLines;
-	private int _id;
+	private string[] SavedLines { get; set; }
+	private int IdTemp { get; set; }
 
 	public string[] Lines
 	{
-		get => Element.ElementType switch
-		{
-			ElmType.Procedure => ((ElProcedure)Element).LinesPg,
-			ElmType.Trigger => ((ElTrigger)Element).LinesPg,
-			ElmType.Table => GeneratedFields,
-			_ => Array.Empty<string>()
-		};
-		set
-		{
-			_savedLines = value;
-		}
+		get =>
+			Element.ElementType switch
+			{
+				ElmType.Procedure => ((ElProcedure)Element).LinesPg,
+				ElmType.Trigger => ((ElTrigger)Element).LinesPg,
+				ElmType.Table => GeneratedFields,
+				_ => Array.Empty<string>()
+			};
+		set =>
+			SavedLines = value;
 	}
 
 	private string[] GeneratedFields =>
@@ -60,7 +58,7 @@ public class NeedCorrect
 		: Array.Empty<string>();
 
 	internal bool Equal(int id) =>
-		id == _id;
+		id == IdTemp;
 
 	//public bool IsNeedCorrect =>
 	//	element.IsNeedCorrect;
