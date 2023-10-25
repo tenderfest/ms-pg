@@ -62,8 +62,9 @@ partial class FormMain
 		radioButtonEditDatabaseAll = new RadioButton();
 		splitContainerEditElement = new SplitContainer();
 		listViewEditElements = new ListView();
-		textBoxEditElement = new TextBox();
+		textBoxEditProcedure = new TextBox();
 		panelEditText = new Panel();
+		labelEditElementType = new Label();
 		buttonEditUndo = new Button();
 		buttonEditAllUndo = new Button();
 		buttonEditSave = new Button();
@@ -83,6 +84,10 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		tabControlEditElement = new TabControl();
+		tabPageTable = new TabPage();
+		tabPageProcedure = new TabPage();
+		tabPageTrigger = new TabPage();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -120,6 +125,8 @@ partial class FormMain
 		groupBoxEditElementStates.SuspendLayout();
 		tabPageResult.SuspendLayout();
 		groupBoxResultFilter.SuspendLayout();
+		tabControlEditElement.SuspendLayout();
+		tabPageProcedure.SuspendLayout();
 		SuspendLayout();
 		// 
 		// panelTop
@@ -542,7 +549,7 @@ partial class FormMain
 		// 
 		// splitContainerEditElement.Panel2
 		// 
-		splitContainerEditElement.Panel2.Controls.Add(textBoxEditElement);
+		splitContainerEditElement.Panel2.Controls.Add(tabControlEditElement);
 		splitContainerEditElement.Panel2.Controls.Add(panelEditText);
 		splitContainerEditElement.Size = new Size(887, 421);
 		splitContainerEditElement.SplitterDistance = 237;
@@ -559,19 +566,21 @@ partial class FormMain
 		listViewEditElements.View = View.List;
 		listViewEditElements.SelectedIndexChanged += ListViewEditElements_SelectedIndexChanged;
 		// 
-		// textBoxEditElement
+		// textBoxEditProcedure
 		// 
-		textBoxEditElement.Dock = DockStyle.Fill;
-		textBoxEditElement.Location = new Point(0, 28);
-		textBoxEditElement.Multiline = true;
-		textBoxEditElement.Name = "textBoxEditElement";
-		textBoxEditElement.ScrollBars = ScrollBars.Both;
-		textBoxEditElement.Size = new Size(646, 393);
-		textBoxEditElement.TabIndex = 0;
-		textBoxEditElement.WordWrap = false;
+		textBoxEditProcedure.Dock = DockStyle.Fill;
+		textBoxEditProcedure.Location = new Point(3, 3);
+		textBoxEditProcedure.Multiline = true;
+		textBoxEditProcedure.Name = "textBoxEditProcedure";
+		textBoxEditProcedure.ScrollBars = ScrollBars.Both;
+		textBoxEditProcedure.Size = new Size(632, 359);
+		textBoxEditProcedure.TabIndex = 0;
+		textBoxEditProcedure.Text = "Первая Строка";
+		textBoxEditProcedure.WordWrap = false;
 		// 
 		// panelEditText
 		// 
+		panelEditText.Controls.Add(labelEditElementType);
 		panelEditText.Controls.Add(buttonEditUndo);
 		panelEditText.Controls.Add(buttonEditAllUndo);
 		panelEditText.Controls.Add(buttonEditSave);
@@ -580,6 +589,15 @@ partial class FormMain
 		panelEditText.Name = "panelEditText";
 		panelEditText.Size = new Size(646, 28);
 		panelEditText.TabIndex = 1;
+		// 
+		// labelEditElementType
+		// 
+		labelEditElementType.AutoSize = true;
+		labelEditElementType.Location = new Point(236, 7);
+		labelEditElementType.Name = "labelEditElementType";
+		labelEditElementType.Size = new Size(12, 15);
+		labelEditElementType.TabIndex = 5;
+		labelEditElementType.Text = "-";
 		// 
 		// buttonEditUndo
 		// 
@@ -812,6 +830,48 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// tabControlEditElement
+		// 
+		tabControlEditElement.Controls.Add(tabPageTable);
+		tabControlEditElement.Controls.Add(tabPageProcedure);
+		tabControlEditElement.Controls.Add(tabPageTrigger);
+		tabControlEditElement.Dock = DockStyle.Fill;
+		tabControlEditElement.Location = new Point(0, 28);
+		tabControlEditElement.Name = "tabControlEditElement";
+		tabControlEditElement.SelectedIndex = 0;
+		tabControlEditElement.Size = new Size(646, 393);
+		tabControlEditElement.TabIndex = 2;
+		// 
+		// tabPageTable
+		// 
+		tabPageTable.Location = new Point(4, 24);
+		tabPageTable.Name = "tabPageTable";
+		tabPageTable.Padding = new Padding(3);
+		tabPageTable.Size = new Size(390, 239);
+		tabPageTable.TabIndex = 0;
+		tabPageTable.Text = "Таблица";
+		tabPageTable.UseVisualStyleBackColor = true;
+		// 
+		// tabPageProcedure
+		// 
+		tabPageProcedure.Controls.Add(textBoxEditProcedure);
+		tabPageProcedure.Location = new Point(4, 24);
+		tabPageProcedure.Name = "tabPageProcedure";
+		tabPageProcedure.Padding = new Padding(3);
+		tabPageProcedure.Size = new Size(638, 365);
+		tabPageProcedure.TabIndex = 1;
+		tabPageProcedure.Text = "Процедура";
+		tabPageProcedure.UseVisualStyleBackColor = true;
+		// 
+		// tabPageTrigger
+		// 
+		tabPageTrigger.Location = new Point(4, 24);
+		tabPageTrigger.Name = "tabPageTrigger";
+		tabPageTrigger.Size = new Size(390, 239);
+		tabPageTrigger.TabIndex = 2;
+		tabPageTrigger.Text = "Триггер";
+		tabPageTrigger.UseVisualStyleBackColor = true;
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -858,10 +918,10 @@ partial class FormMain
 		groupBoxEditDatabasesList.PerformLayout();
 		splitContainerEditElement.Panel1.ResumeLayout(false);
 		splitContainerEditElement.Panel2.ResumeLayout(false);
-		splitContainerEditElement.Panel2.PerformLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerEditElement).EndInit();
 		splitContainerEditElement.ResumeLayout(false);
 		panelEditText.ResumeLayout(false);
+		panelEditText.PerformLayout();
 		groupBoxEditElementsType.ResumeLayout(false);
 		groupBoxEditElementsType.PerformLayout();
 		groupBoxEditElementStates.ResumeLayout(false);
@@ -869,6 +929,9 @@ partial class FormMain
 		tabPageResult.ResumeLayout(false);
 		groupBoxResultFilter.ResumeLayout(false);
 		groupBoxResultFilter.PerformLayout();
+		tabControlEditElement.ResumeLayout(false);
+		tabPageProcedure.ResumeLayout(false);
+		tabPageProcedure.PerformLayout();
 		ResumeLayout(false);
 	}
 
@@ -923,10 +986,15 @@ partial class FormMain
 	private RadioButton radioButtonEditElementsTypeTable;
 	private RadioButton radioButtonEditElementsTypeAll;
 	private ListView listViewEditElements;
-	private TextBox textBoxEditElement;
+	private TextBox textBoxEditProcedure;
 	private Panel panelEditText;
 	private Button buttonEditAllUndo;
 	private Button buttonEditSave;
 	private Button buttonEditUndo;
 	private RadioButton radioButtonEditElementsTypeTrigger;
+	private Label labelEditElementType;
+	private TabControl tabControlEditElement;
+	private TabPage tabPageTable;
+	private TabPage tabPageProcedure;
+	private TabPage tabPageTrigger;
 }

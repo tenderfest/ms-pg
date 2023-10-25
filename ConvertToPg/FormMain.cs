@@ -388,7 +388,7 @@ public partial class FormMain : Form
 
 	private void ShowEditElements()
 	{
-		textBoxEditElement.Clear();
+		textBoxEditProcedure.Clear();
 		listViewEditElements.BeginUpdate();
 		listViewEditElements.Items.Clear();
 		var editElements = convert.GetEditElements();
@@ -453,10 +453,10 @@ public partial class FormMain : Form
 
 	private void ListViewEditElements_SelectedIndexChanged(object sender, EventArgs e)
 	{
-		textBoxEditElement.Clear();
+		textBoxEditProcedure.Clear();
 		if (listViewEditElements.SelectedItems.Count == 1)
 		{
-			textBoxEditElement.Text = ((DtElement)listViewEditElements.SelectedItems[0].Tag).GetElementContent;
+			textBoxEditProcedure.Text = ((DtElement)listViewEditElements.SelectedItems[0].Tag).GetElementContent;
 		}
 	}
 }
