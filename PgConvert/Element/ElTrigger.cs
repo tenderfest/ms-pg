@@ -36,9 +36,9 @@ public class ElTrigger : ElBaseForTable
 		LinesPg ??= new string[Lines.Length];
 		Lines.CopyTo(LinesPg, 0);
 
-		SetTableName(ClearBraces(Lines.Length < 2
-			? "Lines.Length < 2"
-			: Lines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)[1]));
+		SetTableName(ClearBraces(ClearLines.Length < 2
+			? "ClearLines.Length < 2"
+			: ClearLines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)[1]));
 		name = ClearBraces(FirstLineWords[2]);
 
 		return null;

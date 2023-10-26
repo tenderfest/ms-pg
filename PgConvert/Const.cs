@@ -32,9 +32,9 @@ internal static class Const
 	{
 		var crcBytes = crc32.ComputeHash(Encoding.UTF8.GetBytes(str));
 		return
-			crcBytes[0] << 24 +
-			crcBytes[1] << 16 +
-			crcBytes[2] << 8 +
+			(crcBytes[0] << 24) |
+			(crcBytes[1] << 16) |
+			(crcBytes[2] << 8) |
 			crcBytes[3];
 	}
 	internal static int Crc32(this string[] lines)

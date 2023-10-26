@@ -458,10 +458,49 @@ public partial class FormMain : Form
 
 	private void ListViewEditElements_SelectedIndexChanged(object sender, EventArgs e)
 	{
-		textBoxEditProcedure.Clear();
-		if (listViewEditElements.SelectedItems.Count == 1)
+		CurrentEditElement = listViewEditElements.SelectedItems.Count == 1
+			? (DtElement)listViewEditElements.SelectedItems[0].Tag
+			: null;
+	}
+
+	/// <summary>
+	/// Отображение текущего элемента для редактирования
+	/// </summary>
+	private DtElement CurrentEditElement
+	{
+		set
 		{
-			textBoxEditProcedure.Text = ((DtElement)listViewEditElements.SelectedItems[0].Tag).GetElementContent;
+			tabControlEditElement.SuspendLayout();
+			// очистка текущего состояния
+			listViewEditTableFieldNames.Items.Clear();
+			labelEditElementType.Text =
+				textBoxEditTableCurrentField.Text =
+				textBoxEditProcedure.Text =
+				textBoxEditTriggerFunctionName.Text =
+				textBoxEditTriggerFunction.Text =
+				null;
+			if (null == value)
+				return;
+
+			// отображение нужной вкладки
+			switch (value.ElementType)
+			{
+				case ElmType.Table:
+					tabControlEditElement.SelectTab(0);
+					break;
+				case ElmType.Procedure:
+					tabControlEditElement.SelectTab(1);
+					break;
+				case ElmType.Trigger:
+					tabControlEditElement.SelectTab(2);
+					break;
+			}
+			labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
+			tabControlEditElement.SelectedTab.Focus();
+
+			// показ данных для элемента
+
+			tabControlEditElement.ResumeLayout();
 		}
 	}
 }
