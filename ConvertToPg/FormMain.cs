@@ -8,7 +8,6 @@ public partial class FormMain : Form
 {
 	private const string PrePathInFile = "..\\..\\..\\..\\..\\!Дополнительно\\2postgres";
 	private readonly ConvertMsToPg convert;
-	private readonly Color _resultColor;
 	private readonly Color _sourceColor;
 
 	private bool _isTableSelected = false;
@@ -17,10 +16,16 @@ public partial class FormMain : Form
 	public FormMain()
 	{
 		InitializeComponent();
-		_resultColor = labelResultTree.BackColor;
 		_sourceColor = labelSourceElte.BackColor;
 		convert = new ConvertMsToPg();
 		CreateElementsTypeCheckboxes();
+
+		// прячем полоску вкладок на tabControlEditElement
+		splitContainerEditElement.Panel2.SuspendLayout();
+		splitContainerEditElement.Panel2.Controls.Clear();
+		splitContainerEditElement.Panel2.Controls.Add(panelEditText);
+		splitContainerEditElement.Panel2.Controls.Add(tabControlEditElement);
+		splitContainerEditElement.Panel2.ResumeLayout(false);
 	}
 
 	/// <summary>

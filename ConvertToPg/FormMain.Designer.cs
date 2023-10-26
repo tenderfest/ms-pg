@@ -62,7 +62,24 @@ partial class FormMain
 		radioButtonEditDatabaseAll = new RadioButton();
 		splitContainerEditElement = new SplitContainer();
 		listViewEditElements = new ListView();
+		tabControlEditElement = new TabControl();
+		tabPageTable = new TabPage();
+		splitContainerEditTable = new SplitContainer();
+		groupBoxEditTableFieldNames = new GroupBox();
+		listViewEditTableFieldNames = new ListView();
+		groupBoxEditTableCurrentField = new GroupBox();
+		textBoxEditTableCurrentField = new TextBox();
+		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
+		tabPageTrigger = new TabPage();
+		groupBoxEditTriggerFunction = new GroupBox();
+		textBoxEditTriggerFunction = new TextBox();
+		labelEditTriggerFunctionEnd = new Label();
+		labelEditTriggerFunctionBegin = new Label();
+		groupBoxEditTriggerText = new GroupBox();
+		textBoxEditTriggerText = new TextBox();
+		groupBoxEditTriggerFunctionName = new GroupBox();
+		textBoxEditTriggerFunctionName = new TextBox();
 		panelEditText = new Panel();
 		labelEditElementType = new Label();
 		buttonEditUndo = new Button();
@@ -84,10 +101,6 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
-		tabControlEditElement = new TabControl();
-		tabPageTable = new TabPage();
-		tabPageProcedure = new TabPage();
-		tabPageTrigger = new TabPage();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -120,13 +133,24 @@ partial class FormMain
 		splitContainerEditElement.Panel1.SuspendLayout();
 		splitContainerEditElement.Panel2.SuspendLayout();
 		splitContainerEditElement.SuspendLayout();
+		tabControlEditElement.SuspendLayout();
+		tabPageTable.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)splitContainerEditTable).BeginInit();
+		splitContainerEditTable.Panel1.SuspendLayout();
+		splitContainerEditTable.Panel2.SuspendLayout();
+		splitContainerEditTable.SuspendLayout();
+		groupBoxEditTableFieldNames.SuspendLayout();
+		groupBoxEditTableCurrentField.SuspendLayout();
+		tabPageProcedure.SuspendLayout();
+		tabPageTrigger.SuspendLayout();
+		groupBoxEditTriggerFunction.SuspendLayout();
+		groupBoxEditTriggerText.SuspendLayout();
+		groupBoxEditTriggerFunctionName.SuspendLayout();
 		panelEditText.SuspendLayout();
 		groupBoxEditElementsType.SuspendLayout();
 		groupBoxEditElementStates.SuspendLayout();
 		tabPageResult.SuspendLayout();
 		groupBoxResultFilter.SuspendLayout();
-		tabControlEditElement.SuspendLayout();
-		tabPageProcedure.SuspendLayout();
 		SuspendLayout();
 		// 
 		// panelTop
@@ -566,17 +590,209 @@ partial class FormMain
 		listViewEditElements.View = View.List;
 		listViewEditElements.SelectedIndexChanged += ListViewEditElements_SelectedIndexChanged;
 		// 
+		// tabControlEditElement
+		// 
+		tabControlEditElement.Controls.Add(tabPageTable);
+		tabControlEditElement.Controls.Add(tabPageProcedure);
+		tabControlEditElement.Controls.Add(tabPageTrigger);
+		tabControlEditElement.Dock = DockStyle.Fill;
+		tabControlEditElement.Location = new Point(0, 28);
+		tabControlEditElement.Name = "tabControlEditElement";
+		tabControlEditElement.SelectedIndex = 0;
+		tabControlEditElement.Size = new Size(646, 393);
+		tabControlEditElement.TabIndex = 2;
+		// 
+		// tabPageTable
+		// 
+		tabPageTable.Controls.Add(splitContainerEditTable);
+		tabPageTable.Location = new Point(4, 24);
+		tabPageTable.Name = "tabPageTable";
+		tabPageTable.Padding = new Padding(3);
+		tabPageTable.Size = new Size(638, 365);
+		tabPageTable.TabIndex = 0;
+		tabPageTable.Text = "Таблица";
+		tabPageTable.UseVisualStyleBackColor = true;
+		// 
+		// splitContainerEditTable
+		// 
+		splitContainerEditTable.Dock = DockStyle.Fill;
+		splitContainerEditTable.Location = new Point(3, 3);
+		splitContainerEditTable.Name = "splitContainerEditTable";
+		// 
+		// splitContainerEditTable.Panel1
+		// 
+		splitContainerEditTable.Panel1.Controls.Add(groupBoxEditTableFieldNames);
+		// 
+		// splitContainerEditTable.Panel2
+		// 
+		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
+		splitContainerEditTable.Size = new Size(632, 359);
+		splitContainerEditTable.SplitterDistance = 210;
+		splitContainerEditTable.TabIndex = 0;
+		// 
+		// groupBoxEditTableFieldNames
+		// 
+		groupBoxEditTableFieldNames.Controls.Add(listViewEditTableFieldNames);
+		groupBoxEditTableFieldNames.Dock = DockStyle.Fill;
+		groupBoxEditTableFieldNames.Location = new Point(0, 0);
+		groupBoxEditTableFieldNames.Name = "groupBoxEditTableFieldNames";
+		groupBoxEditTableFieldNames.Size = new Size(210, 359);
+		groupBoxEditTableFieldNames.TabIndex = 1;
+		groupBoxEditTableFieldNames.TabStop = false;
+		groupBoxEditTableFieldNames.Text = "Поля таблицы";
+		// 
+		// listViewEditTableFieldNames
+		// 
+		listViewEditTableFieldNames.Dock = DockStyle.Fill;
+		listViewEditTableFieldNames.Location = new Point(3, 19);
+		listViewEditTableFieldNames.MultiSelect = false;
+		listViewEditTableFieldNames.Name = "listViewEditTableFieldNames";
+		listViewEditTableFieldNames.ShowGroups = false;
+		listViewEditTableFieldNames.Size = new Size(204, 337);
+		listViewEditTableFieldNames.TabIndex = 0;
+		listViewEditTableFieldNames.UseCompatibleStateImageBehavior = false;
+		listViewEditTableFieldNames.View = View.List;
+		// 
+		// groupBoxEditTableCurrentField
+		// 
+		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
+		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
+		groupBoxEditTableCurrentField.Location = new Point(0, 0);
+		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
+		groupBoxEditTableCurrentField.Size = new Size(418, 359);
+		groupBoxEditTableCurrentField.TabIndex = 1;
+		groupBoxEditTableCurrentField.TabStop = false;
+		groupBoxEditTableCurrentField.Text = "Значение вычисляемого поля";
+		// 
+		// textBoxEditTableCurrentField
+		// 
+		textBoxEditTableCurrentField.Dock = DockStyle.Fill;
+		textBoxEditTableCurrentField.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTableCurrentField.Location = new Point(3, 19);
+		textBoxEditTableCurrentField.Multiline = true;
+		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
+		textBoxEditTableCurrentField.Size = new Size(412, 337);
+		textBoxEditTableCurrentField.TabIndex = 0;
+		// 
+		// tabPageProcedure
+		// 
+		tabPageProcedure.Controls.Add(textBoxEditProcedure);
+		tabPageProcedure.Location = new Point(4, 24);
+		tabPageProcedure.Name = "tabPageProcedure";
+		tabPageProcedure.Padding = new Padding(3);
+		tabPageProcedure.Size = new Size(638, 365);
+		tabPageProcedure.TabIndex = 1;
+		tabPageProcedure.Text = "Процедура";
+		tabPageProcedure.UseVisualStyleBackColor = true;
+		// 
 		// textBoxEditProcedure
 		// 
 		textBoxEditProcedure.Dock = DockStyle.Fill;
+		textBoxEditProcedure.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
 		textBoxEditProcedure.Location = new Point(3, 3);
 		textBoxEditProcedure.Multiline = true;
 		textBoxEditProcedure.Name = "textBoxEditProcedure";
 		textBoxEditProcedure.ScrollBars = ScrollBars.Both;
 		textBoxEditProcedure.Size = new Size(632, 359);
 		textBoxEditProcedure.TabIndex = 0;
-		textBoxEditProcedure.Text = "Первая Строка";
 		textBoxEditProcedure.WordWrap = false;
+		// 
+		// tabPageTrigger
+		// 
+		tabPageTrigger.Controls.Add(groupBoxEditTriggerFunction);
+		tabPageTrigger.Controls.Add(groupBoxEditTriggerText);
+		tabPageTrigger.Controls.Add(groupBoxEditTriggerFunctionName);
+		tabPageTrigger.Location = new Point(4, 24);
+		tabPageTrigger.Name = "tabPageTrigger";
+		tabPageTrigger.Size = new Size(638, 365);
+		tabPageTrigger.TabIndex = 2;
+		tabPageTrigger.Text = "Триггер";
+		tabPageTrigger.UseVisualStyleBackColor = true;
+		// 
+		// groupBoxEditTriggerFunction
+		// 
+		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFunction);
+		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionEnd);
+		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionBegin);
+		groupBoxEditTriggerFunction.Dock = DockStyle.Fill;
+		groupBoxEditTriggerFunction.Location = new Point(0, 117);
+		groupBoxEditTriggerFunction.Name = "groupBoxEditTriggerFunction";
+		groupBoxEditTriggerFunction.Size = new Size(638, 248);
+		groupBoxEditTriggerFunction.TabIndex = 2;
+		groupBoxEditTriggerFunction.TabStop = false;
+		groupBoxEditTriggerFunction.Text = "Триггерная функция";
+		// 
+		// textBoxEditTriggerFunction
+		// 
+		textBoxEditTriggerFunction.Dock = DockStyle.Fill;
+		textBoxEditTriggerFunction.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerFunction.Location = new Point(3, 34);
+		textBoxEditTriggerFunction.Multiline = true;
+		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
+		textBoxEditTriggerFunction.Size = new Size(632, 196);
+		textBoxEditTriggerFunction.TabIndex = 0;
+		// 
+		// labelEditTriggerFunctionEnd
+		// 
+		labelEditTriggerFunctionEnd.Dock = DockStyle.Bottom;
+		labelEditTriggerFunctionEnd.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		labelEditTriggerFunctionEnd.Location = new Point(3, 230);
+		labelEditTriggerFunctionEnd.Name = "labelEditTriggerFunctionEnd";
+		labelEditTriggerFunctionEnd.Size = new Size(632, 15);
+		labelEditTriggerFunctionEnd.TabIndex = 2;
+		labelEditTriggerFunctionEnd.Text = "$$ LANGUAGE plpgsql;";
+		// 
+		// labelEditTriggerFunctionBegin
+		// 
+		labelEditTriggerFunctionBegin.Dock = DockStyle.Top;
+		labelEditTriggerFunctionBegin.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		labelEditTriggerFunctionBegin.Location = new Point(3, 19);
+		labelEditTriggerFunctionBegin.Name = "labelEditTriggerFunctionBegin";
+		labelEditTriggerFunctionBegin.Size = new Size(632, 15);
+		labelEditTriggerFunctionBegin.TabIndex = 1;
+		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER AS $$";
+		// 
+		// groupBoxEditTriggerText
+		// 
+		groupBoxEditTriggerText.Controls.Add(textBoxEditTriggerText);
+		groupBoxEditTriggerText.Dock = DockStyle.Top;
+		groupBoxEditTriggerText.Location = new Point(0, 45);
+		groupBoxEditTriggerText.Name = "groupBoxEditTriggerText";
+		groupBoxEditTriggerText.Size = new Size(638, 72);
+		groupBoxEditTriggerText.TabIndex = 1;
+		groupBoxEditTriggerText.TabStop = false;
+		groupBoxEditTriggerText.Text = "Триггер";
+		// 
+		// textBoxEditTriggerText
+		// 
+		textBoxEditTriggerText.Dock = DockStyle.Fill;
+		textBoxEditTriggerText.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerText.Location = new Point(3, 19);
+		textBoxEditTriggerText.Multiline = true;
+		textBoxEditTriggerText.Name = "textBoxEditTriggerText";
+		textBoxEditTriggerText.ReadOnly = true;
+		textBoxEditTriggerText.Size = new Size(632, 50);
+		textBoxEditTriggerText.TabIndex = 0;
+		// 
+		// groupBoxEditTriggerFunctionName
+		// 
+		groupBoxEditTriggerFunctionName.Controls.Add(textBoxEditTriggerFunctionName);
+		groupBoxEditTriggerFunctionName.Dock = DockStyle.Top;
+		groupBoxEditTriggerFunctionName.Location = new Point(0, 0);
+		groupBoxEditTriggerFunctionName.Name = "groupBoxEditTriggerFunctionName";
+		groupBoxEditTriggerFunctionName.Size = new Size(638, 45);
+		groupBoxEditTriggerFunctionName.TabIndex = 0;
+		groupBoxEditTriggerFunctionName.TabStop = false;
+		groupBoxEditTriggerFunctionName.Text = "Имя триггерной функции";
+		// 
+		// textBoxEditTriggerFunctionName
+		// 
+		textBoxEditTriggerFunctionName.Dock = DockStyle.Top;
+		textBoxEditTriggerFunctionName.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerFunctionName.Location = new Point(3, 19);
+		textBoxEditTriggerFunctionName.Name = "textBoxEditTriggerFunctionName";
+		textBoxEditTriggerFunctionName.Size = new Size(632, 23);
+		textBoxEditTriggerFunctionName.TabIndex = 0;
 		// 
 		// panelEditText
 		// 
@@ -830,48 +1046,6 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// tabControlEditElement
-		// 
-		tabControlEditElement.Controls.Add(tabPageTable);
-		tabControlEditElement.Controls.Add(tabPageProcedure);
-		tabControlEditElement.Controls.Add(tabPageTrigger);
-		tabControlEditElement.Dock = DockStyle.Fill;
-		tabControlEditElement.Location = new Point(0, 28);
-		tabControlEditElement.Name = "tabControlEditElement";
-		tabControlEditElement.SelectedIndex = 0;
-		tabControlEditElement.Size = new Size(646, 393);
-		tabControlEditElement.TabIndex = 2;
-		// 
-		// tabPageTable
-		// 
-		tabPageTable.Location = new Point(4, 24);
-		tabPageTable.Name = "tabPageTable";
-		tabPageTable.Padding = new Padding(3);
-		tabPageTable.Size = new Size(390, 239);
-		tabPageTable.TabIndex = 0;
-		tabPageTable.Text = "Таблица";
-		tabPageTable.UseVisualStyleBackColor = true;
-		// 
-		// tabPageProcedure
-		// 
-		tabPageProcedure.Controls.Add(textBoxEditProcedure);
-		tabPageProcedure.Location = new Point(4, 24);
-		tabPageProcedure.Name = "tabPageProcedure";
-		tabPageProcedure.Padding = new Padding(3);
-		tabPageProcedure.Size = new Size(638, 365);
-		tabPageProcedure.TabIndex = 1;
-		tabPageProcedure.Text = "Процедура";
-		tabPageProcedure.UseVisualStyleBackColor = true;
-		// 
-		// tabPageTrigger
-		// 
-		tabPageTrigger.Location = new Point(4, 24);
-		tabPageTrigger.Name = "tabPageTrigger";
-		tabPageTrigger.Size = new Size(390, 239);
-		tabPageTrigger.TabIndex = 2;
-		tabPageTrigger.Text = "Триггер";
-		tabPageTrigger.UseVisualStyleBackColor = true;
-		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -920,6 +1094,24 @@ partial class FormMain
 		splitContainerEditElement.Panel2.ResumeLayout(false);
 		((System.ComponentModel.ISupportInitialize)splitContainerEditElement).EndInit();
 		splitContainerEditElement.ResumeLayout(false);
+		tabControlEditElement.ResumeLayout(false);
+		tabPageTable.ResumeLayout(false);
+		splitContainerEditTable.Panel1.ResumeLayout(false);
+		splitContainerEditTable.Panel2.ResumeLayout(false);
+		((System.ComponentModel.ISupportInitialize)splitContainerEditTable).EndInit();
+		splitContainerEditTable.ResumeLayout(false);
+		groupBoxEditTableFieldNames.ResumeLayout(false);
+		groupBoxEditTableCurrentField.ResumeLayout(false);
+		groupBoxEditTableCurrentField.PerformLayout();
+		tabPageProcedure.ResumeLayout(false);
+		tabPageProcedure.PerformLayout();
+		tabPageTrigger.ResumeLayout(false);
+		groupBoxEditTriggerFunction.ResumeLayout(false);
+		groupBoxEditTriggerFunction.PerformLayout();
+		groupBoxEditTriggerText.ResumeLayout(false);
+		groupBoxEditTriggerText.PerformLayout();
+		groupBoxEditTriggerFunctionName.ResumeLayout(false);
+		groupBoxEditTriggerFunctionName.PerformLayout();
 		panelEditText.ResumeLayout(false);
 		panelEditText.PerformLayout();
 		groupBoxEditElementsType.ResumeLayout(false);
@@ -929,9 +1121,6 @@ partial class FormMain
 		tabPageResult.ResumeLayout(false);
 		groupBoxResultFilter.ResumeLayout(false);
 		groupBoxResultFilter.PerformLayout();
-		tabControlEditElement.ResumeLayout(false);
-		tabPageProcedure.ResumeLayout(false);
-		tabPageProcedure.PerformLayout();
 		ResumeLayout(false);
 	}
 
@@ -997,4 +1186,17 @@ partial class FormMain
 	private TabPage tabPageTable;
 	private TabPage tabPageProcedure;
 	private TabPage tabPageTrigger;
+	private SplitContainer splitContainerEditTable;
+	private GroupBox groupBoxEditTableFieldNames;
+	private ListView listViewEditTableFieldNames;
+	private TextBox textBoxEditTableCurrentField;
+	private GroupBox groupBoxEditTriggerText;
+	private TextBox textBoxEditTriggerText;
+	private GroupBox groupBoxEditTriggerFunctionName;
+	private TextBox textBoxEditTriggerFunctionName;
+	private GroupBox groupBoxEditTriggerFunction;
+	private TextBox textBoxEditTriggerFunction;
+	private Label labelEditTriggerFunctionEnd;
+	private Label labelEditTriggerFunctionBegin;
+	private GroupBox groupBoxEditTableCurrentField;
 }
