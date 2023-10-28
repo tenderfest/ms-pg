@@ -3,7 +3,7 @@
 namespace PgConvert;
 
 #pragma warning disable IDE0056 // Использовать оператор индекса
-public class DtField
+public class DtField 
 {
 	public const string _correctSygn = "^";
 	private const string _generated = "as";
@@ -11,7 +11,7 @@ public class DtField
 	private const string _not = "not";
 	private const string _null = "null";
 
-	private string GeneratedFieldPg => 
+	private string GeneratedFieldPg =>
 		$"{Name} numeric GENERATED ALWAYS AS (height_cm / 2.54) STORED";
 
 	public string Name { get; set; }
@@ -25,6 +25,14 @@ public class DtField
 	/// вычисляемое поле - формула PostgreSQL
 	/// </summary>
 	public string FormulaPg { get; set; }
+	/// <summary>
+	/// Устанавливаемый пользователем признак того, что вычисляемое поле
+	/// откорректировано для PostgreSQL
+	/// </summary>
+	public bool CorrectIsDone { get; private set; }
+	public void SetOk(bool ok) =>
+		CorrectIsDone = ok;
+
 	/// <summary>
 	/// вычисляемое сохраняемое
 	/// </summary>
@@ -110,5 +118,5 @@ public class DtField
 	}
 
 	public string NeedCorrect =>
-		$"{Name}{_correctSygn}{FormulaPg}";
+		$"{Name}{_correctSygn}{CorrectIsDone}{_correctSygn}{FormulaPg}";
 }

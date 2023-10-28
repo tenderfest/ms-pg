@@ -390,7 +390,7 @@ public class ConvertMsToPg
 			}
 			else if (!string.IsNullOrEmpty(inLine))
 			{
-					inLines.Add(inLine);
+				inLines.Add(inLine);
 			}
 		}
 
@@ -504,7 +504,10 @@ public class ConvertMsToPg
 
 	public List<DtElement> GetEditElements()
 	{
-		var editElements = Elements.AsEnumerable().Where(e => e.Operation == ElmOperation.Create);
+		var editElements = Elements
+			.AsEnumerable()
+			.Where(e => e.Operation == ElmOperation.Create && e is IEdited)
+			.Select(e => e as IEdited);
 		if (CurrentEditDatabase != null)
 			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
 
@@ -521,7 +524,7 @@ public class ConvertMsToPg
 				editElements = editElements.Where(e => e.IsOk);
 				break;
 		}
-		return editElements.ToList();
+		return editElements.Select(x => x as DtElement).ToList();
 	}
 
 	private static ElmType EditElementsTypeToElmType(EditElementsType editElementsType) =>

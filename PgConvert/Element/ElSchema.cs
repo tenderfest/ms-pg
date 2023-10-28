@@ -6,6 +6,7 @@ internal class ElSchema : DtElement
 	{
 		ElementType = ElmType.Schema;
 	}
+
 	internal override string Parse()
 	{
 

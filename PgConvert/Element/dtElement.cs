@@ -26,10 +26,6 @@ public abstract class DtElement
 		.ToArray();
 
 	/// <summary>
-	/// Признак того, что элемент проверен и, если необходимо, приведён в соответствие с требованиями T-SQL
-	/// </summary>
-	public bool IsOk { get; internal set; }
-	/// <summary>
 	/// Устанавливаемый человеком признак необходимости корректировки элемента
 	/// </summary>
 	public bool IsNeedCorrect { get; set; } = true;

@@ -1,6 +1,8 @@
-﻿namespace PgConvert.Element;
+﻿using PgConvert.Config;
 
-public class ElProcedure : DtElement
+namespace PgConvert.Element;
+
+public class ElProcedure : DtElement, IEdited
 {
 	public ElProcedure(string[] lines) : base(lines)
 	{
@@ -11,6 +13,14 @@ public class ElProcedure : DtElement
 	/// Текст процедуры в терминах PostgreSQL
 	/// </summary>
 	public string[] LinesPg { get; set; }
+
+	private bool isOk;
+	public bool IsOk => isOk;
+
+	OnePgDatabase IEdited.Database => base.Database;
+
+	public void SetOk(bool ok) =>
+		isOk = ok;
 
 	internal override string Parse()
 	{

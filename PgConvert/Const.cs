@@ -28,7 +28,7 @@ internal static class Const
 	#region метод подсчёта контрольной суммы
 
 	readonly static Crc32Algorithm crc32 = new();
-	internal static int Crc32(this string str)
+	private static int Crc32(this string str)
 	{
 		var crcBytes = crc32.ComputeHash(Encoding.UTF8.GetBytes(str));
 		return

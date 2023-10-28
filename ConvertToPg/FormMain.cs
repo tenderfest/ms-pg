@@ -401,7 +401,7 @@ public partial class FormMain : Form
 			editElements
 			.Select(e => new ListViewItem(e.ToString())
 			{
-				ForeColor = e.IsOk ? Color.Green : Color.Red,
+				ForeColor = ((IEdited)e).IsOk ? Color.Green : Color.Red,
 				Tag = e,
 			})
 			.ToArray());
@@ -471,36 +471,49 @@ public partial class FormMain : Form
 		set
 		{
 			tabControlEditElement.SuspendLayout();
-			// очистка текущего состояния
-			listViewEditTableFieldNames.Items.Clear();
-			labelEditElementType.Text =
-				textBoxEditTableCurrentField.Text =
-				textBoxEditProcedure.Text =
-				textBoxEditTriggerFunctionName.Text =
-				textBoxEditTriggerFunction.Text =
-				null;
-			if (null == value)
-				return;
-
-			// отображение нужной вкладки
-			switch (value.ElementType)
+			try
 			{
-				case ElmType.Table:
-					tabControlEditElement.SelectTab(0);
-					break;
-				case ElmType.Procedure:
-					tabControlEditElement.SelectTab(1);
-					break;
-				case ElmType.Trigger:
-					tabControlEditElement.SelectTab(2);
-					break;
+				// очистка текущего состояния
+				listViewEditTableFieldNames.Items.Clear();
+				labelEditElementType.Text =
+					textBoxEditTableCurrentField.Text =
+					textBoxEditProcedure.Text =
+					textBoxEditTriggerFunctionName.Text =
+					textBoxEditTriggerFunction.Text =
+					null;
+				if (null == value)
+					return;
+
+				// отображение нужной вкладки
+				// показ данных для элемента
+				switch (value.ElementType)
+				{
+					case ElmType.Table:
+						tabControlEditElement.SelectTab(0);
+						listViewEditTableFieldNames.Items.AddRange(
+							((ElTable)value).FieldsForCorrect.Select(x =>
+							new ListViewItem
+							{
+								Text = x.Name,
+								Tag = x,
+							})
+							.ToArray());
+						break;
+
+					case ElmType.Procedure:
+						tabControlEditElement.SelectTab(1);
+						break;
+
+					case ElmType.Trigger:
+						tabControlEditElement.SelectTab(2);
+						break;
+				}
+				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
 			}
-			labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
-			tabControlEditElement.SelectedTab.Focus();
-
-			// показ данных для элемента
-
-			tabControlEditElement.ResumeLayout();
+			finally
+			{
+				tabControlEditElement.ResumeLayout();
+			}
 		}
 	}
 }
