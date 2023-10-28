@@ -3,13 +3,14 @@
 namespace PgConvert;
 
 #pragma warning disable IDE0056 // Использовать оператор индекса
-public class DtField 
+public class DtField
 {
 	public const string _correctSygn = "^";
 	private const string _generated = "as";
 	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
 	private const string _null = "null";
+	private const string _notNull = " NotNull";
 
 	private string GeneratedFieldPg =>
 		$"{Name} numeric GENERATED ALWAYS AS (height_cm / 2.54) STORED";
@@ -105,7 +106,7 @@ public class DtField
 	public override string ToString() =>
 		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
 			IsFieldTypeNone ? "???" : FieldType)}{(
-			NotNull ? " NotNull" : string.Empty)}";
+			NotNull ? _notNull : string.Empty)}";
 
 	internal static (string, string) GetCorrectFieldName(string correctField)
 	{
@@ -119,4 +120,9 @@ public class DtField
 
 	public string NeedCorrect =>
 		$"{Name}{_correctSygn}{CorrectIsDone}{_correctSygn}{FormulaPg}";
+
+	public string GeneratedFieldToString =>
+		$"{Name}{(
+			Persisted ? $" {_persisted}" : string.Empty)}{(
+			NotNull ? _notNull : string.Empty)}";
 }

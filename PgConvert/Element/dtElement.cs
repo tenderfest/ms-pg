@@ -110,18 +110,18 @@ public abstract class DtElement
 	//	CommentLines = fromElement.CommentLines;
 	//}
 
-	[JsonIgnore]
-	public string GetElementContent
-	{
-		get
-		{
-			StringBuilder sb = new();
-			if (null != Lines)
-				foreach (var str in Lines)
-					sb.AppendLine(str);
-			return sb.ToString();
-		}
-	}
+	//[JsonIgnore]
+	//public string GetElementContent
+	//{
+	//	get
+	//	{
+	//		StringBuilder sb = new();
+	//		if (null != Lines)
+	//			foreach (var str in Lines)
+	//				sb.AppendLine(str);
+	//		return sb.ToString();
+	//	}
+	//}
 
 	[JsonIgnore]
 	public virtual DtField[] GetFields =>

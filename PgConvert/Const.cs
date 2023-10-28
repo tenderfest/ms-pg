@@ -3,7 +3,7 @@ using System.Text;
 
 namespace PgConvert;
 
-internal static class Const
+public static class Const
 {
 	internal const string FOREIGN = "foreign";
 	internal const string KEY = "key";
@@ -24,6 +24,15 @@ internal static class Const
 		UNIQUE,
 	};
 	internal static string[] IndexSign => _indexSign;
+
+	public static string ToOneString(this string[] lines)
+	{
+		StringBuilder sb = new();
+		if (null != lines)
+			foreach (var str in lines)
+				sb.AppendLine(str);
+		return sb.ToString();
+	}
 
 	#region метод подсчёта контрольной суммы
 

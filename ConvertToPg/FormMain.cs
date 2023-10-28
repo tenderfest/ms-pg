@@ -164,7 +164,7 @@ public partial class FormMain : Form
 			return;
 
 		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetElementContent;
+		textBoxContent.Text = dtElement.Lines.ToOneString();
 
 		FillTreeView(dtElement);
 	}
@@ -239,7 +239,7 @@ public partial class FormMain : Form
 		switch (treeView.SelectedNode.Tag)
 		{
 			case DtElement dtElement:
-				textBoxContent.Text = dtElement.GetElementContent;
+				textBoxContent.Text = dtElement.Lines.ToOneString();
 				break;
 			case DtField dtField:
 				textBoxContent.Text = dtField.ToString();
@@ -463,6 +463,17 @@ public partial class FormMain : Form
 			: null;
 	}
 
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		textBoxEditTableCurrentField.Text = null;
+		if (listViewEditTableFieldNames.SelectedItems.Count == 1)
+		{
+			var field = (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag;
+			textBoxEditTableCurrentField.Text = field.FormulaPg;
+			textBoxEditTableCurrentField.Enabled = field.IsGenerated;
+		}
+	}
+
 	/// <summary>
 	/// Отображение текущего элемента для редактирования
 	/// </summary>
@@ -490,18 +501,32 @@ public partial class FormMain : Form
 				{
 					case ElmType.Table:
 						tabControlEditElement.SelectTab(0);
+						// вычисляемые поля
 						listViewEditTableFieldNames.Items.AddRange(
 							((ElTable)value).FieldsForCorrect.Select(x =>
 							new ListViewItem
 							{
-								Text = x.Name,
+								Text = x.GeneratedFieldToString,
 								Tag = x,
+							})
+							.ToArray());
+						// остальные поля, для справки
+						listViewEditTableFieldNames.Items.AddRange(
+							((ElTable)value).Fields
+							.Where(x => !x.IsGenerated)
+							.Select(x =>
+							new ListViewItem
+							{
+								Text = x.ToString(),
+								Tag = x,
+								ForeColor = Color.Gray,
 							})
 							.ToArray());
 						break;
 
 					case ElmType.Procedure:
 						tabControlEditElement.SelectTab(1);
+						textBoxEditProcedure.Text = ((ElProcedure)value).LinesPg.ToOneString();
 						break;
 
 					case ElmType.Trigger:

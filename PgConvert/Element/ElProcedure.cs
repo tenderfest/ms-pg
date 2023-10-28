@@ -17,7 +17,7 @@ public class ElProcedure : DtElement, IEdited
 	private bool isOk;
 	public bool IsOk => isOk;
 
-	OnePgDatabase IEdited.Database => base.Database;
+	OnePgDatabase IEdited.Database => Database;
 
 	public void SetOk(bool ok) =>
 		isOk = ok;
@@ -28,5 +28,4 @@ public class ElProcedure : DtElement, IEdited
 		Lines.CopyTo(LinesPg, 0);
 		return null;
 	}
-
 }
