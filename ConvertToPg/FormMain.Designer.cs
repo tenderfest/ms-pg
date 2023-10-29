@@ -795,6 +795,7 @@ partial class FormMain
 		textBoxEditTriggerFunctionName.Name = "textBoxEditTriggerFunctionName";
 		textBoxEditTriggerFunctionName.Size = new Size(632, 23);
 		textBoxEditTriggerFunctionName.TabIndex = 0;
+		textBoxEditTriggerFunctionName.TextChanged += TextBoxEditTriggerFunctionName_TextChanged;
 		// 
 		// panelEditText
 		// 

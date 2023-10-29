@@ -37,7 +37,7 @@ public abstract class DtElement
 	private protected string[] FirstLineWords { get; set; }
 
 	private protected string name;
-	internal protected virtual string Name
+	public virtual string Name
 	{
 		get
 		{

@@ -36,8 +36,30 @@ public class ElTrigger : ElBaseForTable, IEdited
 	public override string ToString() =>
 		base.ToString() + $" ON ({string.Join(',', TableNames)})";
 
-	internal protected override string Name =>
+	public override string Name =>
 		name;
+
+	private string _triggerFunctionName;
+	public string TriggerFunctionName
+	{
+		get
+		{
+			if (string.IsNullOrEmpty(_triggerFunctionName))
+			{
+				var name = Name;
+				bool doubleQuot = name.EndsWith('"');
+				if (doubleQuot)
+					name = name[..^1];
+				_triggerFunctionName = $"{name}_function{(doubleQuot ? '"' : string.Empty)}";
+			}
+
+			return _triggerFunctionName;
+		}
+		set
+		{
+			_triggerFunctionName = value;
+		}
+	}
 
 	internal override string Parse()
 	{

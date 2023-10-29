@@ -531,6 +531,8 @@ public partial class FormMain : Form
 
 					case ElmType.Trigger:
 						tabControlEditElement.SelectTab(2);
+						var trigger = ((ElTrigger)value);
+						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
 						break;
 				}
 				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
@@ -540,5 +542,10 @@ public partial class FormMain : Form
 				tabControlEditElement.ResumeLayout();
 			}
 		}
+	}
+
+	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
+	{
+		textBoxEditTriggerText.Text = "";
 	}
 }

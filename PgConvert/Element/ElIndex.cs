@@ -29,7 +29,7 @@ public class ElIndex : ElBaseForTable
 	public override string ToString() =>
 		$"{base.ToString()} ON ({string.Join(',', TableNames)})";
 
-	internal protected override string Name =>
+	public override string Name =>
 		name;
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
