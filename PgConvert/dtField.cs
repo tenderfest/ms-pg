@@ -18,6 +18,7 @@ public class DtField
 	public string Name { get; set; }
 	public DtFieldType FieldType { get; set; }
 	public bool NotNull { get; set; }
+
 	/// <summary>
 	/// вычисляемое поле - формула T-SQL
 	/// </summary>
@@ -31,6 +32,10 @@ public class DtField
 	/// откорректировано для PostgreSQL
 	/// </summary>
 	public bool CorrectIsDone { get; private set; }
+
+	/// <summary>
+	/// Утверждение вычисляемого поля как подходящего для PostgreSQL
+	/// </summary>
 	public void SetOk(bool ok) =>
 		CorrectIsDone = ok;
 

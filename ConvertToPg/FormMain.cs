@@ -26,6 +26,9 @@ public partial class FormMain : Form
 		splitContainerEditElement.Panel2.Controls.Add(panelEditText);
 		splitContainerEditElement.Panel2.Controls.Add(tabControlEditElement);
 		splitContainerEditElement.Panel2.ResumeLayout(false);
+
+		// наполнение комбобокса с типами полей значениями
+		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
 	}
 
 	/// <summary>

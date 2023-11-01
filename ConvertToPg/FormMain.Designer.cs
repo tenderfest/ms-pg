@@ -69,6 +69,8 @@ partial class FormMain
 		listViewEditTableFieldNames = new ListView();
 		groupBoxEditTableCurrentField = new GroupBox();
 		textBoxEditTableCurrentField = new TextBox();
+		groupBoxEditTableCurrentFieldType = new GroupBox();
+		comboBoxEditTableCurrentFieldType = new ComboBox();
 		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
 		tabPageTrigger = new TabPage();
@@ -101,6 +103,10 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		label1 = new Label();
+		numericUpDown1 = new NumericUpDown();
+		numericUpDown2 = new NumericUpDown();
+		label2 = new Label();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -141,6 +147,7 @@ partial class FormMain
 		splitContainerEditTable.SuspendLayout();
 		groupBoxEditTableFieldNames.SuspendLayout();
 		groupBoxEditTableCurrentField.SuspendLayout();
+		groupBoxEditTableCurrentFieldType.SuspendLayout();
 		tabPageProcedure.SuspendLayout();
 		tabPageTrigger.SuspendLayout();
 		groupBoxEditTriggerFunction.SuspendLayout();
@@ -151,6 +158,8 @@ partial class FormMain
 		groupBoxEditElementStates.SuspendLayout();
 		tabPageResult.SuspendLayout();
 		groupBoxResultFilter.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+		((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
 		SuspendLayout();
 		// 
 		// panelTop
@@ -627,6 +636,7 @@ partial class FormMain
 		// splitContainerEditTable.Panel2
 		// 
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
+		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldType);
 		splitContainerEditTable.Size = new Size(632, 356);
 		splitContainerEditTable.SplitterDistance = 210;
 		splitContainerEditTable.TabIndex = 0;
@@ -659,9 +669,9 @@ partial class FormMain
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
-		groupBoxEditTableCurrentField.Location = new Point(0, 0);
+		groupBoxEditTableCurrentField.Location = new Point(0, 50);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
-		groupBoxEditTableCurrentField.Size = new Size(418, 356);
+		groupBoxEditTableCurrentField.Size = new Size(418, 306);
 		groupBoxEditTableCurrentField.TabIndex = 1;
 		groupBoxEditTableCurrentField.TabStop = false;
 		groupBoxEditTableCurrentField.Text = "Значение вычисляемого поля";
@@ -673,8 +683,31 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 334);
+		textBoxEditTableCurrentField.Size = new Size(412, 284);
 		textBoxEditTableCurrentField.TabIndex = 0;
+		// 
+		// groupBoxEditTableCurrentFieldType
+		// 
+		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDown2);
+		groupBoxEditTableCurrentFieldType.Controls.Add(label2);
+		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDown1);
+		groupBoxEditTableCurrentFieldType.Controls.Add(label1);
+		groupBoxEditTableCurrentFieldType.Controls.Add(comboBoxEditTableCurrentFieldType);
+		groupBoxEditTableCurrentFieldType.Dock = DockStyle.Top;
+		groupBoxEditTableCurrentFieldType.Location = new Point(0, 0);
+		groupBoxEditTableCurrentFieldType.Name = "groupBoxEditTableCurrentFieldType";
+		groupBoxEditTableCurrentFieldType.Size = new Size(418, 50);
+		groupBoxEditTableCurrentFieldType.TabIndex = 2;
+		groupBoxEditTableCurrentFieldType.TabStop = false;
+		groupBoxEditTableCurrentFieldType.Text = "Тип вычисляемого поля";
+		// 
+		// comboBoxEditTableCurrentFieldType
+		// 
+		comboBoxEditTableCurrentFieldType.FormattingEnabled = true;
+		comboBoxEditTableCurrentFieldType.Location = new Point(3, 19);
+		comboBoxEditTableCurrentFieldType.Name = "comboBoxEditTableCurrentFieldType";
+		comboBoxEditTableCurrentFieldType.Size = new Size(154, 23);
+		comboBoxEditTableCurrentFieldType.TabIndex = 0;
 		// 
 		// tabPageProcedure
 		// 
@@ -1049,6 +1082,40 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// label1
+		// 
+		label1.AutoSize = true;
+		label1.Location = new Point(163, 22);
+		label1.Name = "label1";
+		label1.Size = new Size(57, 15);
+		label1.TabIndex = 1;
+		label1.Text = "точность";
+		// 
+		// numericUpDown1
+		// 
+		numericUpDown1.Location = new Point(226, 19);
+		numericUpDown1.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+		numericUpDown1.Name = "numericUpDown1";
+		numericUpDown1.Size = new Size(56, 23);
+		numericUpDown1.TabIndex = 2;
+		// 
+		// numericUpDown2
+		// 
+		numericUpDown2.Location = new Point(351, 19);
+		numericUpDown2.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+		numericUpDown2.Name = "numericUpDown2";
+		numericUpDown2.Size = new Size(56, 23);
+		numericUpDown2.TabIndex = 4;
+		// 
+		// label2
+		// 
+		label2.AutoSize = true;
+		label2.Location = new Point(288, 22);
+		label2.Name = "label2";
+		label2.Size = new Size(57, 15);
+		label2.TabIndex = 3;
+		label2.Text = "масштаб";
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1106,6 +1173,8 @@ partial class FormMain
 		groupBoxEditTableFieldNames.ResumeLayout(false);
 		groupBoxEditTableCurrentField.ResumeLayout(false);
 		groupBoxEditTableCurrentField.PerformLayout();
+		groupBoxEditTableCurrentFieldType.ResumeLayout(false);
+		groupBoxEditTableCurrentFieldType.PerformLayout();
 		tabPageProcedure.ResumeLayout(false);
 		tabPageProcedure.PerformLayout();
 		tabPageTrigger.ResumeLayout(false);
@@ -1124,6 +1193,8 @@ partial class FormMain
 		tabPageResult.ResumeLayout(false);
 		groupBoxResultFilter.ResumeLayout(false);
 		groupBoxResultFilter.PerformLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+		((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
 		ResumeLayout(false);
 	}
 
@@ -1202,4 +1273,10 @@ partial class FormMain
 	private Label labelEditTriggerFunctionEnd;
 	private Label labelEditTriggerFunctionBegin;
 	private GroupBox groupBoxEditTableCurrentField;
+	private GroupBox groupBoxEditTableCurrentFieldType;
+	private ComboBox comboBoxEditTableCurrentFieldType;
+	private NumericUpDown numericUpDown2;
+	private Label label2;
+	private NumericUpDown numericUpDown1;
+	private Label label1;
 }

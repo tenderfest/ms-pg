@@ -5,6 +5,10 @@ namespace PgConvert.Element;
 
 public class ElTrigger : ElBaseForTable, IEdited
 {
+	private const char _doubleQuot = '"';
+	private const char _comma = ',';
+	private const char _space = ' ';
+
 	public ElTrigger(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Trigger;
@@ -22,8 +26,10 @@ public class ElTrigger : ElBaseForTable, IEdited
 	public string[] LinesPg { get; set; }
 
 	private bool isOk;
-	public bool IsOk => isOk;
-	OnePgDatabase IEdited.Database => base.Database;
+	public bool IsOk =>
+		isOk;
+	OnePgDatabase IEdited.Database =>
+		Database;
 
 	public void SetOk(bool ok) =>
 		isOk = ok;
@@ -34,7 +40,7 @@ public class ElTrigger : ElBaseForTable, IEdited
 	public string TriggerPg { get; set; }
 
 	public override string ToString() =>
-		base.ToString() + $" ON ({string.Join(',', TableNames)})";
+		base.ToString() + $" ON ({string.Join(_comma, TableNames)})";
 
 	public override string Name =>
 		name;
@@ -47,10 +53,10 @@ public class ElTrigger : ElBaseForTable, IEdited
 			if (string.IsNullOrEmpty(_triggerFunctionName))
 			{
 				var name = Name;
-				bool doubleQuot = name.EndsWith('"');
+				bool doubleQuot = name.EndsWith(_doubleQuot);
 				if (doubleQuot)
 					name = name[..^1];
-				_triggerFunctionName = $"{name}_function{(doubleQuot ? '"' : string.Empty)}";
+				_triggerFunctionName = $"{name}_function{(doubleQuot ? _doubleQuot : string.Empty)}";
 			}
 
 			return _triggerFunctionName;
@@ -68,7 +74,7 @@ public class ElTrigger : ElBaseForTable, IEdited
 
 		SetTableName(ClearBraces(ClearLines.Length < 2
 			? "ClearLines.Length < 2"
-			: ClearLines[1].Split(' ', StringSplitOptions.RemoveEmptyEntries)[1]));
+			: ClearLines[1].Split(_space, StringSplitOptions.RemoveEmptyEntries)[1]));
 		name = ClearBraces(FirstLineWords[2]);
 
 		return null;
