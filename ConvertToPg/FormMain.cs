@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.FileIO;
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
@@ -29,6 +30,7 @@ public partial class FormMain : Form
 
 		// наполнение комбобокса с типами полей значениями
 		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
+		comboBoxEditTableCurrentFieldType.SelectedIndex = 0;
 	}
 
 	/// <summary>
@@ -550,5 +552,16 @@ public partial class FormMain : Form
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
 	{
 		textBoxEditTriggerText.Text = "";
+	}
+
+	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
+		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
+			fieldType == FldType.Numeric ||
+			fieldType == FldType.Char ||
+			fieldType == FldType.Varchar;
+		numericUpDownScale.Enabled = labelScale.Enabled =
+			fieldType == FldType.Numeric;
 	}
 }

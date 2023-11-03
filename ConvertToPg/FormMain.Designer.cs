@@ -70,7 +70,13 @@ partial class FormMain
 		groupBoxEditTableCurrentField = new GroupBox();
 		textBoxEditTableCurrentField = new TextBox();
 		groupBoxEditTableCurrentFieldType = new GroupBox();
+		numericUpDownScale = new NumericUpDown();
+		labelScale = new Label();
+		numericUpDownPrecision = new NumericUpDown();
+		labelPrecision = new Label();
 		comboBoxEditTableCurrentFieldType = new ComboBox();
+		groupBoxEditTableCurrentFieldExample = new GroupBox();
+		labelEditTableCurrentFieldExample = new Label();
 		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
 		tabPageTrigger = new TabPage();
@@ -103,10 +109,6 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
-		label1 = new Label();
-		numericUpDown1 = new NumericUpDown();
-		numericUpDown2 = new NumericUpDown();
-		label2 = new Label();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -148,6 +150,9 @@ partial class FormMain
 		groupBoxEditTableFieldNames.SuspendLayout();
 		groupBoxEditTableCurrentField.SuspendLayout();
 		groupBoxEditTableCurrentFieldType.SuspendLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDownScale).BeginInit();
+		((System.ComponentModel.ISupportInitialize)numericUpDownPrecision).BeginInit();
+		groupBoxEditTableCurrentFieldExample.SuspendLayout();
 		tabPageProcedure.SuspendLayout();
 		tabPageTrigger.SuspendLayout();
 		groupBoxEditTriggerFunction.SuspendLayout();
@@ -158,8 +163,6 @@ partial class FormMain
 		groupBoxEditElementStates.SuspendLayout();
 		tabPageResult.SuspendLayout();
 		groupBoxResultFilter.SuspendLayout();
-		((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-		((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
 		SuspendLayout();
 		// 
 		// panelTop
@@ -637,6 +640,7 @@ partial class FormMain
 		// 
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldType);
+		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldExample);
 		splitContainerEditTable.Size = new Size(632, 356);
 		splitContainerEditTable.SplitterDistance = 210;
 		splitContainerEditTable.TabIndex = 0;
@@ -669,9 +673,9 @@ partial class FormMain
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
-		groupBoxEditTableCurrentField.Location = new Point(0, 50);
+		groupBoxEditTableCurrentField.Location = new Point(0, 94);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
-		groupBoxEditTableCurrentField.Size = new Size(418, 306);
+		groupBoxEditTableCurrentField.Size = new Size(418, 262);
 		groupBoxEditTableCurrentField.TabIndex = 1;
 		groupBoxEditTableCurrentField.TabStop = false;
 		groupBoxEditTableCurrentField.Text = "Значение вычисляемого поля";
@@ -683,23 +687,61 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 284);
+		textBoxEditTableCurrentField.Size = new Size(412, 240);
 		textBoxEditTableCurrentField.TabIndex = 0;
 		// 
 		// groupBoxEditTableCurrentFieldType
 		// 
-		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDown2);
-		groupBoxEditTableCurrentFieldType.Controls.Add(label2);
-		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDown1);
-		groupBoxEditTableCurrentFieldType.Controls.Add(label1);
+		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDownScale);
+		groupBoxEditTableCurrentFieldType.Controls.Add(labelScale);
+		groupBoxEditTableCurrentFieldType.Controls.Add(numericUpDownPrecision);
+		groupBoxEditTableCurrentFieldType.Controls.Add(labelPrecision);
 		groupBoxEditTableCurrentFieldType.Controls.Add(comboBoxEditTableCurrentFieldType);
 		groupBoxEditTableCurrentFieldType.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldType.Location = new Point(0, 0);
+		groupBoxEditTableCurrentFieldType.Location = new Point(0, 44);
 		groupBoxEditTableCurrentFieldType.Name = "groupBoxEditTableCurrentFieldType";
 		groupBoxEditTableCurrentFieldType.Size = new Size(418, 50);
 		groupBoxEditTableCurrentFieldType.TabIndex = 2;
 		groupBoxEditTableCurrentFieldType.TabStop = false;
 		groupBoxEditTableCurrentFieldType.Text = "Тип вычисляемого поля";
+		// 
+		// numericUpDownScale
+		// 
+		numericUpDownScale.Enabled = false;
+		numericUpDownScale.Location = new Point(351, 19);
+		numericUpDownScale.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+		numericUpDownScale.Name = "numericUpDownScale";
+		numericUpDownScale.Size = new Size(56, 23);
+		numericUpDownScale.TabIndex = 4;
+		// 
+		// labelScale
+		// 
+		labelScale.AutoSize = true;
+		labelScale.Enabled = false;
+		labelScale.Location = new Point(288, 22);
+		labelScale.Name = "labelScale";
+		labelScale.Size = new Size(57, 15);
+		labelScale.TabIndex = 3;
+		labelScale.Text = "масштаб";
+		// 
+		// numericUpDownPrecision
+		// 
+		numericUpDownPrecision.Enabled = false;
+		numericUpDownPrecision.Location = new Point(226, 19);
+		numericUpDownPrecision.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
+		numericUpDownPrecision.Name = "numericUpDownPrecision";
+		numericUpDownPrecision.Size = new Size(56, 23);
+		numericUpDownPrecision.TabIndex = 2;
+		// 
+		// labelPrecision
+		// 
+		labelPrecision.AutoSize = true;
+		labelPrecision.Enabled = false;
+		labelPrecision.Location = new Point(163, 22);
+		labelPrecision.Name = "labelPrecision";
+		labelPrecision.Size = new Size(57, 15);
+		labelPrecision.TabIndex = 1;
+		labelPrecision.Text = "точность";
 		// 
 		// comboBoxEditTableCurrentFieldType
 		// 
@@ -708,6 +750,29 @@ partial class FormMain
 		comboBoxEditTableCurrentFieldType.Name = "comboBoxEditTableCurrentFieldType";
 		comboBoxEditTableCurrentFieldType.Size = new Size(154, 23);
 		comboBoxEditTableCurrentFieldType.TabIndex = 0;
+		comboBoxEditTableCurrentFieldType.SelectedIndexChanged += ComboBoxEditTableCurrentFieldType_SelectedIndexChanged;
+		// 
+		// groupBoxEditTableCurrentFieldExample
+		// 
+		groupBoxEditTableCurrentFieldExample.Controls.Add(labelEditTableCurrentFieldExample);
+		groupBoxEditTableCurrentFieldExample.Dock = DockStyle.Top;
+		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 0);
+		groupBoxEditTableCurrentFieldExample.Name = "groupBoxEditTableCurrentFieldExample";
+		groupBoxEditTableCurrentFieldExample.Size = new Size(418, 44);
+		groupBoxEditTableCurrentFieldExample.TabIndex = 3;
+		groupBoxEditTableCurrentFieldExample.TabStop = false;
+		groupBoxEditTableCurrentFieldExample.Text = "Определение вычисляемого поля для PostgreSQL";
+		// 
+		// labelEditTableCurrentFieldExample
+		// 
+		labelEditTableCurrentFieldExample.AutoSize = true;
+		labelEditTableCurrentFieldExample.Dock = DockStyle.Left;
+		labelEditTableCurrentFieldExample.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		labelEditTableCurrentFieldExample.Location = new Point(3, 19);
+		labelEditTableCurrentFieldExample.Name = "labelEditTableCurrentFieldExample";
+		labelEditTableCurrentFieldExample.Size = new Size(38, 15);
+		labelEditTableCurrentFieldExample.TabIndex = 1;
+		labelEditTableCurrentFieldExample.Text = "FIELD";
 		// 
 		// tabPageProcedure
 		// 
@@ -1082,40 +1147,6 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// label1
-		// 
-		label1.AutoSize = true;
-		label1.Location = new Point(163, 22);
-		label1.Name = "label1";
-		label1.Size = new Size(57, 15);
-		label1.TabIndex = 1;
-		label1.Text = "точность";
-		// 
-		// numericUpDown1
-		// 
-		numericUpDown1.Location = new Point(226, 19);
-		numericUpDown1.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
-		numericUpDown1.Name = "numericUpDown1";
-		numericUpDown1.Size = new Size(56, 23);
-		numericUpDown1.TabIndex = 2;
-		// 
-		// numericUpDown2
-		// 
-		numericUpDown2.Location = new Point(351, 19);
-		numericUpDown2.Maximum = new decimal(new int[] { 999999, 0, 0, 0 });
-		numericUpDown2.Name = "numericUpDown2";
-		numericUpDown2.Size = new Size(56, 23);
-		numericUpDown2.TabIndex = 4;
-		// 
-		// label2
-		// 
-		label2.AutoSize = true;
-		label2.Location = new Point(288, 22);
-		label2.Name = "label2";
-		label2.Size = new Size(57, 15);
-		label2.TabIndex = 3;
-		label2.Text = "масштаб";
-		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1175,6 +1206,10 @@ partial class FormMain
 		groupBoxEditTableCurrentField.PerformLayout();
 		groupBoxEditTableCurrentFieldType.ResumeLayout(false);
 		groupBoxEditTableCurrentFieldType.PerformLayout();
+		((System.ComponentModel.ISupportInitialize)numericUpDownScale).EndInit();
+		((System.ComponentModel.ISupportInitialize)numericUpDownPrecision).EndInit();
+		groupBoxEditTableCurrentFieldExample.ResumeLayout(false);
+		groupBoxEditTableCurrentFieldExample.PerformLayout();
 		tabPageProcedure.ResumeLayout(false);
 		tabPageProcedure.PerformLayout();
 		tabPageTrigger.ResumeLayout(false);
@@ -1193,8 +1228,6 @@ partial class FormMain
 		tabPageResult.ResumeLayout(false);
 		groupBoxResultFilter.ResumeLayout(false);
 		groupBoxResultFilter.PerformLayout();
-		((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-		((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
 		ResumeLayout(false);
 	}
 
@@ -1275,8 +1308,10 @@ partial class FormMain
 	private GroupBox groupBoxEditTableCurrentField;
 	private GroupBox groupBoxEditTableCurrentFieldType;
 	private ComboBox comboBoxEditTableCurrentFieldType;
-	private NumericUpDown numericUpDown2;
-	private Label label2;
-	private NumericUpDown numericUpDown1;
-	private Label label1;
+	private NumericUpDown numericUpDownScale;
+	private Label labelScale;
+	private NumericUpDown numericUpDownPrecision;
+	private Label labelPrecision;
+	private GroupBox groupBoxEditTableCurrentFieldExample;
+	private Label labelEditTableCurrentFieldExample;
 }
