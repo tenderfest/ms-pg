@@ -486,6 +486,7 @@ public partial class FormMain : Form
 	{
 		set
 		{
+			_currentEditElement = value;
 			tabControlEditElement.SuspendLayout();
 			try
 			{
@@ -538,6 +539,9 @@ public partial class FormMain : Form
 						tabControlEditElement.SelectTab(2);
 						var trigger = ((ElTrigger)value);
 						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
+
+						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
+
 						break;
 				}
 				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
@@ -548,10 +552,15 @@ public partial class FormMain : Form
 			}
 		}
 	}
+	private DtElement _currentEditElement;
 
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
 	{
-		textBoxEditTriggerText.Text = "";
+		if (_currentEditElement is not ElTrigger trigger)
+			return;
+		textBoxEditTriggerText.Text = trigger.GetTriggerText(textBoxEditTriggerFunctionName.Text);
+		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
+		labelEditTriggerFunctionEnd.Text = trigger.GetTriggerFunctionTextEnd();
 	}
 
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)

@@ -21,12 +21,25 @@ public enum ElmType
 /// <summary>
 /// Тип триггера
 /// </summary>
+[Flags]
 public enum TriggerType
 {
 	None = 0,
-	Insert,
-	Update,
-	Delete,
+	Insert = 1,
+	Update = 1 << 1,
+	Delete = 1 << 2,
+}
+/// <summary>
+/// Условие выполнение триггера
+/// </summary>
+public enum TriggerDoing
+{
+	None = 0,
+	After,
+	/// <summary>
+	/// Триггеры INSTEAD OF могут определяться только для представлений и только на уровне строк
+	/// </summary>
+	InsteadOf,
 }
 
 /// <summary>

@@ -123,9 +123,9 @@ public abstract class DtElement
 	//	}
 	//}
 
-	[JsonIgnore]
-	public virtual DtField[] GetFields =>
-		Array.Empty<DtField>();
+	//[JsonIgnore]
+	//public virtual DtField[] GetFields =>
+	//	Array.Empty<DtField>();
 
 	public override string ToString() =>
 		$"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {Name}";
