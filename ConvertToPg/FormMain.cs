@@ -566,11 +566,17 @@ public partial class FormMain : Form
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
+
 		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
 			fieldType == FldType.Numeric ||
 			fieldType == FldType.Char ||
 			fieldType == FldType.Varchar;
+		if (!numericUpDownPrecision.Enabled)
+			numericUpDownPrecision.Value = 0;
+
 		numericUpDownScale.Enabled = labelScale.Enabled =
 			fieldType == FldType.Numeric;
+		if (!numericUpDownScale.Enabled)
+			numericUpDownScale.Value = 0;
 	}
 }

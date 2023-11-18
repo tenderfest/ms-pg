@@ -21,7 +21,9 @@ public class NeedCorrect
 				((ElProcedure)Element).LinesPg = SavedLines;
 				break;
 			case ElmType.Trigger:
-				((ElTrigger)Element).LinesPg = SavedLines;
+				var trigger = (ElTrigger)Element;
+				trigger.LinesPg = SavedLines;
+				trigger.TriggerFunctionName = FunctionNameTemp;
 				break;
 			case ElmType.Table:
 				((ElTable)Element).GeneratedFields = SavedLines;
@@ -31,12 +33,31 @@ public class NeedCorrect
 
 	public int Id
 	{
-		get => Element.Id;
-		set => IdTemp = value;
+		get =>
+			Element.Id;
+
+		set =>
+			IdTemp = value;
+	}
+
+	public string FunctionName
+	{
+		get =>
+			Element.ElementType switch
+			{
+				ElmType.Procedure => ((ElProcedure)Element).Name,
+				ElmType.Trigger => ((ElTrigger)Element).TriggerFunctionName,
+				ElmType.Table => null,
+				_ => null,
+			};
+
+		set =>
+			FunctionNameTemp = value;
 	}
 
 	private string[] SavedLines { get; set; }
 	private int IdTemp { get; set; }
+	private string FunctionNameTemp { get; set; }
 
 	public string[] Lines
 	{
@@ -46,8 +67,9 @@ public class NeedCorrect
 				ElmType.Procedure => ((ElProcedure)Element).LinesPg,
 				ElmType.Trigger => ((ElTrigger)Element).LinesPg,
 				ElmType.Table => GeneratedFields,
-				_ => Array.Empty<string>()
+				_ => Array.Empty<string>(),
 			};
+
 		set =>
 			SavedLines = value;
 	}
