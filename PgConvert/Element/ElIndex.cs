@@ -5,29 +5,32 @@ public class ElIndex : ElBaseForTable
 	private const string CHECK = "CHECK";
 	private const string CONSTRAINT = "CONSTRAINT";
 
-	public IdxType IndexType { get; set; }
 	public string[] FieldNames { get; set; }
+
 	/// <summary>
 	/// Имя таблицы, к которой применяется этот индекс
 	/// </summary>
 	public string TableName { get; set; }
-	public bool FromTable { get; set; }
 
-	public ElIndex(string[] lines, bool fromTable) : base(lines)
+	public ElIndex(string[] lines, string fromTable, string indexName = null) : base(lines)
 	{
+		if (lines == null || lines.Length == 0)
+			throw new ArgumentNullException(nameof(lines));
+
 		ElementType = ElmType.Index;
-		FromTable = fromTable;
 		Operation = ElmOperation.Create;
+		if (!string.IsNullOrEmpty(fromTable))
+		{
+			SetTableName(fromTable);
+			name = ClearBraces(indexName);
+		}
 	}
 
 	public override string ToString() =>
-		base.ToString() + $" ON ({string.Join(',', TableNames)})";
+		$"{base.ToString()} ON ({string.Join(',', TableNames)})";
 
-	internal protected override string Name =>
+	public override string Name =>
 		name;
-
-	//public override string ToString()
-	//	=> $"{ElementOperation.GetOperationSign(Operation)} {SelectFor}: {Name} ON {TableName}";
 
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	internal override string Parse()
@@ -54,7 +57,7 @@ public class ElIndex : ElBaseForTable
 					continue;
 			}
 
-			list.Add(new ElIndex(aTableLines, false));
+			list.Add(new ElIndex(aTableLines, null));
 		}
 		return list;
 	}

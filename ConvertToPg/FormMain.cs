@@ -1,3 +1,4 @@
+using Microsoft.VisualBasic.FileIO;
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
@@ -6,9 +7,8 @@ namespace ConvertToPg;
 
 public partial class FormMain : Form
 {
-	private const string PrePathInFile = "..\\..\\..\\..\\..\\!Дополнительно\\2postgres";
+	private const string PrePathInFile = "..\\..\\..\\..\\..\\!Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ\\2postgres";
 	private readonly ConvertMsToPg convert;
-	private readonly Color _resultColor;
 	private readonly Color _sourceColor;
 
 	private bool _isTableSelected = false;
@@ -17,16 +17,26 @@ public partial class FormMain : Form
 	public FormMain()
 	{
 		InitializeComponent();
-		_resultColor = labelResultTree.BackColor;
 		_sourceColor = labelSourceElte.BackColor;
 		convert = new ConvertMsToPg();
-		MakeTypeCheckboxes();
+		CreateElementsTypeCheckboxes();
+
+		// РїСЂСЏС‡РµРј РїРѕР»РѕСЃРєСѓ РІРєР»Р°РґРѕРє РЅР° tabControlEditElement
+		splitContainerEditElement.Panel2.SuspendLayout();
+		splitContainerEditElement.Panel2.Controls.Clear();
+		splitContainerEditElement.Panel2.Controls.Add(panelEditText);
+		splitContainerEditElement.Panel2.Controls.Add(tabControlEditElement);
+		splitContainerEditElement.Panel2.ResumeLayout(false);
+
+		// РЅР°РїРѕР»РЅРµРЅРёРµ РєРѕРјР±РѕР±РѕРєСЃР° СЃ С‚РёРїР°РјРё РїРѕР»РµР№ Р·РЅР°С‡РµРЅРёСЏРјРё
+		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
+		comboBoxEditTableCurrentFieldType.SelectedIndex = 0;
 	}
 
 	/// <summary>
-	/// Создание чекбоксов всех типов элементов
+	/// РЎРѕР·РґР°РЅРёРµ С‡РµРєР±РѕРєСЃРѕРІ РІСЃРµС… С‚РёРїРѕРІ СЌР»РµРјРµРЅС‚РѕРІ
 	/// </summary>
-	private void MakeTypeCheckboxes()
+	private void CreateElementsTypeCheckboxes()
 	{
 		int i = 0, y = 0;
 		foreach (var elementType in Enum.GetValues(typeof(ElmType)))
@@ -50,10 +60,10 @@ public partial class FormMain : Form
 		}
 	}
 
-	#region Открытие исходного файла
+	#region РћС‚РєСЂС‹С‚РёРµ РёСЃС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°
 
 	/// <summary>
-	/// Загрузка файла проекта
+	/// Р—Р°РіСЂСѓР·РєР° С„Р°Р№Р»Р° РїСЂРѕРµРєС‚Р°
 	/// </summary>
 	private void ButtonLoad_Click(object sender, EventArgs e)
 	{
@@ -81,7 +91,7 @@ public partial class FormMain : Form
 
 	#endregion
 
-	#region Обработка событий нажатия на кнопки
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РЅР°Р¶Р°С‚РёСЏ РЅР° РєРЅРѕРїРєРё
 
 	private void ButtonSetup_Click(object sender, EventArgs e)
 	{
@@ -92,7 +102,7 @@ public partial class FormMain : Form
 
 		convert.SetConfig(
 			cfg.Databases,
-			cfg.FreeElementIds,
+			//cfg.FreeElementIds,
 			formCfg.SkipOperation,
 			formCfg.SkipElement);
 
@@ -111,17 +121,17 @@ public partial class FormMain : Form
 		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
 		if (string.IsNullOrEmpty(errMessage))
 		{
-			errMessage = $"Проект сохранён в файле {projectFile}";
+			errMessage = $"РџСЂРѕРµРєС‚ СЃРѕС…СЂР°РЅС‘РЅ РІ С„Р°Р№Р»Рµ {projectFile}";
 		}
 		MessageBox.Show(errMessage);
 	}
 
 	/// <summary>
-	/// Добавить выбранные элементы в базу данных
+	/// Р”РѕР±Р°РІРёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Рµ СЌР»РµРјРµРЅС‚С‹ РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…
 	/// </summary>
 	private void ButtonAdd_Click(object sender, EventArgs e)
 	{
-		if (convert.YesElementsForAddDatabase)
+		if (convert.IsPresentElementsForAddDatabase)
 		{
 			SetButtonAddToOriginal();
 			return;
@@ -132,17 +142,17 @@ public partial class FormMain : Form
 
 		if (selectedElements.Any())
 		{
-			buttonAdd.Text = "Отменить";
+			buttonAdd.Text = "РћС‚РјРµРЅРёС‚СЊ";
 			EnableDisableControls(false);
 		}
 	}
 
 	#endregion
 
-	#region Обработка событий выбора чекбоксов
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РІС‹Р±РѕСЂР° С‡РµРєР±РѕРєСЃРѕРІ
 
 	/// <summary>
-	/// Смена выбранного типа элементов
+	/// РЎРјРµРЅР° РІС‹Р±СЂР°РЅРЅРѕРіРѕ С‚РёРїР° СЌР»РµРјРµРЅС‚РѕРІ
 	/// </summary>
 	private void CheckBoxElmType_CheckedChanged(object sender, EventArgs e)
 	{
@@ -159,14 +169,14 @@ public partial class FormMain : Form
 			return;
 
 		textBoxContent.BackColor = _sourceColor;
-		textBoxContent.Text = dtElement.GetElementContent;
+		textBoxContent.Text = dtElement.Lines.ToOneString();
 
 		FillTreeView(dtElement);
 	}
 
 	#endregion
 
-	#region Обработка событий выбора радио-кнопок
+	#region РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РІС‹Р±РѕСЂР° СЂР°РґРёРѕ-РєРЅРѕРїРѕРє
 
 	private void RadioButtonDatabase_CheckedChanged(object sender, EventArgs e)
 	{
@@ -177,14 +187,14 @@ public partial class FormMain : Form
 
 		convert.SelectedDataBase = dataBase;
 
-		// добавление элементов к БД
-		if (convert.YesElementsForAddDatabase)
+		// РґРѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ Рє Р‘Р”
+		if (convert.IsPresentElementsForAddDatabase)
 		{
 			convert.AddSelectedElementsToDatabase();
-			// разблокировать контролы, вернуть кнопку "Добавить" в оригинальный вид
+			// СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РєРѕРЅС‚СЂРѕР»С‹, РІРµСЂРЅСѓС‚СЊ РєРЅРѕРїРєСѓ "Р”РѕР±Р°РІРёС‚СЊ" РІ РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ РІРёРґ
 			SetButtonAddToOriginal();
 		}
-		// отобразить список элементов выбранной БД
+		// РѕС‚РѕР±СЂР°Р·РёС‚СЊ СЃРїРёСЃРѕРє СЌР»РµРјРµРЅС‚РѕРІ РІС‹Р±СЂР°РЅРЅРѕР№ Р‘Р”
 		FillTables();
 	}
 
@@ -234,7 +244,7 @@ public partial class FormMain : Form
 		switch (treeView.SelectedNode.Tag)
 		{
 			case DtElement dtElement:
-				textBoxContent.Text = dtElement.GetElementContent;
+				textBoxContent.Text = dtElement.Lines.ToOneString();
 				break;
 			case DtField dtField:
 				textBoxContent.Text = dtField.ToString();
@@ -263,11 +273,11 @@ public partial class FormMain : Form
 			if (dtElement is not ElTable elTable)
 				return;
 			if (elTable.Fields.Any())
-				treeView.Nodes.Add(MakeTreeNode("поля", elTable.Fields));
+				treeView.Nodes.Add(MakeTreeNode("РїРѕР»СЏ", elTable.Fields));
 			if (elTable.Indexes.Any())
-				treeView.Nodes.Add(MakeTreeNode("индексы", elTable.Indexes));
+				treeView.Nodes.Add(MakeTreeNode("РёРЅРґРµРєСЃС‹", elTable.Indexes));
 			if (elTable.Triggers.Any())
-				treeView.Nodes.Add(MakeTreeNode("триггеры", elTable.Triggers));
+				treeView.Nodes.Add(MakeTreeNode("С‚СЂРёРіРіРµСЂС‹", elTable.Triggers));
 		}
 		finally
 		{
@@ -277,7 +287,7 @@ public partial class FormMain : Form
 	}
 
 	/// <summary>
-	/// Выполнить действия после загрузки и разбора
+	/// Р’С‹РїРѕР»РЅРёС‚СЊ РґРµР№СЃС‚РІРёСЏ РїРѕСЃР»Рµ Р·Р°РіСЂСѓР·РєРё Рё СЂР°Р·Р±РѕСЂР°
 	/// </summary>
 	private void AfterLoadElements()
 	{
@@ -294,33 +304,44 @@ public partial class FormMain : Form
 
 	private void SetDatabasesRadiobuttons()
 	{
+		static RadioButton newRadioButtonDatabase(OnePgDatabase db, string name) => new()
+		{
+			Name = name,
+			AutoSize = true,
+			Dock = DockStyle.Top,
+			ForeColor = db.IsDefault ? Color.Red : Color.Blue,
+			Text = $"{db}",
+			UseVisualStyleBackColor = true,
+			Tag = db,
+		};
+
 		groupBoxNewDatabases.SuspendLayout();
 		groupBoxNewDatabases.Controls.Clear();
 		groupBoxNewDatabases.Controls.Add(radioButtonNoDatabase);
 
+		groupBoxEditDatabasesList.SuspendLayout();
+		groupBoxEditDatabasesList.Controls.Clear();
+		groupBoxEditDatabasesList.Controls.Add(radioButtonEditDatabaseAll);
+
 		foreach (var db in convert.GetDatabases)
 		{
-			var radioButtonDb = new RadioButton();
-			groupBoxNewDatabases.Controls.Add(radioButtonDb);
-			radioButtonDb.AutoSize = true;
-			radioButtonDb.Dock = DockStyle.Top;
-			radioButtonDb.ForeColor = Color.Blue;
-			radioButtonDb.Location = new Point(0, 38);
-			radioButtonDb.Name = $"radioButton{db}";
-			radioButtonDb.Size = new Size(107, 19);
-			radioButtonDb.TabIndex = 5;
-			radioButtonDb.Text = $"{db}";
-			radioButtonDb.UseVisualStyleBackColor = true;
-			radioButtonDb.Tag = db;
+			var radioButtonDb = newRadioButtonDatabase(db, $"radioButton{db}");
 			radioButtonDb.CheckedChanged += RadioButtonDatabase_CheckedChanged;
+			groupBoxNewDatabases.Controls.Add(radioButtonDb);
+
+			radioButtonDb = newRadioButtonDatabase(db, $"radioButtonEdit{db}");
+			radioButtonDb.CheckedChanged += RadioButtonEditDatabase_CheckedChanged;
+			groupBoxEditDatabasesList.Controls.Add(radioButtonDb);
 		}
+
 		groupBoxNewDatabases.ResumeLayout();
+		groupBoxEditDatabasesList.ResumeLayout();
 		radioButtonNoDatabase.Checked = true;
 	}
 
 	private void SetButtonAddToOriginal()
 	{
-		buttonAdd.Text = "Добавить";
+		buttonAdd.Text = "Р”РѕР±Р°РІРёС‚СЊ";
 		convert.SetElementsForAddDatabase(null);
 		EnableDisableControls(true);
 	}
@@ -328,15 +349,18 @@ public partial class FormMain : Form
 	private void EnableDisableControls(bool isEnable)
 	{
 		panelTop.Enabled =
-			splitContainerEltText.Enabled =
-			groupBoxCheckElmType.Enabled = isEnable;
+		textBoxContent.Enabled =
+		groupBoxCheckElmType.Enabled =
+		splitContainerSource.Enabled =
+		splitContainerSourceElements.Panel2.Enabled =
+			isEnable;
 	}
 
 	private static void ShowErrorMessage(string err) =>
-		MessageBox.Show(err, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		MessageBox.Show(err, "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 	// ----------------------------------------------------
-	// отсортировать
+	// РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°С‚СЊ
 
 	private void ButtonDelete_Click(object sender, EventArgs e)
 	{
@@ -370,5 +394,189 @@ public partial class FormMain : Form
 		for (int i = 0; i < checkedListBoxElements.Items.Count; i++)
 			checkedListBoxElements.SetItemChecked(i, !checkedListBoxElements.CheckedItems.Contains(checkedListBoxElements.Items[i]));
 		checkedListBoxElements.EndUpdate();
+	}
+
+	private void ShowEditElements()
+	{
+		textBoxEditProcedure.Clear();
+		listViewEditElements.BeginUpdate();
+		listViewEditElements.Items.Clear();
+		var editElements = convert.GetEditElements();
+		listViewEditElements.Items.AddRange(
+			editElements
+			.Select(e => new ListViewItem(e.ToString())
+			{
+				ForeColor = ((IEdited)e).IsOk ? Color.Green : Color.Red,
+				Tag = e,
+			})
+			.ToArray());
+		listViewEditElements.EndUpdate();
+	}
+
+	private void RadioButtonEditDatabase_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+
+		convert.CurrentEditDatabase = radioButton.Tag as OnePgDatabase;
+		ShowEditElements();
+	}
+
+	private void RadioButtonEditElementsType_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+		convert.SetEditElementsType(CheckEditElementsType(radioButton));
+		ShowEditElements();
+	}
+
+	private EditElementsType CheckEditElementsType(RadioButton radioButton)
+	{
+		if (radioButton == radioButtonEditElementsTypeTable)
+			return EditElementsType.Table;
+		else if (radioButton == radioButtonEditElementsTypeProcedure)
+			return EditElementsType.Procedure;
+		else if (radioButton == radioButtonEditElementsTypeTrigger)
+			return EditElementsType.Trigger;
+		else
+			return EditElementsType.All;
+	}
+
+	private void RadioButtonEditElements_CheckedChanged(object sender, EventArgs e)
+	{
+		var radioButton = (RadioButton)sender;
+		if (!radioButton.Checked)
+			return;
+
+		ShowEditElements showEditElements;
+		if (radioButton == radioButtonEditElementsAlert)
+			showEditElements = PgConvert.ShowEditElements.Alert;
+		else if (radioButton == radioButtonEditElementsOk)
+			showEditElements = PgConvert.ShowEditElements.Ok;
+		else
+			showEditElements = PgConvert.ShowEditElements.All;
+		convert.SetShowEditElements(showEditElements);
+		ShowEditElements();
+	}
+
+	private void ListViewEditElements_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		CurrentEditElement = listViewEditElements.SelectedItems.Count == 1
+			? (DtElement)listViewEditElements.SelectedItems[0].Tag
+			: null;
+	}
+
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		textBoxEditTableCurrentField.Text = null;
+		if (listViewEditTableFieldNames.SelectedItems.Count == 1)
+		{
+			var field = (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag;
+			textBoxEditTableCurrentField.Text = field.FormulaPg;
+			textBoxEditTableCurrentField.Enabled = field.IsGenerated;
+		}
+	}
+
+	/// <summary>
+	/// РћС‚РѕР±СЂР°Р¶РµРЅРёРµ С‚РµРєСѓС‰РµРіРѕ СЌР»РµРјРµРЅС‚Р° РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
+	/// </summary>
+	private DtElement CurrentEditElement
+	{
+		set
+		{
+			_currentEditElement = value;
+			tabControlEditElement.SuspendLayout();
+			try
+			{
+				// РѕС‡РёСЃС‚РєР° С‚РµРєСѓС‰РµРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ
+				listViewEditTableFieldNames.Items.Clear();
+				labelEditElementType.Text =
+					textBoxEditTableCurrentField.Text =
+					textBoxEditProcedure.Text =
+					textBoxEditTriggerFunctionName.Text =
+					textBoxEditTriggerFunction.Text =
+					null;
+				if (null == value)
+					return;
+
+				// РѕС‚РѕР±СЂР°Р¶РµРЅРёРµ РЅСѓР¶РЅРѕР№ РІРєР»Р°РґРєРё
+				// РїРѕРєР°Р· РґР°РЅРЅС‹С… РґР»СЏ СЌР»РµРјРµРЅС‚Р°
+				switch (value.ElementType)
+				{
+					case ElmType.Table:
+						tabControlEditElement.SelectTab(0);
+						// РІС‹С‡РёСЃР»СЏРµРјС‹Рµ РїРѕР»СЏ
+						listViewEditTableFieldNames.Items.AddRange(
+							((ElTable)value).FieldsForCorrect.Select(x =>
+							new ListViewItem
+							{
+								Text = x.GeneratedFieldToString,
+								Tag = x,
+							})
+							.ToArray());
+						// РѕСЃС‚Р°Р»СЊРЅС‹Рµ РїРѕР»СЏ, РґР»СЏ СЃРїСЂР°РІРєРё
+						listViewEditTableFieldNames.Items.AddRange(
+							((ElTable)value).Fields
+							.Where(x => !x.IsGenerated)
+							.Select(x =>
+							new ListViewItem
+							{
+								Text = x.ToString(),
+								Tag = x,
+								ForeColor = Color.Gray,
+							})
+							.ToArray());
+						break;
+
+					case ElmType.Procedure:
+						tabControlEditElement.SelectTab(1);
+						textBoxEditProcedure.Text = ((ElProcedure)value).LinesPg.ToOneString();
+						break;
+
+					case ElmType.Trigger:
+						tabControlEditElement.SelectTab(2);
+						var trigger = ((ElTrigger)value);
+						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
+
+						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
+
+						break;
+				}
+				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
+			}
+			finally
+			{
+				tabControlEditElement.ResumeLayout();
+			}
+		}
+	}
+	private DtElement _currentEditElement;
+
+	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
+	{
+		if (_currentEditElement is not ElTrigger trigger)
+			return;
+		textBoxEditTriggerText.Text = trigger.GetTriggerText(textBoxEditTriggerFunctionName.Text);
+		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
+		labelEditTriggerFunctionEnd.Text = trigger.GetTriggerFunctionTextEnd();
+	}
+
+	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
+
+		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
+			fieldType == FldType.Numeric ||
+			fieldType == FldType.Char ||
+			fieldType == FldType.Varchar;
+		if (!numericUpDownPrecision.Enabled)
+			numericUpDownPrecision.Value = 0;
+
+		numericUpDownScale.Enabled = labelScale.Enabled =
+			fieldType == FldType.Numeric;
+		if (!numericUpDownScale.Enabled)
+			numericUpDownScale.Value = 0;
 	}
 }

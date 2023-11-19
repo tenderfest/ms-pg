@@ -7,9 +7,7 @@ public class DtFieldType
 {
 	private const string _max = "max";
 
-	public DtFieldType()
-	{
-	}
+	public DtFieldType() { }
 
 	public DtFieldType(string typeNameMs)
 	{
@@ -44,14 +42,47 @@ public class DtFieldType
 		}
 	}
 
+	/// <summary>
+	/// Тип поля
+	/// </summary>
 	internal FldType FieldType { get; set; }
+	/// <summary>
+	/// Точность десятичных значений NUMERIC(точность, масштаб)
+	/// </summary>
 	int Len { get; set; }
+	/// <summary>
+	/// Масштаб десятичных значений NUMERIC(точность, масштаб)
+	/// </summary>
 	int LenDecimal { get; set; }
+	/// <summary>
+	/// Максимально возможная длина поля
+	/// </summary>
 	bool IsMax { get; set; }
 
-	internal static FldType GetFieldTypeMs(string typeNameMs)
+	internal string GetFieldTypePg()
 	{
-		return typeNameMs switch
+		return FieldType switch
+		{
+			FldType.Bool => "BOOL",
+			FldType.Byte => "SMALLINT",
+			FldType.ByteA => "BYTEA",
+			FldType.Char => "TEXT",
+			FldType.Date => "DATE",
+			FldType.DateTime => "TIMESTAMP(3)",
+			FldType.Guid => "CHAR(16)",
+			FldType.Int16 => "SMALLINT",
+			FldType.Int32 => "INT",
+			FldType.Int64 => "BIGINT",
+			FldType.Money => "MONEY",
+			FldType.Numeric => "NUMERIC",
+			FldType.TimeStamp => "TIMESTAMP",
+			FldType.Varchar => "TEXT",
+			_ => string.Empty,
+		};
+	}
+
+	internal static FldType GetFieldTypeMs(string typeNameMs) =>
+		typeNameMs switch
 		{
 			"bigint" => FldType.Int64,
 			"bit" => FldType.Bool,
@@ -70,7 +101,6 @@ public class DtFieldType
 			"varchar" => FldType.Varchar,
 			_ => FldType.None,
 		};
-	}
 
 	public override string ToString()
 	{

@@ -1,6 +1,9 @@
-﻿namespace PgConvert.Element;
+﻿using PgConvert.Config;
 
-public class ElTable : ElBaseForTable
+namespace PgConvert.Element;
+#pragma warning disable S2365 // Properties should not make collection or array copies
+
+public class ElTable : ElBaseForTable, IEdited
 {
 	public ElTable(string[] lines) : base(lines)
 	{
@@ -8,6 +11,7 @@ public class ElTable : ElBaseForTable
 	}
 
 	public List<DtField> Fields { get; private set; } = new List<DtField>();
+	public bool IsGeneratedFields => Fields?.Count(x => x.IsGenerated) > 0;
 
 	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
@@ -34,6 +38,36 @@ public class ElTable : ElBaseForTable
 			.Select(x =>
 				x as ElBaseForTable));
 
+	public DtField[] FieldsForCorrect =>
+		Fields
+		.Where(x => x.IsGenerated && !x.CorrectIsDone)
+		.ToArray();
+
+	public string[] GeneratedFields
+	{
+		get => Fields
+			.Where(x => x.IsGenerated)
+			.Select(x => x.NeedCorrect)
+			.ToArray();
+		set
+		{
+			foreach (var correctField in value)
+			{
+				var (name, formulaPg) = DtField.GetCorrectFieldName(correctField);
+				if (null == name)
+					continue;
+				var field = Fields.Find(x => x.Name == name);
+				if (null == field)
+					continue;
+				field.FormulaPg = formulaPg;
+			}
+		}
+	}
+
+	public bool IsOk =>
+		!FieldsForCorrect.Any();
+	OnePgDatabase IEdited.Database => base.Database;
+
 	internal override string Parse()
 	{
 		// изменение таблицы
@@ -58,9 +92,9 @@ public class ElTable : ElBaseForTable
 			return null;
 		}
 
-		// создание таблицы
 		if (ElmOperation.Create != Operation)
 			return null;
+		// ниже по коду - обработка создания таблицы
 
 		// определение позиций запятых внутри внешних круглых скобок
 		var commaIndexList = GetSymbolIndexes(out int? indexFieldsOpen, out int lengthFieldsClose);
@@ -68,7 +102,7 @@ public class ElTable : ElBaseForTable
 		if (!indexFieldsOpen.HasValue || 0 == lengthFieldsClose)
 			return null;
 
-		var fieldsDraft = ParseDrafgFields(commaIndexList, indexFieldsOpen, lengthFieldsClose);
+		var fieldsDraft = ParseDraftFields(commaIndexList, indexFieldsOpen, lengthFieldsClose);
 		if (!fieldsDraft.Any())
 			return null;
 
@@ -82,9 +116,9 @@ public class ElTable : ElBaseForTable
 			try
 			{
 				// индекс
-				if (Const._indexSign.Contains(pieces[0].ToLower()))
+				if (Const.IndexSign.Contains(pieces[0].ToLower()))
 				{
-					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, true));
+					IndexCreateTable.Add(new ElIndex(new[] { fieldDraft }, Name, pieces[1]));
 				}
 				else
 					// обычное поле
@@ -105,7 +139,7 @@ public class ElTable : ElBaseForTable
 	/// <param name="indexFieldsOpen">Позиция первой (внешней) открывающей круглой скобки</param>
 	/// <param name="lengthFieldsClose">Длина строки от внешней открывающей до внешней закрывающей круглой скобки</param>
 	/// <returns>Набор подстрок, соответстваующих полям траблицы</returns>
-	private List<string> ParseDrafgFields(List<int> commaIndexList, int? indexFieldsOpen, int lengthFieldsClose)
+	private List<string> ParseDraftFields(List<int> commaIndexList, int? indexFieldsOpen, int lengthFieldsClose)
 	{
 		var fieldsDraft = new List<string>();
 		var fieldsOpenIndex = indexFieldsOpen.Value;

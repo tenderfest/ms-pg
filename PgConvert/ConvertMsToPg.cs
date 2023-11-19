@@ -2,10 +2,32 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
+using System.Xml.Linq;
 using PgConvert.Config;
 using PgConvert.Element;
 
 namespace PgConvert;
+
+public enum EditElementsType
+{
+	/// <summary> Все </summary>
+	All,
+	/// <summary> Таблицы </summary>
+	Table,
+	/// <summary> Процедуры </summary>
+	Procedure,
+	/// <summary> Триггер </summary>
+	Trigger,
+}
+public enum ShowEditElements
+{
+	/// <summary> Все </summary>
+	All,
+	/// <summary> Требующие внимания </summary>
+	Alert,
+	/// <summary> Утверждённые </summary>
+	Ok,
+}
 
 public class ConvertMsToPg
 {
@@ -24,15 +46,31 @@ public class ConvertMsToPg
 	public string FullFilePath { get; set; }
 	List<string> InFile { get; set; }
 	List<DtElement> Elements { get; set; }
+
 	/// <summary>
 	/// База данных, выбранная в настоящий момент ползователем
 	/// </summary>
 	public OnePgDatabase SelectedDataBase { get; set; }
+
 	/// <summary>
 	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
 	/// </summary>
 	public List<DtElement> ElementsForAddDatabase { get; set; }
 
+	/// <summary>
+	/// Тип элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private EditElementsType CurrentEditElementsType { get; set; }
+
+	/// <summary>
+	/// Статус элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private ShowEditElements CurrentShowEditElements { get; set; }
+
+	/// <summary>
+	/// База данных, выбранная на вкладке "Доработка текстов процедур", null="все базы данных"
+	/// </summary>
+	public OnePgDatabase CurrentEditDatabase { get; set; }
 
 	private static readonly JsonSerializerOptions _jsonOptions = new()
 	{
@@ -44,14 +82,14 @@ public class ConvertMsToPg
 
 	public void SetConfig(
 		List<OnePgDatabase> databases,
-		int[] freeElementIds,
+		//int[] freeElementIds,
 		string[] skipOperation,
 		string[] skipElement)
 	{
 		Config = new ConvertMsToPgCfg
 		{
 			Databases = databases,
-			FreeElementIds = freeElementIds,
+			//FreeElementIds = freeElementIds,
 			SkipElement = skipOperation,
 			SkipOperation = skipElement,
 		};
@@ -115,7 +153,10 @@ public class ConvertMsToPg
 	public IEnumerable<OnePgDatabase> GetDatabases =>
 		Config.Databases;
 
-	public bool YesElementsForAddDatabase =>
+	/// <summary>
+	/// Есть ли выбранные элементы для перемещения в базу данных
+	/// </summary>
+	public bool IsPresentElementsForAddDatabase =>
 		null != ElementsForAddDatabase;
 
 	public string LoadFile(string fileName) =>
@@ -213,7 +254,7 @@ public class ConvertMsToPg
 			return errorMessage;
 
 		// разнесение элементов по разным БД
-		errorMessage = SortingElements();
+		errorMessage = SortingElements(Config.AddNeedCorrect);
 		if (!string.IsNullOrEmpty(errorMessage))
 			return errorMessage;
 
@@ -253,7 +294,7 @@ public class ConvertMsToPg
 	/// <summary>
 	/// Разнесение элементов по базам данных
 	/// </summary>
-	private string SortingElements()
+	private string SortingElements(Action<DtElement> addNeedCorrect)
 	{
 		if (Config.Databases.Contains(null))
 			Config.Databases = Config.Databases
@@ -272,7 +313,7 @@ public class ConvertMsToPg
 			List<DtElement> freeElements = new();
 			foreach (var element in Elements)
 			{
-				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.HashCode)))
+				foreach (var db in GetDatabases.Where(db => db.IsContainsElementIds(element.Id)))
 				{
 					element.Database = db;
 					db.Elements.Add(element);
@@ -280,6 +321,14 @@ public class ConvertMsToPg
 
 				if (null == element.Database)
 					freeElements.Add(element);
+
+				// определение элементов, требующих доработки
+				if (element.ElementType == ElmType.Table && ((ElTable)element).IsGeneratedFields ||
+					element.ElementType == ElmType.Procedure ||
+					element.ElementType == ElmType.Trigger)
+				{
+					addNeedCorrect(element);
+				}
 			}
 			Config.FreeElements = freeElements;
 			if (freeElementsNum != Config.FreeElementIds.Length)
@@ -302,9 +351,7 @@ public class ConvertMsToPg
 		{
 			var errorMessage = element.Parse();
 			if (!string.IsNullOrEmpty(errorMessage))
-			{
 				return errorMessage;
-			}
 		}
 
 		// сортировка элементов по имени
@@ -320,7 +367,6 @@ public class ConvertMsToPg
 	private string ParseStrings()
 	{
 		List<string> inLines = new();
-		List<string> commentBuffer = new();
 		List<DtElement> dtElements = new();
 		foreach (var inLine in InFile)
 		{
@@ -330,7 +376,7 @@ public class ConvertMsToPg
 				if (!inLines.Any())
 					continue;
 
-				var dicValue = DtElement.GetElement(inLines, commentBuffer, Config);
+				var dicValue = DtElement.GetElement(inLines.ToArray(), Config);
 				if (default != dicValue)
 				{
 					var equalElement = dtElements
@@ -341,14 +387,10 @@ public class ConvertMsToPg
 				}
 
 				inLines = new();
-				commentBuffer = new();
 			}
 			else if (!string.IsNullOrEmpty(inLine))
 			{
-				if (inLine.TrimStart().StartsWith("--"))
-					commentBuffer.Add(inLine);
-				else
-					inLines.Add(inLine);
+				inLines.Add(inLine);
 			}
 		}
 
@@ -453,4 +495,44 @@ public class ConvertMsToPg
 			}
 		}
 	}
+
+	public void SetEditElementsType(EditElementsType editElementsType) =>
+		CurrentEditElementsType = editElementsType;
+
+	public void SetShowEditElements(ShowEditElements showEditElements) =>
+		CurrentShowEditElements = showEditElements;
+
+	public List<DtElement> GetEditElements()
+	{
+		var editElements = Elements
+			.AsEnumerable()
+			.Where(e => e.Operation == ElmOperation.Create && e is IEdited)
+			.Select(e => e as IEdited);
+		if (CurrentEditDatabase != null)
+			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
+
+		var elmType = EditElementsTypeToElmType(CurrentEditElementsType);
+		if (elmType != ElmType.None)
+			editElements = editElements.Where(e => e.ElementType == elmType);
+
+		switch (CurrentShowEditElements)
+		{
+			case ShowEditElements.Alert:
+				editElements = editElements.Where(e => !e.IsOk);
+				break;
+			case ShowEditElements.Ok:
+				editElements = editElements.Where(e => e.IsOk);
+				break;
+		}
+		return editElements.Select(x => x as DtElement).ToList();
+	}
+
+	private static ElmType EditElementsTypeToElmType(EditElementsType editElementsType) =>
+		 editElementsType switch
+		 {
+			 EditElementsType.Table => ElmType.Table,
+			 EditElementsType.Procedure => ElmType.Procedure,
+			 EditElementsType.Trigger => ElmType.Trigger,
+			 _ => ElmType.None,
+		 };
 }

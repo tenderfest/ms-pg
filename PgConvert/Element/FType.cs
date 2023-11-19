@@ -1,23 +1,23 @@
 ﻿namespace PgConvert.Element;
 
 /// <summary>
-/// тип поля
+/// Тип поля
 /// </summary>
 public enum FldType
 {
 	None = 0,
 	Bool,
 	Byte,
+	ByteA,
+	Char,
+	Date,
+	DateTime,
+	Guid,
 	Int16,
 	Int32,
 	Int64,
-	Numeric,
 	Money,
-	Date,
-	DateTime,
+	Numeric,
 	TimeStamp,
-	Guid,
 	Varchar,
-	Char,
-	ByteA,
 }

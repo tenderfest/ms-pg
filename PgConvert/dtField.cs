@@ -2,16 +2,23 @@
 
 namespace PgConvert;
 
+#pragma warning disable IDE0056 // Использовать оператор индекса
 public class DtField
 {
+	public const string _correctSygn = "^";
 	private const string _generated = "as";
 	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
 	private const string _null = "null";
+	private const string _notNull = " NotNull";
+
+	private string GeneratedFieldPg =>
+		$"{Name} numeric GENERATED ALWAYS AS (height_cm / 2.54) STORED";
 
 	public string Name { get; set; }
 	public DtFieldType FieldType { get; set; }
 	public bool NotNull { get; set; }
+
 	/// <summary>
 	/// вычисляемое поле - формула T-SQL
 	/// </summary>
@@ -20,6 +27,18 @@ public class DtField
 	/// вычисляемое поле - формула PostgreSQL
 	/// </summary>
 	public string FormulaPg { get; set; }
+	/// <summary>
+	/// Устанавливаемый пользователем признак того, что вычисляемое поле
+	/// откорректировано для PostgreSQL
+	/// </summary>
+	public bool CorrectIsDone { get; private set; }
+
+	/// <summary>
+	/// Утверждение вычисляемого поля как подходящего для PostgreSQL
+	/// </summary>
+	public void SetOk(bool ok) =>
+		CorrectIsDone = ok;
+
 	/// <summary>
 	/// вычисляемое сохраняемое
 	/// </summary>
@@ -33,7 +52,6 @@ public class DtField
 	public bool IsFieldTypeNone =>
 		FldType.None == FieldType?.FieldType;
 
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0056:Использовать оператор индекса", Justification = "<Ожидание>")]
 	public DtField(string[] pieces)
 	{
 		while (pieces.Length < 3)
@@ -52,7 +70,7 @@ public class DtField
 		if (_generated == secondPiece)
 		// вычисляемое поле
 		{
-			FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
+			FormulaPg = FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
 			Persisted = isPersisted;
 			FieldType = new DtFieldType();
 		}
@@ -93,5 +111,23 @@ public class DtField
 	public override string ToString() =>
 		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
 			IsFieldTypeNone ? "???" : FieldType)}{(
-			NotNull ? " NotNull" : string.Empty)}";
+			NotNull ? _notNull : string.Empty)}";
+
+	internal static (string, string) GetCorrectFieldName(string correctField)
+	{
+		if (string.IsNullOrEmpty(correctField))
+			return (null, null);
+		var name = correctField.Split(_correctSygn);
+		if (name.Length != 2)
+			return (null, null);
+		return (name[0], name[1]);
+	}
+
+	public string NeedCorrect =>
+		$"{Name}{_correctSygn}{CorrectIsDone}{_correctSygn}{FormulaPg}";
+
+	public string GeneratedFieldToString =>
+		$"{Name}{(
+			Persisted ? $" {_persisted}" : string.Empty)}{(
+			NotNull ? _notNull : string.Empty)}";
 }

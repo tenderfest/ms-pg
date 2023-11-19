@@ -1,38 +1,24 @@
 ﻿using PgConvert.Element;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Xml.Linq;
 
 namespace PgConvert.Config;
+#pragma warning disable S2365 // Properties should not make collection or array copies
 
 [Serializable]
 public class ConvertMsToPgCfg
 {
-	/// <summary>
-	/// Результат измения списка баз данных
-	/// </summary>
-	public enum ResultChangeDatabaseList
-	{
-		/// <summary>
-		/// Список не изменился без ошибки
-		/// </summary>
-		None,
-		/// <summary>
-		/// Список изменился
-		/// </summary>
-		Ok,
-		/// <summary>
-		/// Ошибка, список не изменился
-		/// </summary>
-		Error,
-	}
-
 	public readonly OnePgDatabase IgnoreDatabase;
 
 	public ConvertMsToPgCfg()
 	{
 		if (null == Databases)
 		{
-			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore);
+			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore)
+			{
+				ConnectionString = "У этой базы данных нет строки подключения"
+			};
 			Databases = new List<OnePgDatabase> { IgnoreDatabase };
 		}
 	}
@@ -41,21 +27,13 @@ public class ConvertMsToPgCfg
 	public string[] SkipOperation { get; set; }
 	public string[] SkipElement { get; set; }
 	public List<OnePgDatabase> Databases { get; set; }
+	public List<NeedCorrect> NeedCorrect { get; set; }
 
 	[JsonIgnore]
 	public List<DtElement> FreeElements { get; set; }
 
-	private int[] _freeElementIds;
-	public int[] FreeElementIds
-	{
-#pragma warning disable S2365 // Properties should not make collection or array copies
-#pragma warning disable S4275 // Getters and setters should access the expected fields
-		get => FreeElements?.Select(e => e.HashCode).ToArray();
-#pragma warning restore S4275 // Getters and setters should access the expected fields
-#pragma warning restore S2365 // Properties should not make collection or array copies
-
-		set => _freeElementIds = value;
-	}
+	public int[] FreeElementIds =>
+		FreeElements?.Select(e => e.Id).ToArray();
 
 	public static string[] GetSkipArrayFromText(string text) =>
 		text?.Split('\n')
@@ -101,5 +79,15 @@ public class ConvertMsToPgCfg
 	{
 		if (!FreeElements.Contains(element))
 			FreeElements.Add(element);
+	}
+
+	internal void AddNeedCorrect(DtElement element)
+	{
+		NeedCorrect ??= new List<NeedCorrect>();
+		var presentElement = NeedCorrect.Find(x => x.Equal(element.Id));
+		if (default == presentElement)
+			NeedCorrect.Add(new NeedCorrect(element));
+		else
+			presentElement.SetElement(element);
 	}
 }

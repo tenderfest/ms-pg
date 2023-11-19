@@ -71,7 +71,18 @@ namespace ConvertToPg
 			DatabaseFromControl(sender, (db) =>
 			{
 				var result = db.TestConnectDatabase();
-				MessageBox.Show(string.IsNullOrEmpty(result) ? "OK" : result);
+				if (string.IsNullOrEmpty(result))
+					MessageBox.Show("OK");
+				else
+				{
+					var tryCreateDatabaseAnswer = MessageBox
+						.Show($"{result}\n\nНадо ли попытаться создать базу данных?", "Ошибка", MessageBoxButtons.YesNo);
+					if (tryCreateDatabaseAnswer == DialogResult.Yes)
+					{
+						result = db.TryCreate();
+						MessageBox.Show(result);
+					}
+				}
 			});
 
 		private void DeleteDatabase(object sender, EventArgs e) =>
@@ -79,7 +90,7 @@ namespace ConvertToPg
 			{
 				if (db.IsDefault) return;
 
-				if (Cfg.AddDelDatabase(db, false) == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+				if (Cfg.AddDelDatabase(db, false) == ResultChangeDatabaseList.Ok)
 				{
 					HeightChange(false);
 					ShowDatabases(false);
@@ -120,12 +131,12 @@ namespace ConvertToPg
 			}
 
 			var addResult = Cfg.AddDelDatabase(newDatabase, true);
-			if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Ok)
+			if (addResult == ResultChangeDatabaseList.Ok)
 			{
 				HeightChange(true);
 				ShowDatabases(false);
 			}
-			else if (addResult == ConvertMsToPgCfg.ResultChangeDatabaseList.Error)
+			else if (addResult == ResultChangeDatabaseList.Error)
 			{
 				MessageBox.Show($"База данных с именем '{newDatabase.Name}' уже существует.");
 			}
