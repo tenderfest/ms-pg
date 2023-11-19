@@ -487,6 +487,7 @@ public partial class FormMain : Form
 		set
 		{
 			_currentEditElement = value;
+			var enableEditButtons = false;
 			tabControlEditElement.SuspendLayout();
 			try
 			{
@@ -528,20 +529,21 @@ public partial class FormMain : Form
 								ForeColor = Color.Gray,
 							})
 							.ToArray());
+						enableEditButtons = true;
 						break;
 
 					case ElmType.Procedure:
 						tabControlEditElement.SelectTab(1);
 						textBoxEditProcedure.Text = ((ElProcedure)value).LinesPg.ToOneString();
+						enableEditButtons = true;
 						break;
 
 					case ElmType.Trigger:
 						tabControlEditElement.SelectTab(2);
-						var trigger = ((ElTrigger)value);
+						var trigger = (ElTrigger)value;
 						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
-
 						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
-
+						enableEditButtons = true;
 						break;
 				}
 				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
@@ -549,6 +551,10 @@ public partial class FormMain : Form
 			finally
 			{
 				tabControlEditElement.ResumeLayout();
+				buttonEditConfirmElement.Enabled =
+					buttonEditSave.Enabled =
+					buttonEditAllUndo.Enabled =
+					buttonEditUndo.Enabled = enableEditButtons;
 			}
 		}
 	}
@@ -558,7 +564,15 @@ public partial class FormMain : Form
 	{
 		if (_currentEditElement is not ElTrigger trigger)
 			return;
-		textBoxEditTriggerText.Text = trigger.GetTriggerText(textBoxEditTriggerFunctionName.Text);
+		var functionName = textBoxEditTriggerFunctionName.Text;
+		if (functionName.Contains(' '))
+		{
+			var selectionStart = textBoxEditTriggerFunctionName.SelectionStart;
+			textBoxEditTriggerFunctionName.Text = functionName.Replace(" ", string.Empty);
+			textBoxEditTriggerFunctionName.SelectionStart = selectionStart - 1;
+			return;
+		}
+		textBoxEditTriggerText.Text = trigger.GetTriggerText(functionName);
 		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
 		labelEditTriggerFunctionEnd.Text = trigger.GetTriggerFunctionTextEnd();
 	}
@@ -578,5 +592,27 @@ public partial class FormMain : Form
 			fieldType == FldType.Numeric;
 		if (!numericUpDownScale.Enabled)
 			numericUpDownScale.Value = 0;
+	}
+
+	private void ButtonEditUndo_Click(object sender, EventArgs e)
+	{
+		switch (_currentEditElement.ElementType)
+		{
+			case ElmType.Table:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Procedure:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Trigger:
+				textBoxEditTriggerFunction.Text = ((ElTrigger)_currentEditElement).LinesPg.ToOneString();
+				break;
+
+			default:
+				MessageBox.Show("");
+				break;
+		}
 	}
 }

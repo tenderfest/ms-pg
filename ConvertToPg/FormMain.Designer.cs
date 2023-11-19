@@ -926,6 +926,7 @@ partial class FormMain
 		buttonEditUndo.TabIndex = 4;
 		buttonEditUndo.Text = "Отменить";
 		buttonEditUndo.UseVisualStyleBackColor = true;
+		buttonEditUndo.Click += ButtonEditUndo_Click;
 		// 
 		// buttonEditAllUndo
 		// 
