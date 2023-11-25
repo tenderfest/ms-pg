@@ -2,6 +2,7 @@ using Microsoft.VisualBasic.FileIO;
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
+using System.Windows.Forms;
 
 namespace ConvertToPg;
 
@@ -109,16 +110,24 @@ public partial class FormMain : Form
 		AfterLoadElements();
 	}
 
-	private void ButtonSave_Click(object sender, EventArgs e)
-	{
-		FolderBrowserDialog saveFileDialog = new()
-		{
-			InitialDirectory = PrePathInFile,
-		};
-		if (saveFileDialog.ShowDialog() != DialogResult.OK)
-			return;
+	private void ButtonSave_Click(object sender, EventArgs e) =>
+		SaveChanges();
 
-		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
+	private void SaveChanges()
+	{
+		if (string.IsNullOrEmpty(convert.PathToSaveFile))
+		{
+			FolderBrowserDialog saveFileDialog = new()
+			{
+				InitialDirectory = PrePathInFile,
+			};
+			if (DialogResult.OK != saveFileDialog.ShowDialog())
+				return;
+
+			convert.PathToSaveFile = saveFileDialog.SelectedPath;
+		}
+
+		var errMessage = convert.SaveFile(out string projectFile);
 		if (string.IsNullOrEmpty(errMessage))
 		{
 			errMessage = $"Проект сохранён в файле {projectFile}";
@@ -594,8 +603,12 @@ public partial class FormMain : Form
 			numericUpDownScale.Value = 0;
 	}
 
-	private void ButtonEditUndo_Click(object sender, EventArgs e)
+	private void ButtonEditUndo_Click(object sender, EventArgs e) =>
+		UndoEdit();
+
+	private void UndoEdit()
 	{
+		if (null == _currentEditElement) return;
 		switch (_currentEditElement.ElementType)
 		{
 			case ElmType.Table:
@@ -614,5 +627,53 @@ public partial class FormMain : Form
 				MessageBox.Show("");
 				break;
 		}
+	}
+
+	private void ButtonEditAllUndo_Click(object sender, EventArgs e)
+	{
+		if (null == _currentEditElement) return;
+		switch (_currentEditElement.ElementType)
+		{
+			case ElmType.Table:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Procedure:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Trigger:
+				((ElTrigger)_currentEditElement).LinesPgFromLines();
+				break;
+
+			default:
+				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
+				break;
+		}
+		UndoEdit();
+	}
+
+	private void ButtonEditSave_Click(object sender, EventArgs e)
+	{
+		if (null == _currentEditElement) return;
+		switch (_currentEditElement.ElementType)
+		{
+			case ElmType.Table:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Procedure:
+				MessageBox.Show("сделать");
+				break;
+
+			case ElmType.Trigger:
+				((ElTrigger)_currentEditElement).SetLinesPgFromOneString(textBoxEditTriggerFunction.Text);
+				break;
+
+			default:
+				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
+				break;
+		}
+		SaveChanges();
 	}
 }

@@ -938,6 +938,7 @@ partial class FormMain
 		buttonEditAllUndo.TabIndex = 3;
 		buttonEditAllUndo.Text = "Отменить всё";
 		buttonEditAllUndo.UseVisualStyleBackColor = true;
+		buttonEditAllUndo.Click += ButtonEditAllUndo_Click;
 		// 
 		// buttonEditSave
 		// 
@@ -949,6 +950,7 @@ partial class FormMain
 		buttonEditSave.TabIndex = 2;
 		buttonEditSave.Text = "Сохранить";
 		buttonEditSave.UseVisualStyleBackColor = true;
+		buttonEditSave.Click += ButtonEditSave_Click;
 		// 
 		// groupBoxEditElementsType
 		// 

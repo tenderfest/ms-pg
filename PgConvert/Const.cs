@@ -33,6 +33,8 @@ public static class Const
 				sb.AppendLine(str);
 		return sb.ToString();
 	}
+	public static string[] FromOneString(this string str) =>
+		str.Split(Environment.NewLine);
 
 	#region метод подсчёта контрольной суммы
 

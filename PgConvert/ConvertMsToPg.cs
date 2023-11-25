@@ -159,6 +159,8 @@ public class ConvertMsToPg
 	public bool IsPresentElementsForAddDatabase =>
 		null != ElementsForAddDatabase;
 
+	public string PathToSaveFile { get; set; }
+
 	public string LoadFile(string fileName) =>
 		Path.GetExtension(fileName) switch
 		{
@@ -400,16 +402,16 @@ public class ConvertMsToPg
 
 	#endregion
 
-	public string SaveFile(string path, out string projectFile)
+	public string SaveFile(out string projectFile)
 	{
 		projectFile = null;
-		if (string.IsNullOrEmpty(path))
+		if (string.IsNullOrEmpty(PathToSaveFile))
 			return "Необходимо указать путь для сохраняемого файла";
 
 		try
 		{
 			projectFile = Path.ChangeExtension(FullFilePath, _extProj);
-			using var stream = new FileStream(Path.Combine(path, projectFile), FileMode.OpenOrCreate);
+			using var stream = new FileStream(Path.Combine(PathToSaveFile, projectFile), FileMode.OpenOrCreate);
 			using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
 
 			// сохранение обрабатываемого файла
