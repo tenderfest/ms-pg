@@ -12,7 +12,6 @@ public class ElTrigger : ElBaseForTable, IEdited
 	private const string _delete = "delete";
 	private const string _insteadOf = "INSTEAD OF";
 	private const string _or = " or ";
-	private const string _begin = "begin";
 	//private const string _end = "end";
 
 	private const char _doubleQuot = '"';
@@ -108,7 +107,7 @@ public class ElTrigger : ElBaseForTable, IEdited
 
 		// определение тела функции
 		if (null == LinesPg)
-			LinesPgFromLines();
+			NeedCorrect.LinesPgFromLines(this);
 
 		// определение имени таблицы
 		SetTableName(ClearBraces(ClearLines[1].Split(_space, StringSplitOptions.RemoveEmptyEntries)[1]));
@@ -131,31 +130,6 @@ public class ElTrigger : ElBaseForTable, IEdited
 				}
 		}
 		return null;
-	}
-
-	/// <summary>
-	/// Наполнение LinesPg изначальным значением из Lines
-	/// </summary>
-	public void LinesPgFromLines()
-	{
-		var linesPg = new List<string>();
-		bool isBegin = false;
-		foreach (var line in Lines)
-		{
-			var lineTrim = line.Trim();
-			if (lineTrim.StartsWith("--"))
-			{
-				linesPg.Add(line);
-				continue;
-			}
-			if (!isBegin)
-				isBegin |= lineTrim.ToLower() == _begin;
-			if (!isBegin)
-				continue;
-			linesPg.Add(line);
-		}
-
-		LinesPg = linesPg.ToArray();
 	}
 
 	/// <summary>
@@ -200,7 +174,4 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 		"$$ LANGUAGE plpgsql;";
 	public string GetTriggerFunctionTextBegin() =>
 		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER AS $$";
-
-	public void SetLinesPgFromOneString(string text) =>
-		LinesPg = text.FromOneString();
 }

@@ -1,8 +1,6 @@
-using Microsoft.VisualBasic.FileIO;
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
-using System.Windows.Forms;
 
 namespace ConvertToPg;
 
@@ -608,7 +606,9 @@ public partial class FormMain : Form
 
 	private void UndoEdit()
 	{
-		if (null == _currentEditElement) return;
+		if (null == _currentEditElement)
+			return;
+
 		switch (_currentEditElement.ElementType)
 		{
 			case ElmType.Table:
@@ -616,7 +616,7 @@ public partial class FormMain : Form
 				break;
 
 			case ElmType.Procedure:
-				MessageBox.Show("сделать");
+				textBoxEditProcedure.Text = ((ElProcedure)_currentEditElement).LinesPg.ToOneString();
 				break;
 
 			case ElmType.Trigger:
@@ -624,14 +624,15 @@ public partial class FormMain : Form
 				break;
 
 			default:
-				MessageBox.Show("");
+				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
 				break;
 		}
 	}
 
 	private void ButtonEditAllUndo_Click(object sender, EventArgs e)
 	{
-		if (null == _currentEditElement) return;
+		if (null == _currentEditElement)
+			return;
 		switch (_currentEditElement.ElementType)
 		{
 			case ElmType.Table:
@@ -639,11 +640,11 @@ public partial class FormMain : Form
 				break;
 
 			case ElmType.Procedure:
-				MessageBox.Show("сделать");
+				NeedCorrect.LinesPgFromLines((ElProcedure)_currentEditElement);
 				break;
 
 			case ElmType.Trigger:
-				((ElTrigger)_currentEditElement).LinesPgFromLines();
+				NeedCorrect.LinesPgFromLines((ElTrigger)_currentEditElement);
 				break;
 
 			default:
@@ -663,11 +664,11 @@ public partial class FormMain : Form
 				break;
 
 			case ElmType.Procedure:
-				MessageBox.Show("сделать");
+				((ElProcedure)_currentEditElement).LinesPg = textBoxEditProcedure.Text.FromOneString();
 				break;
 
 			case ElmType.Trigger:
-				((ElTrigger)_currentEditElement).SetLinesPgFromOneString(textBoxEditTriggerFunction.Text);
+				((ElTrigger)_currentEditElement).LinesPg = textBoxEditTriggerFunction.Text.FromOneString();
 				break;
 
 			default:

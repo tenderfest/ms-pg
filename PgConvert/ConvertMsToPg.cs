@@ -504,8 +504,11 @@ public class ConvertMsToPg
 	public void SetShowEditElements(ShowEditElements showEditElements) =>
 		CurrentShowEditElements = showEditElements;
 
-	public List<DtElement> GetEditElements()
+	public IEnumerable<DtElement> GetEditElements()
 	{
+		if (null == Elements)
+			return Array.Empty<DtElement>();
+
 		var editElements = Elements
 			.AsEnumerable()
 			.Where(e => e.Operation == ElmOperation.Create && e is IEdited)

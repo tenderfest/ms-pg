@@ -7,6 +7,8 @@ namespace PgConvert.Config;
 /// </summary>
 public class NeedCorrect
 {
+	private const string _begin = "begin";
+
 	private DtElement Element { get; set; }
 	public NeedCorrect() { }
 	public NeedCorrect(DtElement element) =>
@@ -82,8 +84,41 @@ public class NeedCorrect
 	internal bool Equal(int id) =>
 		id == IdTemp;
 
-	//public bool IsNeedCorrect =>
-	//	element.IsNeedCorrect;
-	//public ElmType ElementType =>
-	//	element.ElementType;
+
+	/// <summary>
+	/// Наполнение LinesPg изначальным значением из Lines
+	/// </summary>
+	public static void LinesPgFromLines(DtElement element)
+	{
+		if (null == element)
+			return;
+
+		var linesPg = new List<string>();
+		bool isBegin = false;
+		foreach (var line in element.Lines)
+		{
+			var lineTrim = line.Trim();
+			if (lineTrim.StartsWith("--"))
+			{
+				linesPg.Add(line);
+				continue;
+			}
+			if (!isBegin)
+				isBegin |= lineTrim.ToLower() == _begin;
+			if (!isBegin)
+				continue;
+			linesPg.Add(line);
+		}
+
+		var linesArray = linesPg.ToArray();
+		switch (element.ElementType)
+		{
+			case ElmType.Procedure:
+				((ElProcedure)element).LinesPg = linesArray;
+				break;
+			case ElmType.Trigger:
+				((ElTrigger)element).LinesPg = linesArray;
+				break;
+		}
+	}
 }
