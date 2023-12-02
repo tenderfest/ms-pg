@@ -87,6 +87,8 @@ partial class FormMain
 		groupBoxEditTriggerText = new GroupBox();
 		textBoxEditTriggerText = new TextBox();
 		groupBoxEditTriggerFunctionName = new GroupBox();
+		labelEditFunctionLanguage = new Label();
+		comboBoxEditFunctionLanguage = new ComboBox();
 		textBoxEditTriggerFunctionName = new TextBox();
 		panelEditText = new Panel();
 		labelEditElementType = new Label();
@@ -840,7 +842,7 @@ partial class FormMain
 		labelEditTriggerFunctionEnd.Name = "labelEditTriggerFunctionEnd";
 		labelEditTriggerFunctionEnd.Size = new Size(632, 15);
 		labelEditTriggerFunctionEnd.TabIndex = 2;
-		labelEditTriggerFunctionEnd.Text = "$$ LANGUAGE plpgsql;";
+		labelEditTriggerFunctionEnd.Text = "$$;";
 		// 
 		// labelEditTriggerFunctionBegin
 		// 
@@ -850,7 +852,7 @@ partial class FormMain
 		labelEditTriggerFunctionBegin.Name = "labelEditTriggerFunctionBegin";
 		labelEditTriggerFunctionBegin.Size = new Size(632, 15);
 		labelEditTriggerFunctionBegin.TabIndex = 1;
-		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER AS $$";
+		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER LANGUAGE <Trigger Lang> AS $$";
 		// 
 		// groupBoxEditTriggerText
 		// 
@@ -876,6 +878,8 @@ partial class FormMain
 		// 
 		// groupBoxEditTriggerFunctionName
 		// 
+		groupBoxEditTriggerFunctionName.Controls.Add(labelEditFunctionLanguage);
+		groupBoxEditTriggerFunctionName.Controls.Add(comboBoxEditFunctionLanguage);
 		groupBoxEditTriggerFunctionName.Controls.Add(textBoxEditTriggerFunctionName);
 		groupBoxEditTriggerFunctionName.Dock = DockStyle.Top;
 		groupBoxEditTriggerFunctionName.Location = new Point(0, 0);
@@ -885,13 +889,32 @@ partial class FormMain
 		groupBoxEditTriggerFunctionName.TabStop = false;
 		groupBoxEditTriggerFunctionName.Text = "Имя триггерной функции";
 		// 
+		// labelEditFunctionLanguage
+		// 
+		labelEditFunctionLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		labelEditFunctionLanguage.AutoSize = true;
+		labelEditFunctionLanguage.Location = new Point(303, 22);
+		labelEditFunctionLanguage.Name = "labelEditFunctionLanguage";
+		labelEditFunctionLanguage.Size = new Size(155, 15);
+		labelEditFunctionLanguage.TabIndex = 2;
+		labelEditFunctionLanguage.Text = "Язык триггерной функции:";
+		// 
+		// comboBoxEditFunctionLanguage
+		// 
+		comboBoxEditFunctionLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		comboBoxEditFunctionLanguage.FormattingEnabled = true;
+		comboBoxEditFunctionLanguage.Location = new Point(464, 19);
+		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
+		comboBoxEditFunctionLanguage.Size = new Size(168, 23);
+		comboBoxEditFunctionLanguage.TabIndex = 1;
+		// 
 		// textBoxEditTriggerFunctionName
 		// 
-		textBoxEditTriggerFunctionName.Dock = DockStyle.Top;
+		textBoxEditTriggerFunctionName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		textBoxEditTriggerFunctionName.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
 		textBoxEditTriggerFunctionName.Location = new Point(3, 19);
 		textBoxEditTriggerFunctionName.Name = "textBoxEditTriggerFunctionName";
-		textBoxEditTriggerFunctionName.Size = new Size(632, 23);
+		textBoxEditTriggerFunctionName.Size = new Size(294, 23);
 		textBoxEditTriggerFunctionName.TabIndex = 0;
 		textBoxEditTriggerFunctionName.TextChanged += TextBoxEditTriggerFunctionName_TextChanged;
 		// 
@@ -1317,4 +1340,6 @@ partial class FormMain
 	private Label labelPrecision;
 	private GroupBox groupBoxEditTableCurrentFieldExample;
 	private Label labelEditTableCurrentFieldExample;
+	private Label labelEditFunctionLanguage;
+	private ComboBox comboBoxEditFunctionLanguage;
 }

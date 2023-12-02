@@ -540,4 +540,7 @@ public class ConvertMsToPg
 			 EditElementsType.Trigger => ElmType.Trigger,
 			 _ => ElmType.None,
 		 };
+
+	public Plang[] GetProcedureLanguages() => 
+		Plang.Langs;
 }

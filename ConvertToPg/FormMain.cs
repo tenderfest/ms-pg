@@ -30,6 +30,9 @@ public partial class FormMain : Form
 		// наполнение комбобокса с типами полей значениями
 		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
 		comboBoxEditTableCurrentFieldType.SelectedIndex = 0;
+
+		// наполднение комбобокса процедурных языков
+		comboBoxEditFunctionLanguage.Items.AddRange(convert.GetProcedureLanguages());
 	}
 
 	/// <summary>
