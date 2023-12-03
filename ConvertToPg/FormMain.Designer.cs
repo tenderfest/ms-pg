@@ -111,6 +111,7 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		textBoxEditTriggerFirstString = new TextBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -814,6 +815,7 @@ partial class FormMain
 		// groupBoxEditTriggerFunction
 		// 
 		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFunction);
+		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFirstString);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionEnd);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionBegin);
 		groupBoxEditTriggerFunction.Dock = DockStyle.Fill;
@@ -828,10 +830,10 @@ partial class FormMain
 		// 
 		textBoxEditTriggerFunction.Dock = DockStyle.Fill;
 		textBoxEditTriggerFunction.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-		textBoxEditTriggerFunction.Location = new Point(3, 34);
+		textBoxEditTriggerFunction.Location = new Point(3, 57);
 		textBoxEditTriggerFunction.Multiline = true;
 		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
-		textBoxEditTriggerFunction.Size = new Size(632, 193);
+		textBoxEditTriggerFunction.Size = new Size(632, 170);
 		textBoxEditTriggerFunction.TabIndex = 0;
 		// 
 		// labelEditTriggerFunctionEnd
@@ -852,7 +854,7 @@ partial class FormMain
 		labelEditTriggerFunctionBegin.Name = "labelEditTriggerFunctionBegin";
 		labelEditTriggerFunctionBegin.Size = new Size(632, 15);
 		labelEditTriggerFunctionBegin.TabIndex = 1;
-		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER LANGUAGE <Trigger Lang> AS $$";
+		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER LANGUAGE";
 		// 
 		// groupBoxEditTriggerText
 		// 
@@ -907,6 +909,7 @@ partial class FormMain
 		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
 		comboBoxEditFunctionLanguage.Size = new Size(168, 23);
 		comboBoxEditFunctionLanguage.TabIndex = 1;
+		comboBoxEditFunctionLanguage.SelectedIndexChanged += ComboBoxEditFunctionLanguage_SelectedIndexChanged;
 		// 
 		// textBoxEditTriggerFunctionName
 		// 
@@ -1173,6 +1176,16 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// textBoxEditTriggerFirstString
+		// 
+		textBoxEditTriggerFirstString.Dock = DockStyle.Top;
+		textBoxEditTriggerFirstString.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerFirstString.Location = new Point(3, 34);
+		textBoxEditTriggerFirstString.Name = "textBoxEditTriggerFirstString";
+		textBoxEditTriggerFirstString.Size = new Size(632, 23);
+		textBoxEditTriggerFirstString.TabIndex = 3;
+		textBoxEditTriggerFirstString.Text = "<Trigger Lang> AS $$";
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1342,4 +1355,5 @@ partial class FormMain
 	private Label labelEditTableCurrentFieldExample;
 	private Label labelEditFunctionLanguage;
 	private ComboBox comboBoxEditFunctionLanguage;
+	private TextBox textBoxEditTriggerFirstString;
 }

@@ -8,8 +8,12 @@ namespace PgConvert.Config;
 public class NeedCorrect
 {
 	private const string _begin = "begin";
-
+	private string[] SavedLines { get; set; }
+	private int IdTemp { get; set; }
+	private string FunctionNameTemp { get; set; }
+	private string PLanguageTemp { get; set; }
 	private DtElement Element { get; set; }
+
 	public NeedCorrect() { }
 	public NeedCorrect(DtElement element) =>
 			Element = element;
@@ -22,15 +26,22 @@ public class NeedCorrect
 			case ElmType.Procedure:
 				((ElProcedure)Element).LinesPg = SavedLines;
 				break;
+
 			case ElmType.Trigger:
 				var trigger = (ElTrigger)Element;
 				trigger.LinesPg = SavedLines;
 				trigger.TriggerFunctionName = FunctionNameTemp;
+				trigger.PLanguage = Plang.GetByName(PLanguageTemp);
+				if (trigger.PLanguage == Plang.OwnVariant)
+				{
+					trigger.OwnVariantLanguage = PLanguageTemp;
+				}
 				break;
+
 			case ElmType.Table:
 				((ElTable)Element).GeneratedFields = SavedLines;
 				break;
-		};
+		}
 	}
 
 	public int Id
@@ -57,9 +68,16 @@ public class NeedCorrect
 			FunctionNameTemp = value;
 	}
 
-	private string[] SavedLines { get; set; }
-	private int IdTemp { get; set; }
-	private string FunctionNameTemp { get; set; }
+	public string PlangName
+	{
+		get =>
+			Element.ElementType == ElmType.Trigger
+			? ((ElTrigger)Element).PlangName
+			: null;
+
+		set =>
+			PLanguageTemp = value;
+	}
 
 	public string[] Lines
 	{

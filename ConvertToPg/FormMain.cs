@@ -33,6 +33,7 @@ public partial class FormMain : Form
 
 		// наполднение комбобокса процедурных языков
 		comboBoxEditFunctionLanguage.Items.AddRange(convert.GetProcedureLanguages());
+		comboBoxEditFunctionLanguage.SelectedIndex = 0;
 	}
 
 	/// <summary>
@@ -553,6 +554,7 @@ public partial class FormMain : Form
 						var trigger = (ElTrigger)value;
 						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
 						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
+						comboBoxEditFunctionLanguage.SelectedItem = trigger.PLanguage;
 						enableEditButtons = true;
 						break;
 				}
@@ -679,5 +681,19 @@ public partial class FormMain : Form
 				break;
 		}
 		SaveChanges();
+	}
+
+	private void ComboBoxEditFunctionLanguage_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (_currentEditElement?.ElementType == ElmType.Trigger)
+		{
+			var trigger = ((ElTrigger)_currentEditElement);
+			trigger.PLanguage = comboBoxEditFunctionLanguage.SelectedItem as Plang;
+			textBoxEditTriggerFirstString.Text = trigger.GetTriggerFunctionTextFirstString(out var nameIsNull);
+			textBoxEditTriggerFirstString.ReadOnly = !nameIsNull;
+			textBoxEditTriggerFirstString.ForeColor = nameIsNull
+				? Color.Red
+				: textBoxEditTriggerFirstString.Parent.ForeColor;
+		}
 	}
 }

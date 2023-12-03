@@ -51,6 +51,18 @@ public class ElTrigger : ElBaseForTable, IEdited
 	/// </summary>
 	public string[] LinesPg { get; set; }
 
+	/// <summary>
+	/// Тип языка функции триггера
+	/// </summary>
+	[JsonIgnore]
+	public Plang PLanguage { get; set; }
+
+	/// <summary>
+	/// Если язык функции триггера не стандартный, он сохраняется здесь
+	/// </summary>
+	[JsonIgnore]
+	public string OwnVariantLanguage { get; internal set; } = "??????";
+
 	private bool isOk;
 	public bool IsOk =>
 		isOk;
@@ -171,7 +183,20 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 	}
 
 	public string GetTriggerFunctionTextEnd() =>
-		"$$ LANGUAGE plpgsql;";
+		"$$;";
+
 	public string GetTriggerFunctionTextBegin() =>
-		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER AS $$";
+		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER LANGUAGE ";
+
+	public bool IsFunctionLanguageOwn =>
+		PLanguage?.Name == null;
+
+	public string PlangName =>
+		PLanguage?.Name ?? OwnVariantLanguage;
+
+	public string GetTriggerFunctionTextFirstString(out bool nameIsNull)
+	{
+		nameIsNull = string.IsNullOrEmpty(PlangName);
+		return $"{(nameIsNull ? PlangName : PLanguage.Name)} AS $$";
+	}
 }
