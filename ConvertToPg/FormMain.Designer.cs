@@ -82,6 +82,9 @@ partial class FormMain
 		tabPageTrigger = new TabPage();
 		groupBoxEditTriggerFunction = new GroupBox();
 		textBoxEditTriggerFunction = new TextBox();
+		panelEditTriggerLanguage = new Panel();
+		textBoxEditTriggerFirstString = new TextBox();
+		buttonEditOwnTriggerLanguageSave = new Button();
 		labelEditTriggerFunctionEnd = new Label();
 		labelEditTriggerFunctionBegin = new Label();
 		groupBoxEditTriggerText = new GroupBox();
@@ -111,7 +114,6 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
-		textBoxEditTriggerFirstString = new TextBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -159,6 +161,7 @@ partial class FormMain
 		tabPageProcedure.SuspendLayout();
 		tabPageTrigger.SuspendLayout();
 		groupBoxEditTriggerFunction.SuspendLayout();
+		panelEditTriggerLanguage.SuspendLayout();
 		groupBoxEditTriggerText.SuspendLayout();
 		groupBoxEditTriggerFunctionName.SuspendLayout();
 		panelEditText.SuspendLayout();
@@ -815,7 +818,7 @@ partial class FormMain
 		// groupBoxEditTriggerFunction
 		// 
 		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFunction);
-		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFirstString);
+		groupBoxEditTriggerFunction.Controls.Add(panelEditTriggerLanguage);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionEnd);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionBegin);
 		groupBoxEditTriggerFunction.Dock = DockStyle.Fill;
@@ -830,11 +833,44 @@ partial class FormMain
 		// 
 		textBoxEditTriggerFunction.Dock = DockStyle.Fill;
 		textBoxEditTriggerFunction.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-		textBoxEditTriggerFunction.Location = new Point(3, 57);
+		textBoxEditTriggerFunction.Location = new Point(3, 59);
 		textBoxEditTriggerFunction.Multiline = true;
 		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
-		textBoxEditTriggerFunction.Size = new Size(632, 170);
+		textBoxEditTriggerFunction.Size = new Size(632, 168);
 		textBoxEditTriggerFunction.TabIndex = 0;
+		// 
+		// panelEditTriggerLanguage
+		// 
+		panelEditTriggerLanguage.Controls.Add(textBoxEditTriggerFirstString);
+		panelEditTriggerLanguage.Controls.Add(buttonEditOwnTriggerLanguageSave);
+		panelEditTriggerLanguage.Dock = DockStyle.Top;
+		panelEditTriggerLanguage.Location = new Point(3, 34);
+		panelEditTriggerLanguage.Name = "panelEditTriggerLanguage";
+		panelEditTriggerLanguage.Size = new Size(632, 25);
+		panelEditTriggerLanguage.TabIndex = 4;
+		// 
+		// textBoxEditTriggerFirstString
+		// 
+		textBoxEditTriggerFirstString.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		textBoxEditTriggerFirstString.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerFirstString.Location = new Point(0, 1);
+		textBoxEditTriggerFirstString.Name = "textBoxEditTriggerFirstString";
+		textBoxEditTriggerFirstString.Size = new Size(517, 23);
+		textBoxEditTriggerFirstString.TabIndex = 3;
+		textBoxEditTriggerFirstString.Text = "<Trigger Lang> AS $$";
+		textBoxEditTriggerFirstString.Enter += TextBoxEditTriggerFirstString_Enter;
+		// 
+		// buttonEditOwnTriggerLanguageSave
+		// 
+		buttonEditOwnTriggerLanguageSave.Dock = DockStyle.Right;
+		buttonEditOwnTriggerLanguageSave.Enabled = false;
+		buttonEditOwnTriggerLanguageSave.Location = new Point(517, 0);
+		buttonEditOwnTriggerLanguageSave.Name = "buttonEditOwnTriggerLanguageSave";
+		buttonEditOwnTriggerLanguageSave.Size = new Size(115, 25);
+		buttonEditOwnTriggerLanguageSave.TabIndex = 4;
+		buttonEditOwnTriggerLanguageSave.Text = "Применить";
+		buttonEditOwnTriggerLanguageSave.UseVisualStyleBackColor = true;
+		buttonEditOwnTriggerLanguageSave.Click += ButtonEditOwnTriggerLanguageSave_Click;
 		// 
 		// labelEditTriggerFunctionEnd
 		// 
@@ -1176,16 +1212,6 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// textBoxEditTriggerFirstString
-		// 
-		textBoxEditTriggerFirstString.Dock = DockStyle.Top;
-		textBoxEditTriggerFirstString.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-		textBoxEditTriggerFirstString.Location = new Point(3, 34);
-		textBoxEditTriggerFirstString.Name = "textBoxEditTriggerFirstString";
-		textBoxEditTriggerFirstString.Size = new Size(632, 23);
-		textBoxEditTriggerFirstString.TabIndex = 3;
-		textBoxEditTriggerFirstString.Text = "<Trigger Lang> AS $$";
-		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1254,6 +1280,8 @@ partial class FormMain
 		tabPageTrigger.ResumeLayout(false);
 		groupBoxEditTriggerFunction.ResumeLayout(false);
 		groupBoxEditTriggerFunction.PerformLayout();
+		panelEditTriggerLanguage.ResumeLayout(false);
+		panelEditTriggerLanguage.PerformLayout();
 		groupBoxEditTriggerText.ResumeLayout(false);
 		groupBoxEditTriggerText.PerformLayout();
 		groupBoxEditTriggerFunctionName.ResumeLayout(false);
@@ -1356,4 +1384,6 @@ partial class FormMain
 	private Label labelEditFunctionLanguage;
 	private ComboBox comboBoxEditFunctionLanguage;
 	private TextBox textBoxEditTriggerFirstString;
+	private Panel panelEditTriggerLanguage;
+	private Button buttonEditOwnTriggerLanguageSave;
 }

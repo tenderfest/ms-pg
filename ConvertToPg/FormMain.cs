@@ -497,7 +497,7 @@ public partial class FormMain : Form
 	{
 		set
 		{
-			_currentEditElement = value;
+			__currentEditElement = value;
 			var enableEditButtons = false;
 			tabControlEditElement.SuspendLayout();
 			try
@@ -554,7 +554,10 @@ public partial class FormMain : Form
 						var trigger = (ElTrigger)value;
 						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
 						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
-						comboBoxEditFunctionLanguage.SelectedItem = trigger.PLanguage;
+						if (comboBoxEditFunctionLanguage.SelectedItem != trigger.PLanguage)
+							comboBoxEditFunctionLanguage.SelectedItem = trigger.PLanguage;
+						else
+							SetTextBoxEditTriggerFirstString(trigger);
 						enableEditButtons = true;
 						break;
 				}
@@ -569,12 +572,13 @@ public partial class FormMain : Form
 					buttonEditUndo.Enabled = enableEditButtons;
 			}
 		}
+		get => __currentEditElement;
 	}
-	private DtElement _currentEditElement;
+	private DtElement __currentEditElement;
 
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
 	{
-		if (_currentEditElement is not ElTrigger trigger)
+		if (CurrentEditElement is not ElTrigger trigger)
 			return;
 		var functionName = textBoxEditTriggerFunctionName.Text;
 		if (functionName.Contains(' '))
@@ -611,49 +615,49 @@ public partial class FormMain : Form
 
 	private void UndoEdit()
 	{
-		if (null == _currentEditElement)
+		if (null == CurrentEditElement)
 			return;
 
-		switch (_currentEditElement.ElementType)
+		switch (CurrentEditElement.ElementType)
 		{
 			case ElmType.Table:
 				MessageBox.Show("сделать");
 				break;
 
 			case ElmType.Procedure:
-				textBoxEditProcedure.Text = ((ElProcedure)_currentEditElement).LinesPg.ToOneString();
+				textBoxEditProcedure.Text = ((ElProcedure)CurrentEditElement).LinesPg.ToOneString();
 				break;
 
 			case ElmType.Trigger:
-				textBoxEditTriggerFunction.Text = ((ElTrigger)_currentEditElement).LinesPg.ToOneString();
+				textBoxEditTriggerFunction.Text = ((ElTrigger)CurrentEditElement).LinesPg.ToOneString();
 				break;
 
 			default:
-				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
+				MessageBox.Show($"Неизвестный тип элемента {CurrentEditElement.ElementType}");
 				break;
 		}
 	}
 
 	private void ButtonEditAllUndo_Click(object sender, EventArgs e)
 	{
-		if (null == _currentEditElement)
+		if (null == CurrentEditElement)
 			return;
-		switch (_currentEditElement.ElementType)
+		switch (CurrentEditElement.ElementType)
 		{
 			case ElmType.Table:
 				MessageBox.Show("сделать");
 				break;
 
 			case ElmType.Procedure:
-				NeedCorrect.LinesPgFromLines((ElProcedure)_currentEditElement);
+				NeedCorrect.LinesPgFromLines((ElProcedure)CurrentEditElement);
 				break;
 
 			case ElmType.Trigger:
-				NeedCorrect.LinesPgFromLines((ElTrigger)_currentEditElement);
+				NeedCorrect.LinesPgFromLines((ElTrigger)CurrentEditElement);
 				break;
 
 			default:
-				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
+				MessageBox.Show($"Неизвестный тип элемента {CurrentEditElement.ElementType}");
 				break;
 		}
 		UndoEdit();
@@ -661,23 +665,23 @@ public partial class FormMain : Form
 
 	private void ButtonEditSave_Click(object sender, EventArgs e)
 	{
-		if (null == _currentEditElement) return;
-		switch (_currentEditElement.ElementType)
+		if (null == CurrentEditElement) return;
+		switch (CurrentEditElement.ElementType)
 		{
 			case ElmType.Table:
 				MessageBox.Show("сделать");
 				break;
 
 			case ElmType.Procedure:
-				((ElProcedure)_currentEditElement).LinesPg = textBoxEditProcedure.Text.FromOneString();
+				((ElProcedure)CurrentEditElement).LinesPg = textBoxEditProcedure.Text.FromOneString();
 				break;
 
 			case ElmType.Trigger:
-				((ElTrigger)_currentEditElement).LinesPg = textBoxEditTriggerFunction.Text.FromOneString();
+				((ElTrigger)CurrentEditElement).LinesPg = textBoxEditTriggerFunction.Text.FromOneString();
 				break;
 
 			default:
-				MessageBox.Show($"Неизвестный тип элемента {_currentEditElement.ElementType}");
+				MessageBox.Show($"Неизвестный тип элемента {CurrentEditElement.ElementType}");
 				break;
 		}
 		SaveChanges();
@@ -685,15 +689,34 @@ public partial class FormMain : Form
 
 	private void ComboBoxEditFunctionLanguage_SelectedIndexChanged(object sender, EventArgs e)
 	{
-		if (_currentEditElement?.ElementType == ElmType.Trigger)
+		if (CurrentEditElement?.ElementType == ElmType.Trigger)
 		{
-			var trigger = ((ElTrigger)_currentEditElement);
+			var trigger = (ElTrigger)CurrentEditElement;
 			trigger.PLanguage = comboBoxEditFunctionLanguage.SelectedItem as Plang;
-			textBoxEditTriggerFirstString.Text = trigger.GetTriggerFunctionTextFirstString(out var nameIsNull);
-			textBoxEditTriggerFirstString.ReadOnly = !nameIsNull;
-			textBoxEditTriggerFirstString.ForeColor = nameIsNull
-				? Color.Red
-				: textBoxEditTriggerFirstString.Parent.ForeColor;
+			SetTextBoxEditTriggerFirstString(trigger);
 		}
+	}
+
+	private void SetTextBoxEditTriggerFirstString(ElTrigger trigger)
+	{
+		textBoxEditTriggerFirstString.Text = trigger.GetTriggerFunctionFirstString(out var nameIsNull);
+		buttonEditOwnTriggerLanguageSave.Enabled = trigger.IsOwnVariantLanguage;
+		textBoxEditTriggerFirstString.ReadOnly = !trigger.IsOwnVariantLanguage;
+		textBoxEditTriggerFirstString.ForeColor = nameIsNull
+			? Color.Red
+			: textBoxEditTriggerFirstString.Parent.ForeColor;
+	}
+
+	private void TextBoxEditTriggerFirstString_Enter(object sender, EventArgs e) =>
+		textBoxEditTriggerFirstString.SelectionStart = 0;
+
+	private void ButtonEditOwnTriggerLanguageSave_Click(object sender, EventArgs e)
+	{
+		if ((CurrentEditElement?.ElementType) != ElmType.Trigger)
+			return;
+
+		var trigger = (ElTrigger)CurrentEditElement;
+		trigger.SetTriggerFunctionFirstString(textBoxEditTriggerFirstString.Text);
+		SetTextBoxEditTriggerFirstString(trigger);
 	}
 }

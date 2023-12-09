@@ -11,6 +11,7 @@ public class ElTrigger : ElBaseForTable, IEdited
 	private const string _update = "update";
 	private const string _delete = "delete";
 	private const string _insteadOf = "INSTEAD OF";
+	private const string _plangNameEnd = "AS $$";
 	private const string _or = " or ";
 	//private const string _end = "end";
 
@@ -61,7 +62,10 @@ public class ElTrigger : ElBaseForTable, IEdited
 	/// Если язык функции триггера не стандартный, он сохраняется здесь
 	/// </summary>
 	[JsonIgnore]
-	public string OwnVariantLanguage { get; internal set; } = "??????";
+	public string OwnVariantLanguage { get; internal set; }
+
+	public bool IsOwnVariantLanguage =>
+		PLanguage == Plang.OwnVariant;
 
 	private bool isOk;
 	public bool IsOk =>
@@ -188,15 +192,20 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 	public string GetTriggerFunctionTextBegin() =>
 		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER LANGUAGE ";
 
-	public bool IsFunctionLanguageOwn =>
-		PLanguage?.Name == null;
-
 	public string PlangName =>
 		PLanguage?.Name ?? OwnVariantLanguage;
 
-	public string GetTriggerFunctionTextFirstString(out bool nameIsNull)
+	public string GetTriggerFunctionFirstString(out bool nameIsNull)
 	{
 		nameIsNull = string.IsNullOrEmpty(PlangName);
-		return $"{(nameIsNull ? PlangName : PLanguage.Name)} AS $$";
+		return $"{(nameIsNull ? PLanguage.Name : PlangName)} {_plangNameEnd}";
 	}
+
+	public void SetTriggerFunctionFirstString(string text) =>
+		OwnVariantLanguage = string.IsNullOrEmpty(text)
+		? null
+		: text
+			.Replace(_plangNameEnd, string.Empty)
+			.Replace(" ", string.Empty)
+			.Trim();
 }
