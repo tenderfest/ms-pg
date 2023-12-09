@@ -490,6 +490,8 @@ public partial class FormMain : Form
 		}
 	}
 
+	private DtElement currentEditElement;
+
 	/// <summary>
 	/// Отображение текущего элемента для редактирования
 	/// </summary>
@@ -497,7 +499,7 @@ public partial class FormMain : Form
 	{
 		set
 		{
-			__currentEditElement = value;
+			currentEditElement = value;
 			var enableEditButtons = false;
 			tabControlEditElement.SuspendLayout();
 			try
@@ -562,19 +564,18 @@ public partial class FormMain : Form
 						break;
 				}
 				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
+				buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk;
 			}
 			finally
 			{
 				tabControlEditElement.ResumeLayout();
-				buttonEditConfirmElement.Enabled =
-					buttonEditSave.Enabled =
+				buttonEditSave.Enabled =
 					buttonEditAllUndo.Enabled =
 					buttonEditUndo.Enabled = enableEditButtons;
 			}
 		}
-		get => __currentEditElement;
+		get => currentEditElement;
 	}
-	private DtElement __currentEditElement;
 
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
 	{

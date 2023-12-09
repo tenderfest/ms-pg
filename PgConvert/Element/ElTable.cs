@@ -66,7 +66,13 @@ public class ElTable : ElBaseForTable, IEdited
 
 	public bool IsOk =>
 		!FieldsForCorrect.Any();
-	OnePgDatabase IEdited.Database => base.Database;
+
+	OnePgDatabase IEdited.Database =>
+		Database;
+
+	public bool CanSetOk => 
+		false;
+	public void SetOk(bool value) { }
 
 	internal override string Parse()
 	{

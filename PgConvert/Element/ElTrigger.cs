@@ -195,6 +195,9 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 	public string PlangName =>
 		PLanguage?.Name ?? OwnVariantLanguage;
 
+	public bool CanSetOk =>
+		true;
+
 	public string GetTriggerFunctionFirstString(out bool nameIsNull)
 	{
 		nameIsNull = string.IsNullOrEmpty(PlangName);

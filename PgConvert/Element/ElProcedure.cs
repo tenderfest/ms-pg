@@ -17,10 +17,14 @@ public class ElProcedure : DtElement, IEdited
 	private bool isOk;
 	public bool IsOk => isOk;
 
-	OnePgDatabase IEdited.Database => Database;
+	OnePgDatabase IEdited.Database => 
+		Database;
 
-	public void SetOk(bool ok) =>
-		isOk = ok;
+	public bool CanSetOk =>
+		true;
+
+	public void SetOk(bool value) =>
+		isOk = value;
 
 	internal override string Parse()
 	{
