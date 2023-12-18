@@ -10,6 +10,7 @@ public class NeedCorrect
 	private const string _begin = "begin";
 	private string[] SavedLines { get; set; }
 	private int IdTemp { get; set; }
+	private bool IsOkTemp { get; set; }
 	private string FunctionNameTemp { get; set; }
 	private string PLanguageTemp { get; set; }
 	private DtElement Element { get; set; }
@@ -24,13 +25,16 @@ public class NeedCorrect
 		switch (Element.ElementType)
 		{
 			case ElmType.Procedure:
-				((ElProcedure)Element).LinesPg = SavedLines;
+				var procedure = (ElProcedure)Element;
+				procedure.LinesPg = SavedLines;
+				procedure.SetOk(IsOkTemp);
 				break;
 
 			case ElmType.Trigger:
 				var trigger = (ElTrigger)Element;
 				trigger.LinesPg = SavedLines;
 				trigger.TriggerFunctionName = FunctionNameTemp;
+				trigger.SetOk(IsOkTemp);
 				trigger.PLanguage = Plang.GetByName(PLanguageTemp);
 				if (trigger.PLanguage == Plang.OwnVariant)
 				{
@@ -42,6 +46,14 @@ public class NeedCorrect
 				((ElTable)Element).GeneratedFields = SavedLines;
 				break;
 		}
+	}
+
+	public bool IsOk
+	{
+		get =>
+			((IEdited)Element).IsOk;
+		set =>
+			IsOkTemp = value;
 	}
 
 	public int Id

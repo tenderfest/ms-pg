@@ -564,7 +564,7 @@ public partial class FormMain : Form
 						break;
 				}
 				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
-				buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk;
+				buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk && !((IEdited)value).IsOk;
 			}
 			finally
 			{
@@ -574,7 +574,8 @@ public partial class FormMain : Form
 					buttonEditUndo.Enabled = enableEditButtons;
 			}
 		}
-		get => currentEditElement;
+		get =>
+			currentEditElement;
 	}
 
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
@@ -654,7 +655,10 @@ public partial class FormMain : Form
 				break;
 
 			case ElmType.Trigger:
-				NeedCorrect.LinesPgFromLines((ElTrigger)CurrentEditElement);
+				var trigger = (ElTrigger)CurrentEditElement;
+				NeedCorrect.LinesPgFromLines(trigger);
+				trigger.TriggerFunctionName = null;
+				textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
 				break;
 
 			default:
@@ -719,5 +723,27 @@ public partial class FormMain : Form
 		var trigger = (ElTrigger)CurrentEditElement;
 		trigger.SetTriggerFunctionFirstString(textBoxEditTriggerFirstString.Text);
 		SetTextBoxEditTriggerFirstString(trigger);
+	}
+
+	private void ButtonEditConfirmElement_Click(object sender, EventArgs e)
+	{
+		switch (CurrentEditElement?.ElementType)
+		{
+			case ElmType.Trigger:
+				var trigger = (ElTrigger)CurrentEditElement;
+				if (trigger.IsOwnVariantLanguage &&
+					string.IsNullOrEmpty(trigger.OwnVariantLanguage))
+				{
+					MessageBox.Show("Необходимо указать собственный вариант языка триггерной функции или выбрать один из имеющихся.");
+					return;
+				}
+				trigger.SetOk(true);
+				break;
+
+			case ElmType.Procedure:
+				((ElProcedure)currentEditElement).SetOk(true);
+				break;
+		}
+		ShowEditElements();
 	}
 }

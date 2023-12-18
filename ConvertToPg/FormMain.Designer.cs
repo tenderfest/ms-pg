@@ -836,6 +836,7 @@ partial class FormMain
 		textBoxEditTriggerFunction.Location = new Point(3, 59);
 		textBoxEditTriggerFunction.Multiline = true;
 		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
+		textBoxEditTriggerFunction.ScrollBars = ScrollBars.Vertical;
 		textBoxEditTriggerFunction.Size = new Size(632, 168);
 		textBoxEditTriggerFunction.TabIndex = 0;
 		// 
@@ -1126,6 +1127,7 @@ partial class FormMain
 		buttonEditConfirmElement.TabIndex = 1;
 		buttonEditConfirmElement.Text = "Утвердить";
 		buttonEditConfirmElement.UseVisualStyleBackColor = true;
+		buttonEditConfirmElement.Click += ButtonEditConfirmElement_Click;
 		// 
 		// radioButtonEditElementsAll
 		// 

@@ -72,7 +72,7 @@ public class ElTable : ElBaseForTable, IEdited
 
 	public bool CanSetOk => 
 		false;
-	public void SetOk(bool value) { }
+	public void SetOk(bool ok) { }
 
 	internal override string Parse()
 	{

@@ -67,12 +67,12 @@ public class ElTrigger : ElBaseForTable, IEdited
 	public bool IsOwnVariantLanguage =>
 		PLanguage == Plang.OwnVariant;
 
-	private bool isOk;
-	public bool IsOk =>
-		isOk;
 	OnePgDatabase IEdited.Database =>
 		Database;
 
+	private bool isOk;
+	public bool IsOk =>
+		isOk;
 	public void SetOk(bool ok) =>
 		isOk = ok;
 
@@ -105,10 +105,8 @@ public class ElTrigger : ElBaseForTable, IEdited
 
 			return _triggerFunctionName;
 		}
-		set
-		{
+		set =>
 			_triggerFunctionName = value;
-		}
 	}
 	private string _triggerFunctionName;
 
@@ -190,7 +188,7 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 		"$$;";
 
 	public string GetTriggerFunctionTextBegin() =>
-		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER LANGUAGE ";
+		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName}() RETURNS TRIGGER LANGUAGE ";
 
 	public string PlangName =>
 		PLanguage?.Name ?? OwnVariantLanguage;

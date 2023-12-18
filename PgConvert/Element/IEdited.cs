@@ -11,5 +11,5 @@ public interface IEdited
 	OnePgDatabase Database { get; }
 	ElmType ElementType { get; }
 	bool CanSetOk { get; }
-	void SetOk(bool value);
+	void SetOk(bool ok);
 }
