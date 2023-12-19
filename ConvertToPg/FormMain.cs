@@ -564,7 +564,17 @@ public partial class FormMain : Form
 					}))
 				{
 					labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
-					buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk && !((IEdited)value).IsOk;
+					buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk;
+					if (((IEdited)value).IsOk)
+					{
+						buttonEditConfirmElement.Text = "Разутвердить";
+						buttonEditConfirmElement.ForeColor = Color.Red;
+					}
+					else
+					{
+						buttonEditConfirmElement.Text = "Утвердить";
+						buttonEditConfirmElement.ForeColor = Color.Green;
+					}
 				}
 			}
 			finally

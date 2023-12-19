@@ -90,6 +90,7 @@ partial class FormMain
 		groupBoxEditTriggerText = new GroupBox();
 		textBoxEditTriggerText = new TextBox();
 		groupBoxEditTriggerFunctionName = new GroupBox();
+		comboBoxEditFunctionLanguage = new ComboBox();
 		labelEditFunctionLanguage = new Label();
 		textBoxEditTriggerFunctionName = new TextBox();
 		panelEditText = new Panel();
@@ -113,7 +114,6 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
-		comboBoxEditFunctionLanguage = new ComboBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -918,8 +918,8 @@ partial class FormMain
 		// 
 		// groupBoxEditTriggerFunctionName
 		// 
-		groupBoxEditTriggerFunctionName.Controls.Add(labelEditFunctionLanguage);
 		groupBoxEditTriggerFunctionName.Controls.Add(comboBoxEditFunctionLanguage);
+		groupBoxEditTriggerFunctionName.Controls.Add(labelEditFunctionLanguage);
 		groupBoxEditTriggerFunctionName.Controls.Add(textBoxEditTriggerFunctionName);
 		groupBoxEditTriggerFunctionName.Dock = DockStyle.Top;
 		groupBoxEditTriggerFunctionName.Location = new Point(0, 0);
@@ -928,6 +928,16 @@ partial class FormMain
 		groupBoxEditTriggerFunctionName.TabIndex = 0;
 		groupBoxEditTriggerFunctionName.TabStop = false;
 		groupBoxEditTriggerFunctionName.Text = "Имя триггерной функции";
+		// 
+		// comboBoxEditFunctionLanguage
+		// 
+		comboBoxEditFunctionLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+		comboBoxEditFunctionLanguage.FormattingEnabled = true;
+		comboBoxEditFunctionLanguage.Location = new Point(464, 16);
+		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
+		comboBoxEditFunctionLanguage.Size = new Size(168, 23);
+		comboBoxEditFunctionLanguage.TabIndex = 3;
+		comboBoxEditFunctionLanguage.SelectedIndexChanged += ComboBoxEditFunctionLanguage_SelectedIndexChanged;
 		// 
 		// labelEditFunctionLanguage
 		// 
@@ -938,17 +948,6 @@ partial class FormMain
 		labelEditFunctionLanguage.Size = new Size(155, 15);
 		labelEditFunctionLanguage.TabIndex = 2;
 		labelEditFunctionLanguage.Text = "Язык триггерной функции:";
-		// 
-		// comboBoxEditFunctionLanguage
-		// 
-		comboBoxEditFunctionLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-		comboBoxEditFunctionLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
-		comboBoxEditFunctionLanguage.FormattingEnabled = true;
-		comboBoxEditFunctionLanguage.Location = new Point(464, 19);
-		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
-		comboBoxEditFunctionLanguage.Size = new Size(168, 23);
-		comboBoxEditFunctionLanguage.TabIndex = 1;
-		comboBoxEditFunctionLanguage.SelectedIndexChanged += ComboBoxEditFunctionLanguage_SelectedIndexChanged;
 		// 
 		// textBoxEditTriggerFunctionName
 		// 
@@ -1386,8 +1385,8 @@ partial class FormMain
 	private GroupBox groupBoxEditTableCurrentFieldExample;
 	private Label labelEditTableCurrentFieldExample;
 	private Label labelEditFunctionLanguage;
-	private ComboBox comboBoxEditFunctionLanguage;
 	private TextBox textBoxEditTriggerFirstString;
 	private Panel panelEditTriggerLanguage;
 	private Button buttonEditOwnTriggerLanguageSave;
+	private ComboBox comboBoxEditFunctionLanguage;
 }
