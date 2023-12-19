@@ -113,14 +113,17 @@ public class DtField
 			IsFieldTypeNone ? "???" : FieldType)}{(
 			NotNull ? _notNull : string.Empty)}";
 
-	internal static (string, string) GetCorrectFieldName(string correctField)
+	internal static (string, bool, string) GetCorrectFieldName(string correctField)
 	{
 		if (string.IsNullOrEmpty(correctField))
-			return (null, null);
+			return (null, false, null);
 		var name = correctField.Split(_correctSygn);
-		if (name.Length != 2)
-			return (null, null);
-		return (name[0], name[1]);
+		if (name.Length != 3)
+			return (null, false, null);
+		bool correctIsDone = false;
+		if (bool.TryParse(name[1], out bool isDone))
+			correctIsDone = isDone;
+		return (name[0], correctIsDone, name[2]);
 	}
 
 	public string NeedCorrect =>

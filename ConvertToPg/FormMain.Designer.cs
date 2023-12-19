@@ -695,6 +695,7 @@ partial class FormMain
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
 		textBoxEditTableCurrentField.Size = new Size(412, 240);
 		textBoxEditTableCurrentField.TabIndex = 0;
+		textBoxEditTableCurrentField.TextChanged += TextBoxEditTableCurrentField_TextChanged;
 		// 
 		// groupBoxEditTableCurrentFieldType
 		// 
@@ -751,6 +752,7 @@ partial class FormMain
 		// 
 		// comboBoxEditTableCurrentFieldType
 		// 
+		comboBoxEditTableCurrentFieldType.DropDownStyle = ComboBoxStyle.DropDownList;
 		comboBoxEditTableCurrentFieldType.FormattingEnabled = true;
 		comboBoxEditTableCurrentFieldType.Location = new Point(3, 19);
 		comboBoxEditTableCurrentFieldType.Name = "comboBoxEditTableCurrentFieldType";

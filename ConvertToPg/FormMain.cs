@@ -29,9 +29,9 @@ public partial class FormMain : Form
 
 		// наполнение комбобокса с типами полей значениями
 		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
-		comboBoxEditTableCurrentFieldType.SelectedIndex = 0;
+		comboBoxEditTableCurrentFieldType.SelectedItem = null;
 
-		// наполднение комбобокса процедурных языков
+		// наполнение комбобокса процедурных языков
 		comboBoxEditFunctionLanguage.Items.AddRange(convert.GetProcedureLanguages());
 		comboBoxEditFunctionLanguage.SelectedIndex = 0;
 	}
@@ -479,6 +479,9 @@ public partial class FormMain : Form
 			: null;
 	}
 
+	/// <summary>
+	/// Выбор поля в списке полей изменяемого определения таблицы
+	/// </summary>
 	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		textBoxEditTableCurrentField.Text = null;
@@ -486,7 +489,13 @@ public partial class FormMain : Form
 		{
 			var field = (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag;
 			textBoxEditTableCurrentField.Text = field.FormulaPg;
-			textBoxEditTableCurrentField.Enabled = field.IsGenerated;
+			groupBoxEditTableCurrentFieldExample.Enabled =
+				groupBoxEditTableCurrentFieldType.Enabled =
+				groupBoxEditTableCurrentField.Enabled = field.IsGenerated;
+		}
+		else
+		{
+			comboBoxEditTableCurrentFieldType.SelectedItem = null;
 		}
 	}
 
@@ -614,6 +623,9 @@ public partial class FormMain : Form
 
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
 	{
+		if (null == comboBoxEditTableCurrentFieldType.SelectedItem)
+			return;
+
 		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
 
 		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
@@ -762,5 +774,11 @@ public partial class FormMain : Form
 		{
 			ShowEditElements();
 		}
+	}
+
+	// изменение определения вычисляемого поля
+	private void TextBoxEditTableCurrentField_TextChanged(object sender, EventArgs e)
+	{
+
 	}
 }

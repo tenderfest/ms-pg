@@ -53,13 +53,14 @@ public class ElTable : ElBaseForTable, IEdited
 		{
 			foreach (var correctField in value)
 			{
-				var (name, formulaPg) = DtField.GetCorrectFieldName(correctField);
+				var (name, isDone, formulaPg) = DtField.GetCorrectFieldName(correctField);
 				if (null == name)
 					continue;
 				var field = Fields.Find(x => x.Name == name);
 				if (null == field)
 					continue;
 				field.FormulaPg = formulaPg;
+				field.SetOk(isDone);
 			}
 		}
 	}
@@ -70,7 +71,7 @@ public class ElTable : ElBaseForTable, IEdited
 	OnePgDatabase IEdited.Database =>
 		Database;
 
-	public bool CanSetOk => 
+	public bool CanSetOk =>
 		false;
 	public void SetOk(bool ok) { }
 
