@@ -941,6 +941,7 @@ partial class FormMain
 		// comboBoxEditFunctionLanguage
 		// 
 		comboBoxEditFunctionLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		comboBoxEditFunctionLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
 		comboBoxEditFunctionLanguage.FormattingEnabled = true;
 		comboBoxEditFunctionLanguage.Location = new Point(464, 19);
 		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
