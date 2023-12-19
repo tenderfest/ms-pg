@@ -91,7 +91,6 @@ partial class FormMain
 		textBoxEditTriggerText = new TextBox();
 		groupBoxEditTriggerFunctionName = new GroupBox();
 		labelEditFunctionLanguage = new Label();
-		comboBoxEditFunctionLanguage = new ComboBox();
 		textBoxEditTriggerFunctionName = new TextBox();
 		panelEditText = new Panel();
 		labelEditElementType = new Label();
@@ -114,6 +113,7 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		comboBoxEditFunctionLanguage = new ComboBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -836,9 +836,10 @@ partial class FormMain
 		textBoxEditTriggerFunction.Location = new Point(3, 59);
 		textBoxEditTriggerFunction.Multiline = true;
 		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
-		textBoxEditTriggerFunction.ScrollBars = ScrollBars.Vertical;
+		textBoxEditTriggerFunction.ScrollBars = ScrollBars.Both;
 		textBoxEditTriggerFunction.Size = new Size(632, 168);
 		textBoxEditTriggerFunction.TabIndex = 0;
+		textBoxEditTriggerFunction.WordWrap = false;
 		// 
 		// panelEditTriggerLanguage
 		// 
