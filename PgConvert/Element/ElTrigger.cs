@@ -184,7 +184,7 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 		}
 	}
 
-	public string GetTriggerFunctionTextEnd() =>
+	public static string TriggerFunctionTextEnd =>
 		"$$;";
 
 	public string GetTriggerFunctionTextBegin() =>
@@ -199,7 +199,7 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 	public string GetTriggerFunctionFirstString(out bool nameIsNull)
 	{
 		nameIsNull = string.IsNullOrEmpty(PlangName);
-		return $"{(nameIsNull ? PLanguage.Name : PlangName)} {_plangNameEnd}";
+		return $"{(nameIsNull ? PLanguage?.Name : PlangName)} {_plangNameEnd}";
 	}
 
 	public void SetTriggerFunctionFirstString(string text) =>

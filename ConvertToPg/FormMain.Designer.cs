@@ -114,6 +114,7 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		buttonEditMakeGeneratedField = new Button();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -678,6 +679,7 @@ partial class FormMain
 		// groupBoxEditTableCurrentField
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
+		groupBoxEditTableCurrentField.Controls.Add(buttonEditMakeGeneratedField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
 		groupBoxEditTableCurrentField.Location = new Point(0, 94);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
@@ -693,9 +695,8 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 240);
+		textBoxEditTableCurrentField.Size = new Size(412, 217);
 		textBoxEditTableCurrentField.TabIndex = 0;
-		textBoxEditTableCurrentField.TextChanged += TextBoxEditTableCurrentField_TextChanged;
 		// 
 		// groupBoxEditTableCurrentFieldType
 		// 
@@ -720,6 +721,7 @@ partial class FormMain
 		numericUpDownScale.Name = "numericUpDownScale";
 		numericUpDownScale.Size = new Size(56, 23);
 		numericUpDownScale.TabIndex = 4;
+		numericUpDownScale.ValueChanged += NumericUpDownScale_ValueChanged;
 		// 
 		// labelScale
 		// 
@@ -739,6 +741,7 @@ partial class FormMain
 		numericUpDownPrecision.Name = "numericUpDownPrecision";
 		numericUpDownPrecision.Size = new Size(56, 23);
 		numericUpDownPrecision.TabIndex = 2;
+		numericUpDownPrecision.ValueChanged += NumericUpDownPrecision_ValueChanged;
 		// 
 		// labelPrecision
 		// 
@@ -1217,6 +1220,17 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// buttonEditMakeGeneratedField
+		// 
+		buttonEditMakeGeneratedField.Dock = DockStyle.Bottom;
+		buttonEditMakeGeneratedField.Location = new Point(3, 236);
+		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
+		buttonEditMakeGeneratedField.Size = new Size(412, 23);
+		buttonEditMakeGeneratedField.TabIndex = 1;
+		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
+		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
+		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1391,4 +1405,5 @@ partial class FormMain
 	private Panel panelEditTriggerLanguage;
 	private Button buttonEditOwnTriggerLanguageSave;
 	private ComboBox comboBoxEditFunctionLanguage;
+	private Button buttonEditMakeGeneratedField;
 }

@@ -479,24 +479,38 @@ public partial class FormMain : Form
 			: null;
 	}
 
+	DtField CurrentField =>
+		listViewEditTableFieldNames.SelectedItems?.Count == 1
+		? (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag
+		: null;
+
 	/// <summary>
 	/// Выбор поля в списке полей изменяемого определения таблицы
 	/// </summary>
-	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
+
+	private void ShowCurrentEditField()
 	{
-		textBoxEditTableCurrentField.Text = null;
-		if (listViewEditTableFieldNames.SelectedItems.Count == 1)
+		//textBoxEditTableCurrentField.Text = null;
+
+		if (null == CurrentField)
 		{
-			var field = (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag;
-			textBoxEditTableCurrentField.Text = field.FormulaPg;
-			groupBoxEditTableCurrentFieldExample.Enabled =
-				groupBoxEditTableCurrentFieldType.Enabled =
-				groupBoxEditTableCurrentField.Enabled = field.IsGenerated;
-		}
-		else
-		{
+			textBoxEditTableCurrentField.Text = null;
 			comboBoxEditTableCurrentFieldType.SelectedItem = null;
+			labelEditTableCurrentFieldExample.Text = null;
+			return;
 		}
+
+		textBoxEditTableCurrentField.Text = CurrentField.FormulaPg;
+		groupBoxEditTableCurrentFieldExample.Enabled =
+			groupBoxEditTableCurrentFieldType.Enabled =
+			groupBoxEditTableCurrentField.Enabled = CurrentField.IsGenerated;
+
+		labelEditTableCurrentFieldExample.Text = CurrentField.GeneratedFieldPg;
+		labelEditTableCurrentFieldExample.ForeColor = CurrentField.IsFieldTypeNone
+			? Color.Red
+			: labelEditTableCurrentFieldExample.Parent.ForeColor;
 	}
 
 	private DtElement currentEditElement;
@@ -618,7 +632,7 @@ public partial class FormMain : Form
 		}
 		textBoxEditTriggerText.Text = trigger.GetTriggerText(functionName);
 		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
-		labelEditTriggerFunctionEnd.Text = trigger.GetTriggerFunctionTextEnd();
+		labelEditTriggerFunctionEnd.Text = ElTrigger.TriggerFunctionTextEnd;
 	}
 
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
@@ -639,6 +653,13 @@ public partial class FormMain : Form
 			fieldType == FldType.Numeric;
 		if (!numericUpDownScale.Enabled)
 			numericUpDownScale.Value = 0;
+
+		CurrentField.FieldType = new DtFieldType(
+			fieldType,
+			Convert.ToInt32(numericUpDownPrecision.Value),
+			Convert.ToInt32(numericUpDownScale.Value));
+
+		ShowCurrentEditField();
 	}
 
 	private void ButtonEditUndo_Click(object sender, EventArgs e) =>
@@ -776,9 +797,19 @@ public partial class FormMain : Form
 		}
 	}
 
-	// изменение определения вычисляемого поля
-	private void TextBoxEditTableCurrentField_TextChanged(object sender, EventArgs e)
-	{
+	private void NumericUpDownPrecision_ValueChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
 
+	private void NumericUpDownScale_ValueChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
+
+	/// <summary>
+	/// Изменение формулы для вычисляемого поля
+	/// </summary>
+	private void ButtonEditMakeGeneratedField_Click(object sender, EventArgs e)
+	{
+		if (null == CurrentField)
+			return;
+		CurrentField.FormulaPg = textBoxEditTableCurrentField.Text;
 	}
 }

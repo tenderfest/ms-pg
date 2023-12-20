@@ -21,7 +21,7 @@ public class DtFieldType
 			new char[] { '(', ')' },
 			StringSplitOptions.RemoveEmptyEntries);
 
-		if (null == pieces || pieces.Length < 1)
+		if (pieces.Length < 1)
 		{
 			FieldType = FldType.None;
 			return;
@@ -42,10 +42,17 @@ public class DtFieldType
 		}
 	}
 
+	public DtFieldType(FldType fieldType, int precision, int scale)
+	{
+		FieldType = fieldType;
+		Len = precision;
+		LenDecimal = scale;
+	}
+
 	/// <summary>
 	/// Тип поля
 	/// </summary>
-	internal FldType FieldType { get; set; }
+	internal FldType FieldType { get; }
 	/// <summary>
 	/// Точность десятичных значений NUMERIC(точность, масштаб)
 	/// </summary>
@@ -118,6 +125,34 @@ public class DtFieldType
 			}
 			sb.Append(')');
 		}
-		return sb.ToString();
+		return $"{sb}";
+	}
+
+	internal string GetNeedCorrect()
+	{
+		var sb = new StringBuilder($"{FieldType}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{Len}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{LenDecimal}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{IsMax}");
+		return $"{sb}";
+	}
+
+	internal static DtFieldType GetNeedCorrect(
+		string fType,
+		string len,
+		string lenDecimal,
+		string isMax)
+	{
+		if (!Enum.TryParse(typeof(FldType), fType, true, out var result) ||
+			!int.TryParse(len, out int precision) ||
+			!int.TryParse(lenDecimal, out int scale))
+			return null;
+		var ft = new DtFieldType((FldType)result, precision, scale);
+		if (bool.TryParse(isMax, out bool isMaxDecimal))
+			ft.IsMax = isMaxDecimal;
+		return ft;
 	}
 }

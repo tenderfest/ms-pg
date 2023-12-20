@@ -53,14 +53,7 @@ public class ElTable : ElBaseForTable, IEdited
 		{
 			foreach (var correctField in value)
 			{
-				var (name, isDone, formulaPg) = DtField.GetCorrectFieldName(correctField);
-				if (null == name)
-					continue;
-				var field = Fields.Find(x => x.Name == name);
-				if (null == field)
-					continue;
-				field.FormulaPg = formulaPg;
-				field.SetOk(isDone);
+				DtField.SetCorrectField(correctField, Fields);
 			}
 		}
 	}
@@ -117,7 +110,7 @@ public class ElTable : ElBaseForTable, IEdited
 		foreach (var fieldDraft in fieldsDraft)
 		{
 			var pieces = fieldDraft.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-			if (null == pieces || !pieces.Any() || pieces.Length < 3)
+			if (!pieces.Any() || pieces.Length < 3)
 				return $"Описание поля таблицы {Name} '{fieldDraft}' содержит меньше трёх элементов.";
 
 			try

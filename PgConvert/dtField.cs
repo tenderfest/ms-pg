@@ -1,19 +1,23 @@
 ﻿using PgConvert.Element;
+using System.Text;
 
 namespace PgConvert;
 
 #pragma warning disable IDE0056 // Использовать оператор индекса
 public class DtField
 {
-	public const string _correctSygn = "^";
+	public const char _sygn = '^';
 	private const string _generated = "as";
 	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
 	private const string _not = "not";
 	private const string _null = "null";
 	private const string _notNull = " NotNull";
 
-	private string GeneratedFieldPg =>
-		$"{Name} numeric GENERATED ALWAYS AS (height_cm / 2.54) STORED";
+	/// <summary>
+	/// вид поля для SQL-запроса, создающего таблицу
+	/// </summary>
+	public string GeneratedFieldPg =>
+		$"{Name} {FieldType} GENERATED ALWAYS AS ({FormulaPg}) STORED";
 
 	public string Name { get; set; }
 	public DtFieldType FieldType { get; set; }
@@ -113,21 +117,44 @@ public class DtField
 			IsFieldTypeNone ? "???" : FieldType)}{(
 			NotNull ? _notNull : string.Empty)}";
 
-	internal static (string, bool, string) GetCorrectFieldName(string correctField)
+	internal static void SetCorrectField(string correctField, List<DtField> fields)
 	{
-		if (string.IsNullOrEmpty(correctField))
-			return (null, false, null);
-		var name = correctField.Split(_correctSygn);
-		if (name.Length != 3)
-			return (null, false, null);
-		bool correctIsDone = false;
-		if (bool.TryParse(name[1], out bool isDone))
-			correctIsDone = isDone;
-		return (name[0], correctIsDone, name[2]);
+		if (string.IsNullOrEmpty(correctField) ||
+			null == fields)
+			return;
+
+		var piece = correctField.Split(_sygn);
+		if (piece.Length < 7)
+			return;
+
+		var name = piece[0];
+		var field = fields.Find(x => x.Name == name);
+		if (null == field)
+			return;
+
+		if (bool.TryParse(piece[1], out bool isDone))
+			field.SetOk(isDone);
+
+		field.FieldType = DtFieldType.GetNeedCorrect(piece[2], piece[3], piece[4], piece[5]);
+		field.FormulaPg = piece[6];
 	}
 
-	public string NeedCorrect =>
-		$"{Name}{_correctSygn}{CorrectIsDone}{_correctSygn}{FormulaPg}";
+	public string NeedCorrect
+	{
+		get
+		{
+			var sb = new StringBuilder(Name);
+			sb.Append(_sygn);
+			sb.Append(CorrectIsDone);
+			sb.Append(_sygn);
+			sb.Append(FieldType.GetNeedCorrect());
+			sb.Append(_sygn);
+			sb.Append(FormulaPg);
+			return $"{sb}";
+		}
+	}
+
+	// сохранять ещё тип
 
 	public string GeneratedFieldToString =>
 		$"{Name}{(
