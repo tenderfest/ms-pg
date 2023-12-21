@@ -82,11 +82,16 @@ partial class FormMain
 		tabPageTrigger = new TabPage();
 		groupBoxEditTriggerFunction = new GroupBox();
 		textBoxEditTriggerFunction = new TextBox();
+		panelEditTriggerLanguage = new Panel();
+		textBoxEditTriggerFirstString = new TextBox();
+		buttonEditOwnTriggerLanguageSave = new Button();
 		labelEditTriggerFunctionEnd = new Label();
 		labelEditTriggerFunctionBegin = new Label();
 		groupBoxEditTriggerText = new GroupBox();
 		textBoxEditTriggerText = new TextBox();
 		groupBoxEditTriggerFunctionName = new GroupBox();
+		comboBoxEditFunctionLanguage = new ComboBox();
+		labelEditFunctionLanguage = new Label();
 		textBoxEditTriggerFunctionName = new TextBox();
 		panelEditText = new Panel();
 		labelEditElementType = new Label();
@@ -109,6 +114,7 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
+		buttonEditMakeGeneratedField = new Button();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -156,6 +162,7 @@ partial class FormMain
 		tabPageProcedure.SuspendLayout();
 		tabPageTrigger.SuspendLayout();
 		groupBoxEditTriggerFunction.SuspendLayout();
+		panelEditTriggerLanguage.SuspendLayout();
 		groupBoxEditTriggerText.SuspendLayout();
 		groupBoxEditTriggerFunctionName.SuspendLayout();
 		panelEditText.SuspendLayout();
@@ -672,6 +679,7 @@ partial class FormMain
 		// groupBoxEditTableCurrentField
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
+		groupBoxEditTableCurrentField.Controls.Add(buttonEditMakeGeneratedField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
 		groupBoxEditTableCurrentField.Location = new Point(0, 94);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
@@ -687,7 +695,7 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 240);
+		textBoxEditTableCurrentField.Size = new Size(412, 217);
 		textBoxEditTableCurrentField.TabIndex = 0;
 		// 
 		// groupBoxEditTableCurrentFieldType
@@ -713,6 +721,7 @@ partial class FormMain
 		numericUpDownScale.Name = "numericUpDownScale";
 		numericUpDownScale.Size = new Size(56, 23);
 		numericUpDownScale.TabIndex = 4;
+		numericUpDownScale.ValueChanged += NumericUpDownScale_ValueChanged;
 		// 
 		// labelScale
 		// 
@@ -732,6 +741,7 @@ partial class FormMain
 		numericUpDownPrecision.Name = "numericUpDownPrecision";
 		numericUpDownPrecision.Size = new Size(56, 23);
 		numericUpDownPrecision.TabIndex = 2;
+		numericUpDownPrecision.ValueChanged += NumericUpDownPrecision_ValueChanged;
 		// 
 		// labelPrecision
 		// 
@@ -745,6 +755,7 @@ partial class FormMain
 		// 
 		// comboBoxEditTableCurrentFieldType
 		// 
+		comboBoxEditTableCurrentFieldType.DropDownStyle = ComboBoxStyle.DropDownList;
 		comboBoxEditTableCurrentFieldType.FormattingEnabled = true;
 		comboBoxEditTableCurrentFieldType.Location = new Point(3, 19);
 		comboBoxEditTableCurrentFieldType.Name = "comboBoxEditTableCurrentFieldType";
@@ -812,6 +823,7 @@ partial class FormMain
 		// groupBoxEditTriggerFunction
 		// 
 		groupBoxEditTriggerFunction.Controls.Add(textBoxEditTriggerFunction);
+		groupBoxEditTriggerFunction.Controls.Add(panelEditTriggerLanguage);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionEnd);
 		groupBoxEditTriggerFunction.Controls.Add(labelEditTriggerFunctionBegin);
 		groupBoxEditTriggerFunction.Dock = DockStyle.Fill;
@@ -826,11 +838,46 @@ partial class FormMain
 		// 
 		textBoxEditTriggerFunction.Dock = DockStyle.Fill;
 		textBoxEditTriggerFunction.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-		textBoxEditTriggerFunction.Location = new Point(3, 34);
+		textBoxEditTriggerFunction.Location = new Point(3, 59);
 		textBoxEditTriggerFunction.Multiline = true;
 		textBoxEditTriggerFunction.Name = "textBoxEditTriggerFunction";
-		textBoxEditTriggerFunction.Size = new Size(632, 193);
+		textBoxEditTriggerFunction.ScrollBars = ScrollBars.Both;
+		textBoxEditTriggerFunction.Size = new Size(632, 168);
 		textBoxEditTriggerFunction.TabIndex = 0;
+		textBoxEditTriggerFunction.WordWrap = false;
+		// 
+		// panelEditTriggerLanguage
+		// 
+		panelEditTriggerLanguage.Controls.Add(textBoxEditTriggerFirstString);
+		panelEditTriggerLanguage.Controls.Add(buttonEditOwnTriggerLanguageSave);
+		panelEditTriggerLanguage.Dock = DockStyle.Top;
+		panelEditTriggerLanguage.Location = new Point(3, 34);
+		panelEditTriggerLanguage.Name = "panelEditTriggerLanguage";
+		panelEditTriggerLanguage.Size = new Size(632, 25);
+		panelEditTriggerLanguage.TabIndex = 4;
+		// 
+		// textBoxEditTriggerFirstString
+		// 
+		textBoxEditTriggerFirstString.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+		textBoxEditTriggerFirstString.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+		textBoxEditTriggerFirstString.Location = new Point(0, 1);
+		textBoxEditTriggerFirstString.Name = "textBoxEditTriggerFirstString";
+		textBoxEditTriggerFirstString.Size = new Size(517, 23);
+		textBoxEditTriggerFirstString.TabIndex = 3;
+		textBoxEditTriggerFirstString.Text = "<Trigger Lang> AS $$";
+		textBoxEditTriggerFirstString.Enter += TextBoxEditTriggerFirstString_Enter;
+		// 
+		// buttonEditOwnTriggerLanguageSave
+		// 
+		buttonEditOwnTriggerLanguageSave.Dock = DockStyle.Right;
+		buttonEditOwnTriggerLanguageSave.Enabled = false;
+		buttonEditOwnTriggerLanguageSave.Location = new Point(517, 0);
+		buttonEditOwnTriggerLanguageSave.Name = "buttonEditOwnTriggerLanguageSave";
+		buttonEditOwnTriggerLanguageSave.Size = new Size(115, 25);
+		buttonEditOwnTriggerLanguageSave.TabIndex = 4;
+		buttonEditOwnTriggerLanguageSave.Text = "Применить";
+		buttonEditOwnTriggerLanguageSave.UseVisualStyleBackColor = true;
+		buttonEditOwnTriggerLanguageSave.Click += ButtonEditOwnTriggerLanguageSave_Click;
 		// 
 		// labelEditTriggerFunctionEnd
 		// 
@@ -840,7 +887,7 @@ partial class FormMain
 		labelEditTriggerFunctionEnd.Name = "labelEditTriggerFunctionEnd";
 		labelEditTriggerFunctionEnd.Size = new Size(632, 15);
 		labelEditTriggerFunctionEnd.TabIndex = 2;
-		labelEditTriggerFunctionEnd.Text = "$$ LANGUAGE plpgsql;";
+		labelEditTriggerFunctionEnd.Text = "$$;";
 		// 
 		// labelEditTriggerFunctionBegin
 		// 
@@ -850,7 +897,7 @@ partial class FormMain
 		labelEditTriggerFunctionBegin.Name = "labelEditTriggerFunctionBegin";
 		labelEditTriggerFunctionBegin.Size = new Size(632, 15);
 		labelEditTriggerFunctionBegin.TabIndex = 1;
-		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER AS $$";
+		labelEditTriggerFunctionBegin.Text = "CREATE OR REPLACE FUNCTION <Function Name> RETURNS TRIGGER LANGUAGE";
 		// 
 		// groupBoxEditTriggerText
 		// 
@@ -876,6 +923,8 @@ partial class FormMain
 		// 
 		// groupBoxEditTriggerFunctionName
 		// 
+		groupBoxEditTriggerFunctionName.Controls.Add(comboBoxEditFunctionLanguage);
+		groupBoxEditTriggerFunctionName.Controls.Add(labelEditFunctionLanguage);
 		groupBoxEditTriggerFunctionName.Controls.Add(textBoxEditTriggerFunctionName);
 		groupBoxEditTriggerFunctionName.Dock = DockStyle.Top;
 		groupBoxEditTriggerFunctionName.Location = new Point(0, 0);
@@ -885,13 +934,33 @@ partial class FormMain
 		groupBoxEditTriggerFunctionName.TabStop = false;
 		groupBoxEditTriggerFunctionName.Text = "Имя триггерной функции";
 		// 
+		// comboBoxEditFunctionLanguage
+		// 
+		comboBoxEditFunctionLanguage.DropDownStyle = ComboBoxStyle.DropDownList;
+		comboBoxEditFunctionLanguage.FormattingEnabled = true;
+		comboBoxEditFunctionLanguage.Location = new Point(464, 16);
+		comboBoxEditFunctionLanguage.Name = "comboBoxEditFunctionLanguage";
+		comboBoxEditFunctionLanguage.Size = new Size(168, 23);
+		comboBoxEditFunctionLanguage.TabIndex = 3;
+		comboBoxEditFunctionLanguage.SelectedIndexChanged += ComboBoxEditFunctionLanguage_SelectedIndexChanged;
+		// 
+		// labelEditFunctionLanguage
+		// 
+		labelEditFunctionLanguage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+		labelEditFunctionLanguage.AutoSize = true;
+		labelEditFunctionLanguage.Location = new Point(303, 22);
+		labelEditFunctionLanguage.Name = "labelEditFunctionLanguage";
+		labelEditFunctionLanguage.Size = new Size(155, 15);
+		labelEditFunctionLanguage.TabIndex = 2;
+		labelEditFunctionLanguage.Text = "Язык триггерной функции:";
+		// 
 		// textBoxEditTriggerFunctionName
 		// 
-		textBoxEditTriggerFunctionName.Dock = DockStyle.Top;
+		textBoxEditTriggerFunctionName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 		textBoxEditTriggerFunctionName.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
 		textBoxEditTriggerFunctionName.Location = new Point(3, 19);
 		textBoxEditTriggerFunctionName.Name = "textBoxEditTriggerFunctionName";
-		textBoxEditTriggerFunctionName.Size = new Size(632, 23);
+		textBoxEditTriggerFunctionName.Size = new Size(294, 23);
 		textBoxEditTriggerFunctionName.TabIndex = 0;
 		textBoxEditTriggerFunctionName.TextChanged += TextBoxEditTriggerFunctionName_TextChanged;
 		// 
@@ -926,6 +995,7 @@ partial class FormMain
 		buttonEditUndo.TabIndex = 4;
 		buttonEditUndo.Text = "Отменить";
 		buttonEditUndo.UseVisualStyleBackColor = true;
+		buttonEditUndo.Click += ButtonEditUndo_Click;
 		// 
 		// buttonEditAllUndo
 		// 
@@ -937,6 +1007,7 @@ partial class FormMain
 		buttonEditAllUndo.TabIndex = 3;
 		buttonEditAllUndo.Text = "Отменить всё";
 		buttonEditAllUndo.UseVisualStyleBackColor = true;
+		buttonEditAllUndo.Click += ButtonEditAllUndo_Click;
 		// 
 		// buttonEditSave
 		// 
@@ -948,6 +1019,7 @@ partial class FormMain
 		buttonEditSave.TabIndex = 2;
 		buttonEditSave.Text = "Сохранить";
 		buttonEditSave.UseVisualStyleBackColor = true;
+		buttonEditSave.Click += ButtonEditSave_Click;
 		// 
 		// groupBoxEditElementsType
 		// 
@@ -1061,6 +1133,7 @@ partial class FormMain
 		buttonEditConfirmElement.TabIndex = 1;
 		buttonEditConfirmElement.Text = "Утвердить";
 		buttonEditConfirmElement.UseVisualStyleBackColor = true;
+		buttonEditConfirmElement.Click += ButtonEditConfirmElement_Click;
 		// 
 		// radioButtonEditElementsAll
 		// 
@@ -1147,6 +1220,17 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
+		// buttonEditMakeGeneratedField
+		// 
+		buttonEditMakeGeneratedField.Dock = DockStyle.Bottom;
+		buttonEditMakeGeneratedField.Location = new Point(3, 236);
+		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
+		buttonEditMakeGeneratedField.Size = new Size(412, 23);
+		buttonEditMakeGeneratedField.TabIndex = 1;
+		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
+		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
+		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
+		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1215,6 +1299,8 @@ partial class FormMain
 		tabPageTrigger.ResumeLayout(false);
 		groupBoxEditTriggerFunction.ResumeLayout(false);
 		groupBoxEditTriggerFunction.PerformLayout();
+		panelEditTriggerLanguage.ResumeLayout(false);
+		panelEditTriggerLanguage.PerformLayout();
 		groupBoxEditTriggerText.ResumeLayout(false);
 		groupBoxEditTriggerText.PerformLayout();
 		groupBoxEditTriggerFunctionName.ResumeLayout(false);
@@ -1314,4 +1400,10 @@ partial class FormMain
 	private Label labelPrecision;
 	private GroupBox groupBoxEditTableCurrentFieldExample;
 	private Label labelEditTableCurrentFieldExample;
+	private Label labelEditFunctionLanguage;
+	private TextBox textBoxEditTriggerFirstString;
+	private Panel panelEditTriggerLanguage;
+	private Button buttonEditOwnTriggerLanguageSave;
+	private ComboBox comboBoxEditFunctionLanguage;
+	private Button buttonEditMakeGeneratedField;
 }

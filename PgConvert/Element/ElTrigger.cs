@@ -11,8 +11,8 @@ public class ElTrigger : ElBaseForTable, IEdited
 	private const string _update = "update";
 	private const string _delete = "delete";
 	private const string _insteadOf = "INSTEAD OF";
+	private const string _plangNameEnd = "AS $$";
 	private const string _or = " or ";
-	private const string _begin = "begin";
 	//private const string _end = "end";
 
 	private const char _doubleQuot = '"';
@@ -52,12 +52,27 @@ public class ElTrigger : ElBaseForTable, IEdited
 	/// </summary>
 	public string[] LinesPg { get; set; }
 
-	private bool isOk;
-	public bool IsOk =>
-		isOk;
+	/// <summary>
+	/// Тип языка функции триггера
+	/// </summary>
+	[JsonIgnore]
+	public Plang PLanguage { get; set; }
+
+	/// <summary>
+	/// Если язык функции триггера не стандартный, он сохраняется здесь
+	/// </summary>
+	[JsonIgnore]
+	public string OwnVariantLanguage { get; internal set; }
+
+	public bool IsOwnVariantLanguage =>
+		PLanguage == Plang.OwnVariant;
+
 	OnePgDatabase IEdited.Database =>
 		Database;
 
+	private bool isOk;
+	public bool IsOk =>
+		isOk;
 	public void SetOk(bool ok) =>
 		isOk = ok;
 
@@ -90,10 +105,8 @@ public class ElTrigger : ElBaseForTable, IEdited
 
 			return _triggerFunctionName;
 		}
-		set
-		{
+		set =>
 			_triggerFunctionName = value;
-		}
 	}
 	private string _triggerFunctionName;
 
@@ -108,25 +121,7 @@ public class ElTrigger : ElBaseForTable, IEdited
 
 		// определение тела функции
 		if (null == LinesPg)
-		{
-			var linesPg = new List<string>();
-			bool isBegin = false;
-			foreach (var line in Lines)
-			{
-				var lineTrim = line.Trim();
-				if (lineTrim.StartsWith("--"))
-				{
-					linesPg.Add(line);
-					continue;
-				}
-				if (!isBegin)
-					isBegin |= lineTrim.ToLower() == _begin;
-				if (!isBegin)
-					continue;
-				linesPg.Add(line);
-			}
-			LinesPg = linesPg.ToArray();
-		}
+			NeedCorrect.LinesPgFromLines(this);
 
 		// определение имени таблицы
 		SetTableName(ClearBraces(ClearLines[1].Split(_space, StringSplitOptions.RemoveEmptyEntries)[1]));
@@ -189,8 +184,29 @@ FOR EACH ROW EXECUTE FUNCTION {TriggerFunctionName}();";
 		}
 	}
 
-	public string GetTriggerFunctionTextEnd() =>
-		"$$ LANGUAGE plpgsql;";
+	public static string TriggerFunctionTextEnd =>
+		"$$;";
+
 	public string GetTriggerFunctionTextBegin() =>
-		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName} RETURNS TRIGGER AS $$";
+		$"CREATE OR REPLACE FUNCTION {TriggerFunctionName}() RETURNS TRIGGER LANGUAGE ";
+
+	public string PlangName =>
+		PLanguage?.Name ?? OwnVariantLanguage;
+
+	public bool CanSetOk =>
+		true;
+
+	public string GetTriggerFunctionFirstString(out bool nameIsNull)
+	{
+		nameIsNull = string.IsNullOrEmpty(PlangName);
+		return $"{(nameIsNull ? PLanguage?.Name : PlangName)} {_plangNameEnd}";
+	}
+
+	public void SetTriggerFunctionFirstString(string text) =>
+		OwnVariantLanguage = string.IsNullOrEmpty(text)
+		? null
+		: text
+			.Replace(_plangNameEnd, string.Empty)
+			.Replace(" ", string.Empty)
+			.Trim();
 }

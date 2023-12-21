@@ -17,15 +17,21 @@ public class ElProcedure : DtElement, IEdited
 	private bool isOk;
 	public bool IsOk => isOk;
 
-	OnePgDatabase IEdited.Database => Database;
+	OnePgDatabase IEdited.Database =>
+		Database;
+
+	public bool CanSetOk =>
+		true;
 
 	public void SetOk(bool ok) =>
 		isOk = ok;
 
 	internal override string Parse()
 	{
-		LinesPg ??= new string[Lines.Length];
-		Lines.CopyTo(LinesPg, 0);
+		// определение тела процедуры
+		if (null == LinesPg)
+			NeedCorrect.LinesPgFromLines(this);
+
 		return null;
 	}
 }

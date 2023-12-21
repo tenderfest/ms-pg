@@ -1,8 +1,9 @@
 ﻿using PgConvert.Config;
+using PgConvert.Enums;
 
 namespace ConvertToPg
 {
-	public partial class FormCfg : Form
+    public partial class FormCfg : Form
 	{
 		private readonly ConvertMsToPgCfg _cfg;
 		private int panelDatabaseHeight;
@@ -18,8 +19,8 @@ namespace ConvertToPg
 
 		private void FormCfg_Load(object sender, EventArgs e)
 		{
-			textBoxSkipOperations.Text = Cfg.GetSkipOperationAsText();
-			textBoxSkipElement.Text = Cfg.GetSkipElementAsText();
+			textBoxSkipOperations.Text = Cfg.SkipOperationAsText;
+			textBoxSkipElement.Text = Cfg.SkipElementAsText;
 
 			ShowDatabases(true);
 		}
@@ -143,8 +144,8 @@ namespace ConvertToPg
 		}
 
 		public string[] SkipOperation =>
-			ConvertMsToPgCfg.GetSkipArrayFromText(textBoxSkipOperations.Text);
+			ConvertMsToPgCfg.GetStringArrayFromText(textBoxSkipOperations.Text);
 		public string[] SkipElement =>
-			ConvertMsToPgCfg.GetSkipArrayFromText(textBoxSkipElement.Text);
+			ConvertMsToPgCfg.GetStringArrayFromText(textBoxSkipElement.Text);
 	}
 }

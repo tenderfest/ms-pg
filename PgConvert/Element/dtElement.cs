@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using System.Text.Json.Serialization;
 using PgConvert.Config;
 
 namespace PgConvert.Element;

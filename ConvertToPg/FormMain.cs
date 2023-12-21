@@ -1,7 +1,7 @@
-using Microsoft.VisualBasic.FileIO;
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
+using PgConvert.Enums;
 
 namespace ConvertToPg;
 
@@ -30,7 +30,11 @@ public partial class FormMain : Form
 
 		// наполнение комбобокса с типами полей значениями
 		comboBoxEditTableCurrentFieldType.Items.AddRange(Enum.GetNames(typeof(FldType)));
-		comboBoxEditTableCurrentFieldType.SelectedIndex = 0;
+		comboBoxEditTableCurrentFieldType.SelectedItem = null;
+
+		// наполнение комбобокса процедурных языков
+		comboBoxEditFunctionLanguage.Items.AddRange(convert.GetProcedureLanguages());
+		comboBoxEditFunctionLanguage.SelectedIndex = 0;
 	}
 
 	/// <summary>
@@ -109,16 +113,24 @@ public partial class FormMain : Form
 		AfterLoadElements();
 	}
 
-	private void ButtonSave_Click(object sender, EventArgs e)
-	{
-		FolderBrowserDialog saveFileDialog = new()
-		{
-			InitialDirectory = PrePathInFile,
-		};
-		if (saveFileDialog.ShowDialog() != DialogResult.OK)
-			return;
+	private void ButtonSave_Click(object sender, EventArgs e) =>
+		SaveChanges();
 
-		var errMessage = convert.SaveFile(saveFileDialog.SelectedPath, out string projectFile);
+	private void SaveChanges()
+	{
+		if (string.IsNullOrEmpty(convert.PathToSaveFile))
+		{
+			FolderBrowserDialog saveFileDialog = new()
+			{
+				InitialDirectory = PrePathInFile,
+			};
+			if (DialogResult.OK != saveFileDialog.ShowDialog())
+				return;
+
+			convert.PathToSaveFile = saveFileDialog.SelectedPath;
+		}
+
+		var errMessage = convert.SaveFile(out string projectFile);
 		if (string.IsNullOrEmpty(errMessage))
 		{
 			errMessage = $"Проект сохранён в файле {projectFile}";
@@ -452,11 +464,11 @@ public partial class FormMain : Form
 
 		ShowEditElements showEditElements;
 		if (radioButton == radioButtonEditElementsAlert)
-			showEditElements = PgConvert.ShowEditElements.Alert;
+			showEditElements = PgConvert.Enums.ShowEditElements.Alert;
 		else if (radioButton == radioButtonEditElementsOk)
-			showEditElements = PgConvert.ShowEditElements.Ok;
+			showEditElements = PgConvert.Enums.ShowEditElements.Ok;
 		else
-			showEditElements = PgConvert.ShowEditElements.All;
+			showEditElements = PgConvert.Enums.ShowEditElements.All;
 		convert.SetShowEditElements(showEditElements);
 		ShowEditElements();
 	}
@@ -468,16 +480,41 @@ public partial class FormMain : Form
 			: null;
 	}
 
-	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	DtField CurrentField =>
+		listViewEditTableFieldNames.SelectedItems?.Count == 1
+		? (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag
+		: null;
+
+	/// <summary>
+	/// Выбор поля в списке полей изменяемого определения таблицы
+	/// </summary>
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
+
+	private void ShowCurrentEditField()
 	{
-		textBoxEditTableCurrentField.Text = null;
-		if (listViewEditTableFieldNames.SelectedItems.Count == 1)
+		//textBoxEditTableCurrentField.Text = null;
+
+		if (null == CurrentField)
 		{
-			var field = (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag;
-			textBoxEditTableCurrentField.Text = field.FormulaPg;
-			textBoxEditTableCurrentField.Enabled = field.IsGenerated;
+			textBoxEditTableCurrentField.Text = null;
+			comboBoxEditTableCurrentFieldType.SelectedItem = null;
+			labelEditTableCurrentFieldExample.Text = null;
+			return;
 		}
+
+		textBoxEditTableCurrentField.Text = CurrentField.FormulaPg;
+		groupBoxEditTableCurrentFieldExample.Enabled =
+			groupBoxEditTableCurrentFieldType.Enabled =
+			groupBoxEditTableCurrentField.Enabled = CurrentField.IsGenerated;
+
+		labelEditTableCurrentFieldExample.Text = CurrentField.GeneratedFieldPg;
+		labelEditTableCurrentFieldExample.ForeColor = CurrentField.IsFieldTypeNone
+			? Color.Red
+			: labelEditTableCurrentFieldExample.Parent.ForeColor;
 	}
+
+	private DtElement currentEditElement;
 
 	/// <summary>
 	/// Отображение текущего элемента для редактирования
@@ -486,7 +523,8 @@ public partial class FormMain : Form
 	{
 		set
 		{
-			_currentEditElement = value;
+			currentEditElement = value;
+			var enableEditButtons = false;
 			tabControlEditElement.SuspendLayout();
 			try
 			{
@@ -503,9 +541,9 @@ public partial class FormMain : Form
 
 				// отображение нужной вкладки
 				// показ данных для элемента
-				switch (value.ElementType)
-				{
-					case ElmType.Table:
+				if (SwitchCurrentElement(
+					() =>
+					{
 						tabControlEditElement.SelectTab(0);
 						// вычисляемые поля
 						listViewEditTableFieldNames.Items.AddRange(
@@ -528,43 +566,81 @@ public partial class FormMain : Form
 								ForeColor = Color.Gray,
 							})
 							.ToArray());
-						break;
-
-					case ElmType.Procedure:
+						enableEditButtons = true;
+					},
+					() =>
+					{
 						tabControlEditElement.SelectTab(1);
 						textBoxEditProcedure.Text = ((ElProcedure)value).LinesPg.ToOneString();
-						break;
-
-					case ElmType.Trigger:
+						enableEditButtons = true;
+					},
+					() =>
+					{
 						tabControlEditElement.SelectTab(2);
-						var trigger = ((ElTrigger)value);
+						var trigger = (ElTrigger)value;
 						textBoxEditTriggerFunctionName.Text = trigger.TriggerFunctionName;
-
 						textBoxEditTriggerFunction.Text = trigger.LinesPg.ToOneString();
-
-						break;
+						if (comboBoxEditFunctionLanguage.SelectedItem != trigger.PLanguage)
+							comboBoxEditFunctionLanguage.SelectedItem = trigger.PLanguage;
+						else
+							SetTextBoxEditTriggerFirstString(trigger);
+						enableEditButtons = true;
+					}))
+				{
+					labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
+					buttonEditConfirmElement.Enabled = ((IEdited)value).CanSetOk;
+					if (((IEdited)value).IsOk)
+					{
+						buttonEditConfirmElement.Text = "Разутвердить";
+						buttonEditConfirmElement.ForeColor = Color.Red;
+					}
+					else
+					{
+						buttonEditConfirmElement.Text = "Утвердить";
+						buttonEditConfirmElement.ForeColor = Color.Green;
+					}
 				}
-				labelEditElementType.Text = tabControlEditElement.SelectedTab.Text;
 			}
 			finally
 			{
 				tabControlEditElement.ResumeLayout();
+				buttonEditSave.Enabled =
+					buttonEditAllUndo.Enabled =
+					buttonEditUndo.Enabled = enableEditButtons;
 			}
 		}
+		get =>
+			currentEditElement;
 	}
-	private DtElement _currentEditElement;
+	private ElTable CurrentTable =>
+		currentEditElement as ElTable;
+	private ElProcedure CurrentProcedure =>
+		currentEditElement as ElProcedure;
+	private ElTrigger CurrentTrigger =>
+		currentEditElement as ElTrigger;
 
 	private void TextBoxEditTriggerFunctionName_TextChanged(object sender, EventArgs e)
 	{
-		if (_currentEditElement is not ElTrigger trigger)
+		if (CurrentEditElement is not ElTrigger trigger)
 			return;
-		textBoxEditTriggerText.Text = trigger.GetTriggerText(textBoxEditTriggerFunctionName.Text);
+		var functionName = textBoxEditTriggerFunctionName.Text;
+		if (functionName.Contains(' '))
+		{
+			var selectionStart = textBoxEditTriggerFunctionName.SelectionStart;
+			textBoxEditTriggerFunctionName.Text = functionName.Replace(" ", string.Empty);
+			textBoxEditTriggerFunctionName.SelectionStart = selectionStart - 1;
+			return;
+		}
+		textBoxEditTriggerText.Text = trigger.GetTriggerText(functionName);
 		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
-		labelEditTriggerFunctionEnd.Text = trigger.GetTriggerFunctionTextEnd();
+		labelEditTriggerFunctionEnd.Text = ElTrigger.TriggerFunctionTextEnd;
 	}
 
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
 	{
+		if (null == comboBoxEditTableCurrentFieldType.SelectedItem)
+			return;
+
 		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
 
 		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
@@ -578,5 +654,163 @@ public partial class FormMain : Form
 			fieldType == FldType.Numeric;
 		if (!numericUpDownScale.Enabled)
 			numericUpDownScale.Value = 0;
+
+		CurrentField.FieldType = new DtFieldType(
+			fieldType,
+			Convert.ToInt32(numericUpDownPrecision.Value),
+			Convert.ToInt32(numericUpDownScale.Value));
+
+		ShowCurrentEditField();
+	}
+
+	private void ButtonEditUndo_Click(object sender, EventArgs e) =>
+		UndoEdit();
+
+	private void UndoEdit()
+	{
+		SwitchCurrentElement(
+			() =>
+			{
+				MessageBox.Show("сделать");
+			},
+			() =>
+			{
+				textBoxEditProcedure.Text = CurrentProcedure.LinesPg.ToOneString();
+			},
+			() =>
+			{
+				textBoxEditTriggerFunction.Text = CurrentTrigger.LinesPg.ToOneString();
+			});
+	}
+
+	private bool SwitchCurrentElement(
+		Action actionTable,
+		Action actionProcedure,
+		Action actionTrigger)
+	{
+		if (null == CurrentEditElement)
+			return false;
+		switch (CurrentEditElement.ElementType)
+		{
+			case ElmType.Table: actionTable(); return true;
+			case ElmType.Procedure: actionProcedure(); return true;
+			case ElmType.Trigger: actionTrigger(); return true;
+			default:
+				MessageBox.Show($"Неизвестный тип элемента {CurrentEditElement.ElementType}");
+				return false;
+		}
+	}
+
+	private void ButtonEditAllUndo_Click(object sender, EventArgs e)
+	{
+		if (SwitchCurrentElement(
+			() =>
+			{
+				MessageBox.Show("сделать");
+			},
+			() =>
+			{
+				NeedCorrect.LinesPgFromLines(CurrentProcedure);
+			},
+			() =>
+			{
+				NeedCorrect.LinesPgFromLines(CurrentTrigger);
+				CurrentTrigger.TriggerFunctionName = null;
+				textBoxEditTriggerFunctionName.Text = CurrentTrigger.TriggerFunctionName;
+			}))
+		{
+			UndoEdit();
+		}
+	}
+
+	private void ButtonEditSave_Click(object sender, EventArgs e)
+	{
+		if (SwitchCurrentElement(
+			() =>
+			{
+				MessageBox.Show("сделать");
+			},
+			() =>
+			{
+				CurrentProcedure.LinesPg = textBoxEditProcedure.Text.FromOneString();
+			},
+			() =>
+			{
+				CurrentTrigger.LinesPg = textBoxEditTriggerFunction.Text.FromOneString();
+			}))
+		{
+			SaveChanges();
+		}
+	}
+
+	private void ComboBoxEditFunctionLanguage_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (CurrentEditElement is not ElTrigger trigger)
+			return;
+		trigger.PLanguage = comboBoxEditFunctionLanguage.SelectedItem as Plang;
+		SetTextBoxEditTriggerFirstString(trigger);
+	}
+
+	private void SetTextBoxEditTriggerFirstString(ElTrigger trigger)
+	{
+		textBoxEditTriggerFirstString.Text = trigger.GetTriggerFunctionFirstString(out var nameIsNull);
+		buttonEditOwnTriggerLanguageSave.Enabled = trigger.IsOwnVariantLanguage;
+		textBoxEditTriggerFirstString.ReadOnly = !trigger.IsOwnVariantLanguage;
+		textBoxEditTriggerFirstString.ForeColor = nameIsNull
+			? Color.Red
+			: textBoxEditTriggerFirstString.Parent.ForeColor;
+	}
+
+	private void TextBoxEditTriggerFirstString_Enter(object sender, EventArgs e) =>
+		textBoxEditTriggerFirstString.SelectionStart = 0;
+
+	private void ButtonEditOwnTriggerLanguageSave_Click(object sender, EventArgs e)
+	{
+		if (CurrentEditElement is not ElTrigger trigger)
+			return;
+		trigger.SetTriggerFunctionFirstString(textBoxEditTriggerFirstString.Text);
+		SetTextBoxEditTriggerFirstString(trigger);
+	}
+
+	private void ButtonEditConfirmElement_Click(object sender, EventArgs e)
+	{
+		if (SwitchCurrentElement(
+			() =>
+			{
+				MessageBox.Show("сделать");
+			},
+			() =>
+			{
+				CurrentProcedure.SetOk(true);
+			},
+			() =>
+			{
+				if (CurrentTrigger.IsOwnVariantLanguage &&
+					string.IsNullOrEmpty(CurrentTrigger.OwnVariantLanguage))
+				{
+					MessageBox.Show("Необходимо указать собственный вариант языка триггерной функции или выбрать один из имеющихся.");
+					return;
+				}
+				CurrentTrigger.SetOk(true);
+			}))
+		{
+			ShowEditElements();
+		}
+	}
+
+	private void NumericUpDownPrecision_ValueChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
+
+	private void NumericUpDownScale_ValueChanged(object sender, EventArgs e) =>
+		ShowCurrentEditField();
+
+	/// <summary>
+	/// Изменение формулы для вычисляемого поля
+	/// </summary>
+	private void ButtonEditMakeGeneratedField_Click(object sender, EventArgs e)
+	{
+		if (null == CurrentField)
+			return;
+		CurrentField.FormulaPg = textBoxEditTableCurrentField.Text;
 	}
 }

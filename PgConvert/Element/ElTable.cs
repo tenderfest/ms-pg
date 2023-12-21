@@ -43,6 +43,9 @@ public class ElTable : ElBaseForTable, IEdited
 		.Where(x => x.IsGenerated && !x.CorrectIsDone)
 		.ToArray();
 
+	/// <summary>
+	/// Спосок вычисляемы полей таблицы
+	/// </summary>
 	public string[] GeneratedFields
 	{
 		get => Fields
@@ -53,20 +56,20 @@ public class ElTable : ElBaseForTable, IEdited
 		{
 			foreach (var correctField in value)
 			{
-				var (name, formulaPg) = DtField.GetCorrectFieldName(correctField);
-				if (null == name)
-					continue;
-				var field = Fields.Find(x => x.Name == name);
-				if (null == field)
-					continue;
-				field.FormulaPg = formulaPg;
+				DtField.SetCorrectField(correctField, Fields);
 			}
 		}
 	}
 
 	public bool IsOk =>
 		!FieldsForCorrect.Any();
-	OnePgDatabase IEdited.Database => base.Database;
+
+	OnePgDatabase IEdited.Database =>
+		Database;
+
+	public bool CanSetOk =>
+		false;
+	public void SetOk(bool ok) { }
 
 	internal override string Parse()
 	{
@@ -110,7 +113,7 @@ public class ElTable : ElBaseForTable, IEdited
 		foreach (var fieldDraft in fieldsDraft)
 		{
 			var pieces = fieldDraft.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-			if (null == pieces || !pieces.Any() || pieces.Length < 3)
+			if (!pieces.Any() || pieces.Length < 3)
 				return $"Описание поля таблицы {Name} '{fieldDraft}' содержит меньше трёх элементов.";
 
 			try

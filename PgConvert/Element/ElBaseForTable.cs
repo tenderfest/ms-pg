@@ -1,7 +1,7 @@
 ﻿namespace PgConvert.Element;
 
 /// <summary>
-/// базовый класс для сущностей, относящихся к таблицам: триггеры и индексы
+/// Базовый класс для сущностей, относящихся к таблицам: триггеры и индексы
 /// </summary>
 public abstract class ElBaseForTable : DtElement
 {

@@ -1,51 +1,58 @@
-﻿using System.IO.Compression;
+﻿using PgConvert.Config;
+using PgConvert.Element;
+using PgConvert.Enums;
+using System.IO.Compression;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Xml.Linq;
-using PgConvert.Config;
-using PgConvert.Element;
 
 namespace PgConvert;
 
-public enum EditElementsType
-{
-	/// <summary> Все </summary>
-	All,
-	/// <summary> Таблицы </summary>
-	Table,
-	/// <summary> Процедуры </summary>
-	Procedure,
-	/// <summary> Триггер </summary>
-	Trigger,
-}
-public enum ShowEditElements
-{
-	/// <summary> Все </summary>
-	All,
-	/// <summary> Требующие внимания </summary>
-	Alert,
-	/// <summary> Утверждённые </summary>
-	Ok,
-}
-
+/// <summary>
+/// Основной класс, реализующий логику работы со скриптами БД
+/// </summary>
 public class ConvertMsToPg
 {
-	const string _cfgFileName = "ConvertMsToPg.Cfg";
+	#region константы и поля
+
 	//public const string _extProj = ".ms2pg";
 	public const string _extProj = ".zip";
 	public const string _extSql = ".sql";
 
-	const string GO = "GO";
-	const string CREATE_TABLE = "CREATE TABLE";
+	private const string _cfgFileName = "ConvertMsToPg.Cfg";
+	private const string GO = "GO";
+	private const string CREATE_TABLE = "CREATE TABLE";
 
 	private bool NeedUpdateFile = false;
 	private bool NeedUpdateConfig = false;
 
-	public ConvertMsToPgCfg Config { get; private set; } = new();
+	private ElTable[] allTables = null;
+	private ElTrigger[] allTriggers = null;
+
+	#endregion
+
+	#region публичные свойства
+
+	/// <summary>
+	/// Полный путь до сохранённого файла проекта
+	/// </summary>
 	public string FullFilePath { get; set; }
-	List<string> InFile { get; set; }
-	List<DtElement> Elements { get; set; }
+
+	/// <summary>
+	/// Путь до сохранённого файла проекта
+	/// </summary>
+	public string PathToSaveFile { get; set; }
+
+	/// <summary>
+	/// Есть ли выбранные элементы для перемещения в базу данных
+	/// </summary>
+	public bool IsPresentElementsForAddDatabase =>
+		null != ElementsForAddDatabase;
+
+	/// <summary>
+	/// Настройки преобразования SQL-скрипта
+	/// </summary>
+	public ConvertMsToPgCfg Config { get; private set; } = new();
 
 	/// <summary>
 	/// База данных, выбранная в настоящий момент ползователем
@@ -53,9 +60,34 @@ public class ConvertMsToPg
 	public OnePgDatabase SelectedDataBase { get; set; }
 
 	/// <summary>
+	/// База данных, выбранная на вкладке "Доработка текстов процедур", null="все базы данных"
+	/// </summary>
+	public OnePgDatabase CurrentEditDatabase { get; set; }
+
+	/// <summary>
 	/// Набор элементов, выбранных для перемещения в БД, либо для отмены такого перемещения
 	/// </summary>
 	public List<DtElement> ElementsForAddDatabase { get; set; }
+
+	/// <summary>
+	/// Получение всех баз данных
+	/// </summary>
+	public IEnumerable<OnePgDatabase> GetDatabases =>
+		Config.Databases;
+
+	#endregion
+
+	#region приватные свойства
+
+	/// <summary>
+	/// Строки, полученные из исходного файла
+	/// </summary>
+	private List<string> InFile { get; set; }
+
+	/// <summary>
+	/// Элементы, получившиеся после разбора входного файла
+	/// </summary>
+	private List<DtElement> Elements { get; set; }
 
 	/// <summary>
 	/// Тип элементов для отображения на вкладке "Доработка текстов процедур"
@@ -68,53 +100,8 @@ public class ConvertMsToPg
 	private ShowEditElements CurrentShowEditElements { get; set; }
 
 	/// <summary>
-	/// База данных, выбранная на вкладке "Доработка текстов процедур", null="все базы данных"
+	/// Все таблицы
 	/// </summary>
-	public OnePgDatabase CurrentEditDatabase { get; set; }
-
-	private static readonly JsonSerializerOptions _jsonOptions = new()
-	{
-		Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-		WriteIndented = true,
-	};
-
-	#region config
-
-	public void SetConfig(
-		List<OnePgDatabase> databases,
-		//int[] freeElementIds,
-		string[] skipOperation,
-		string[] skipElement)
-	{
-		Config = new ConvertMsToPgCfg
-		{
-			Databases = databases,
-			//FreeElementIds = freeElementIds,
-			SkipElement = skipOperation,
-			SkipOperation = skipElement,
-		};
-		NeedUpdateConfig = true;
-	}
-	#endregion config
-
-	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
-	{
-		IEnumerable<DtElement> elements = null != SelectedDataBase
-			? SelectedDataBase.Elements
-			: Config.FreeElements;
-		if (null == elements)
-			return Array.Empty<DtElement>();
-
-		elements = elements.Where(s =>
-			s.ElementType == selectedElementType);
-		if (createOnly)
-			elements = elements.Where(t =>
-				t.Operation == ElmOperation.Create);
-
-		return elements.ToArray();
-	}
-
-	private ElTable[] allTables = null;
 	private ElTable[] Tables
 	{
 		get
@@ -132,7 +119,9 @@ public class ConvertMsToPg
 		}
 	}
 
-	private ElTrigger[] allTriggers = null;
+	/// <summary>
+	/// Все триггеры
+	/// </summary>
 	private ElTrigger[] Triggers
 	{
 		get
@@ -150,15 +139,99 @@ public class ConvertMsToPg
 		}
 	}
 
-	public IEnumerable<OnePgDatabase> GetDatabases =>
-		Config.Databases;
+	/// <summary>
+	/// Параметры сериализации файла настроек
+	/// </summary>
+	private static readonly JsonSerializerOptions _jsonOptions = new()
+	{
+		Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+		WriteIndented = true,
+	};
+
+	#endregion
+
+	#region публичные методы
 
 	/// <summary>
-	/// Есть ли выбранные элементы для перемещения в базу данных
+	/// Разбор исходного файла
 	/// </summary>
-	public bool IsPresentElementsForAddDatabase =>
-		null != ElementsForAddDatabase;
+	public string ParseSource()
+	{
+		string errorMessage;
 
+		// чтение и разбор входного потока
+		errorMessage = ParseStrings();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
+		// разбор каждого элемента по составляющим
+		errorMessage = ParseElements();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
+		// установка взаимосвязей между элементами
+		errorMessage = RelationElements();
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
+		// разнесение элементов по разным БД
+		errorMessage = SortingElements(Config.AddNeedCorrect);
+		if (!string.IsNullOrEmpty(errorMessage))
+			return errorMessage;
+
+		return null;
+	}
+
+	/// <summary>
+	/// Установка параметров
+	/// </summary>
+	/// <param name="databases"></param>
+	/// <param name="skipOperation"></param>
+	/// <param name="skipElement"></param>
+	public void SetConfig(
+		List<OnePgDatabase> databases,
+		string[] skipOperation,
+		string[] skipElement)
+	{
+		Config = new ConvertMsToPgCfg
+		{
+			Databases = databases,
+			SkipElement = skipOperation,
+			SkipOperation = skipElement,
+		};
+		NeedUpdateConfig = true;
+	}
+
+	/// <summary>
+	/// Получение набора элементов по параметрам
+	/// </summary>
+	/// <param name="selectedElementType">Тип требуемых элементов</param>
+	/// <param name="createOnly">Выбрать только создание элементов (SQL-инструкция CREATE)</param>
+	/// <returns>Массив элементов, удовлетворяющих параметрам выборки</returns>
+	public DtElement[] GetElements(ElmType selectedElementType, bool createOnly)
+	{
+		IEnumerable<DtElement> elements = null != SelectedDataBase
+			? SelectedDataBase.Elements
+			: Config.FreeElements;
+		if (null == elements)
+			return Array.Empty<DtElement>();
+
+		elements = elements.Where(s =>
+			s.ElementType == selectedElementType);
+		if (createOnly)
+		{
+			elements = elements.Where(t =>
+				t.Operation == ElmOperation.Create);
+		}
+
+		return elements.ToArray();
+	}
+
+	/// <summary>
+	/// Загрузить файл проекта
+	/// </summary>
+	/// <param name="fileName">Путь до загружаемого файла</param>
+	/// <returns></returns>
 	public string LoadFile(string fileName) =>
 		Path.GetExtension(fileName) switch
 		{
@@ -167,6 +240,132 @@ public class ConvertMsToPg
 			_ => $"Неизвестный формат файла {fileName}",
 		};
 
+	/// <summary>
+	/// Сохранение файла проекта
+	/// </summary>
+	/// <param name="projectFile">Имя сохранённого файла</param>
+	/// <returns>Сообщение об ошибке или null, если ошибок не было</returns>
+	public string SaveFile(out string projectFile)
+	{
+		projectFile = null;
+		if (string.IsNullOrEmpty(PathToSaveFile))
+			return "Необходимо указать путь для сохраняемого файла";
+
+		try
+		{
+			projectFile = Path.ChangeExtension(FullFilePath, _extProj);
+			using var stream = new FileStream(Path.Combine(PathToSaveFile, projectFile), FileMode.OpenOrCreate);
+			using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
+
+			// сохранение обрабатываемого файла
+			if (NeedUpdateFile)
+			{
+				var fileName = Path.GetFileName(FullFilePath);
+				var fileEntry = zip.GetEntry(fileName);
+				fileEntry?.Delete();
+				fileEntry = zip.CreateEntry(fileName);
+				using var writer = new StreamWriter(fileEntry.Open());
+				InFile.ForEach(writer.WriteLine);
+			}
+
+			// сохранение настроек
+#if !DEBUG
+			if (NeedUpdateConfig)
+#endif
+			{
+				var configEntry = zip.GetEntry(_cfgFileName);
+				configEntry?.Delete();
+				configEntry = zip.CreateEntry(Path.GetFileName(_cfgFileName));
+				using var writer = new StreamWriter(configEntry.Open());
+				JsonSerializer.Serialize(writer.BaseStream, Config, _jsonOptions);
+			}
+		}
+		catch (Exception ex) { return ex.Message; }
+
+		NeedUpdateFile = NeedUpdateConfig = false;
+		return null;
+	}
+
+	/// <summary>
+	/// Установка элементов, выбранных для добавления к БД либо для удаления оттуда
+	/// </summary>
+	/// <param name="list">Список выбранных элементов</param>
+	public void SetElementsForAddDatabase(List<DtElement> list) =>
+		ElementsForAddDatabase = list;
+
+	/// <summary>
+	/// Добавление элементов к БД
+	/// </summary>
+	public void AddSelectedElementsToDatabase() =>
+		SetElementsToDatabase(ElementsForAddDatabase);
+
+	/// <summary>
+	/// Удаление элементов из БД
+	/// </summary>
+	/// <param name="selectedElements"></param>
+	public void RemoveElementsFromDatabase(List<DtElement> selectedElements) =>
+		RemoveFromDatabase(selectedElements);
+
+	/// <summary>
+	/// Уастновка типа редактируемых элементов для отображения на вкладке редактирования
+	/// </summary>
+	/// <param name="editElementsType">Тип элементов для отображения</param>
+	public void SetEditElementsType(EditElementsType editElementsType) =>
+		CurrentEditElementsType = editElementsType;
+
+	/// <summary>
+	/// Уастновка состояния элементов для отображения на вкладке редактирования
+	/// </summary>
+	/// <param name="showEditElements">Состояние элементов для отображения</param>
+	public void SetShowEditElements(ShowEditElements showEditElements) =>
+		CurrentShowEditElements = showEditElements;
+
+	/// <summary>
+	/// Получение списка элементов в соответствии с установленным состоянием и типом
+	/// </summary>
+	public IEnumerable<DtElement> GetEditElements()
+	{
+		if (null == Elements)
+			return Array.Empty<DtElement>();
+
+		var editElements = Elements
+			.AsEnumerable()
+			.Where(e => e.Operation == ElmOperation.Create && e is IEdited)
+			.Select(e => e as IEdited);
+		if (CurrentEditDatabase != null)
+			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
+
+		var elmType = EditElementsTypeToElmType(CurrentEditElementsType);
+		if (elmType != ElmType.None)
+			editElements = editElements.Where(e => e.ElementType == elmType);
+
+		switch (CurrentShowEditElements)
+		{
+			case ShowEditElements.Alert:
+				editElements = editElements.Where(e => !e.IsOk);
+				break;
+			case ShowEditElements.Ok:
+				editElements = editElements.Where(e => e.IsOk);
+				break;
+		}
+		return editElements.Select(x => x as DtElement).ToList();
+	}
+
+	/// <summary>
+	/// Получение списка всех процедурных языков
+	/// </summary>
+	public Plang[] GetProcedureLanguages() =>
+		Plang.Langs;
+
+	#endregion
+
+	#region приватные методы
+
+	/// <summary>
+	/// Загрузка ранее сохранённого файла проекта
+	/// </summary>
+	/// <param name="fileName">Полный путь до файла</param>
+	/// <returns>Сообщение об ошибке или null, если ошибок не было</returns>
 	private string LoadProj(string fileName)
 	{
 		FullFilePath = fileName;
@@ -197,6 +396,11 @@ public class ConvertMsToPg
 		return null;
 	}
 
+	/// <summary>
+	/// Загрузка исходного файла, содержащего MS SQL-скрипт
+	/// </summary>
+	/// <param name="fileName">Полный путь до файла</param>
+	/// <returns>Сообщение об ошибке или null, если ошибок не было</returns>
 	private string LoadMsSql(string fileName)
 	{
 		FullFilePath = fileName;
@@ -217,8 +421,14 @@ public class ConvertMsToPg
 		return null;
 	}
 
+	/// <summary>
+	/// Чтение строк из файла-источника
+	/// </summary>
 	private void ReadInLines(StreamReader reader)
 	{
+		if (null == reader)
+			return;
+
 		// сохранение исходника
 		InFile = new();
 		while (true)
@@ -230,36 +440,6 @@ public class ConvertMsToPg
 	}
 
 	#region ParseSource
-
-	/// <summary>
-	/// разбор файла
-	/// </summary>
-	public string ParseSource()
-	{
-		string errorMessage;
-
-		// чтение и разбор входного потока
-		errorMessage = ParseStrings();
-		if (!string.IsNullOrEmpty(errorMessage))
-			return errorMessage;
-
-		// разбор каждого элемента по составляющим
-		errorMessage = ParseElements();
-		if (!string.IsNullOrEmpty(errorMessage))
-			return errorMessage;
-
-		// установка взаимосвязей между элементами
-		errorMessage = RelationElements();
-		if (!string.IsNullOrEmpty(errorMessage))
-			return errorMessage;
-
-		// разнесение элементов по разным БД
-		errorMessage = SortingElements(Config.AddNeedCorrect);
-		if (!string.IsNullOrEmpty(errorMessage))
-			return errorMessage;
-
-		return null;
-	}
 
 	/// <summary>
 	/// Установка взаимосвязей между элементами
@@ -400,55 +580,9 @@ public class ConvertMsToPg
 
 	#endregion
 
-	public string SaveFile(string path, out string projectFile)
-	{
-		projectFile = null;
-		if (string.IsNullOrEmpty(path))
-			return "Необходимо указать путь для сохраняемого файла";
-
-		try
-		{
-			projectFile = Path.ChangeExtension(FullFilePath, _extProj);
-			using var stream = new FileStream(Path.Combine(path, projectFile), FileMode.OpenOrCreate);
-			using var zip = new ZipArchive(stream, ZipArchiveMode.Update, false);
-
-			// сохранение обрабатываемого файла
-			if (NeedUpdateFile)
-			{
-				var fileName = Path.GetFileName(FullFilePath);
-				var fileEntry = zip.GetEntry(fileName);
-				fileEntry?.Delete();
-				fileEntry = zip.CreateEntry(fileName);
-				using var writer = new StreamWriter(fileEntry.Open());
-				InFile.ForEach(writer.WriteLine);
-			}
-
-			// сохранение настроек
-#if !DEBUG
-			if (NeedUpdateConfig)
-#endif
-			{
-				var configEntry = zip.GetEntry(_cfgFileName);
-				configEntry?.Delete();
-				configEntry = zip.CreateEntry(Path.GetFileName(_cfgFileName));
-				using var writer = new StreamWriter(configEntry.Open());
-				JsonSerializer.Serialize(writer.BaseStream, Config, _jsonOptions);
-			}
-		}
-		catch (Exception ex) { return ex.Message; }
-
-		NeedUpdateFile = NeedUpdateConfig = false;
-		return null;
-	}
-
-	public void SetElementsForAddDatabase(List<DtElement> list) =>
-		ElementsForAddDatabase = list;
-
-	public void AddSelectedElementsToDatabase() =>
-		SetElementsToDatabase(ElementsForAddDatabase);
-	public void RemoveElementsFromDatabase(List<DtElement> selectedElements) =>
-		RemoveFromDatabase(selectedElements);
-
+	/// <summary>
+	/// Назначение набора элементов выбранной ранее базе данных
+	/// </summary>
 	private void SetElementsToDatabase(IEnumerable<DtElement> elementsForAddDatabase)
 	{
 		if (null == elementsForAddDatabase ||
@@ -475,6 +609,9 @@ public class ConvertMsToPg
 		}
 	}
 
+	/// <summary>
+	/// Удаление набора элементов из выбранной ранее БД, перемещение их в список нераспределённых элементов
+	/// </summary>
 	private void RemoveFromDatabase(IEnumerable<DtElement> elementsForAddDatabase)
 	{
 		if (null == elementsForAddDatabase)
@@ -496,37 +633,9 @@ public class ConvertMsToPg
 		}
 	}
 
-	public void SetEditElementsType(EditElementsType editElementsType) =>
-		CurrentEditElementsType = editElementsType;
-
-	public void SetShowEditElements(ShowEditElements showEditElements) =>
-		CurrentShowEditElements = showEditElements;
-
-	public List<DtElement> GetEditElements()
-	{
-		var editElements = Elements
-			.AsEnumerable()
-			.Where(e => e.Operation == ElmOperation.Create && e is IEdited)
-			.Select(e => e as IEdited);
-		if (CurrentEditDatabase != null)
-			editElements = editElements.Where(e => e.Database == CurrentEditDatabase);
-
-		var elmType = EditElementsTypeToElmType(CurrentEditElementsType);
-		if (elmType != ElmType.None)
-			editElements = editElements.Where(e => e.ElementType == elmType);
-
-		switch (CurrentShowEditElements)
-		{
-			case ShowEditElements.Alert:
-				editElements = editElements.Where(e => !e.IsOk);
-				break;
-			case ShowEditElements.Ok:
-				editElements = editElements.Where(e => e.IsOk);
-				break;
-		}
-		return editElements.Select(x => x as DtElement).ToList();
-	}
-
+	/// <summary>
+	/// Получение типа элемента из типа резактируемого элемента
+	/// </summary>
 	private static ElmType EditElementsTypeToElmType(EditElementsType editElementsType) =>
 		 editElementsType switch
 		 {
@@ -535,4 +644,6 @@ public class ConvertMsToPg
 			 EditElementsType.Trigger => ElmType.Trigger,
 			 _ => ElmType.None,
 		 };
+
+	#endregion
 }

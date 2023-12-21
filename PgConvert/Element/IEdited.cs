@@ -10,4 +10,6 @@ public interface IEdited
 	bool IsOk { get; }
 	OnePgDatabase Database { get; }
 	ElmType ElementType { get; }
+	bool CanSetOk { get; }
+	void SetOk(bool ok);
 }
