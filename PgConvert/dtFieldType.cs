@@ -1,14 +1,25 @@
-﻿using PgConvert.Element;
+﻿using PgConvert.Enums;
 using System.Text;
 
 namespace PgConvert;
 
+/// <summary>
+/// Тип поля таблицы
+/// </summary>
 public class DtFieldType
 {
 	private const string _max = "max";
 
+	/// <summary>
+	/// Конструктор
+	/// </summary>
 	public DtFieldType() { }
 
+	/// <summary>
+	/// Конструктор
+	/// </summary>
+	/// <param name="typeNameMs">Название типа поля в скрипте MS SQL</param>
+	/// <exception cref="Exception">Определение типа некорректно</exception>
 	public DtFieldType(string typeNameMs)
 	{
 		if (string.IsNullOrEmpty(typeNameMs))
@@ -27,7 +38,7 @@ public class DtFieldType
 			return;
 		}
 
-		FieldType = GetFieldTypeMs(pieces[0]);
+		FieldType = GetFieldTypeMs(pieces[0].Replace("\"", null));
 		if (pieces.Length > 2)
 			throw new Exception($"В строке '{typeNameMs}' количество разбираемых элементов больше двух.");
 
@@ -42,6 +53,12 @@ public class DtFieldType
 		}
 	}
 
+	/// <summary>
+	/// Конструктор
+	/// </summary>
+	/// <param name="fieldType">Тип поля</param>
+	/// <param name="precision">Точность числового или длина строкового поля</param>
+	/// <param name="scale">Масштаб числового поля</param>
 	public DtFieldType(FldType fieldType, int precision, int scale)
 	{
 		FieldType = fieldType;
@@ -53,19 +70,26 @@ public class DtFieldType
 	/// Тип поля
 	/// </summary>
 	internal FldType FieldType { get; }
+
 	/// <summary>
 	/// Точность десятичных значений NUMERIC(точность, масштаб)
 	/// </summary>
+	/// 
 	int Len { get; set; }
+
 	/// <summary>
 	/// Масштаб десятичных значений NUMERIC(точность, масштаб)
 	/// </summary>
 	int LenDecimal { get; set; }
+
 	/// <summary>
 	/// Максимально возможная длина поля
 	/// </summary>
 	bool IsMax { get; set; }
 
+	/// <summary>
+	/// Получение строки описания типа для PostgreSQL
+	/// </summary>
 	internal string GetFieldTypePg()
 	{
 		return FieldType switch
@@ -88,6 +112,11 @@ public class DtFieldType
 		};
 	}
 
+	/// <summary>
+	/// Получение типа по строке его описания в скрипте MS SQL
+	/// </summary>
+	/// <param name="typeNameMs">Описание типа в скрипте MS SQL</param>
+	/// <returns>Тип, соответствующий его описанию. Если определить тип не удалось, то FldType.None</returns>
 	internal static FldType GetFieldTypeMs(string typeNameMs) =>
 		typeNameMs switch
 		{
@@ -109,6 +138,46 @@ public class DtFieldType
 			_ => FldType.None,
 		};
 
+	/// <summary>
+	/// Получение определения поля для сохранения его в файле
+	/// </summary>
+	/// <returns></returns>
+	internal string GetNeedCorrect()
+	{
+		StringBuilder sb = new($"{FieldType}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{Len}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{LenDecimal}");
+		sb.Append(DtField._sygn);
+		sb.Append($"{IsMax}");
+		return $"{sb}";
+	}
+
+	/// <summary>
+	/// Получение типа из его сохраненного определения в файле
+	/// </summary>
+	/// <param name="fType">Элемент перечисления типов</param>
+	/// <param name="len">Точность десятичных значений NUMERIC(точность, масштаб) или длина текстового поля</param>
+	/// <param name="lenDecimal">Масштаб десятичных значений NUMERIC(точность, масштаб)</param>
+	/// <param name="isMax">Является ли этот тип с максимално возможной длиной поля</param>
+	/// <returns>Определённый по параметрам тип, или null, если определить тип не удалось</returns>
+	internal static DtFieldType GetNeedCorrect(
+		string fType,
+		string len,
+		string lenDecimal,
+		string isMax)
+	{
+		if (!Enum.TryParse(typeof(FldType), fType, true, out var result) ||
+			!int.TryParse(len, out int precision) ||
+			!int.TryParse(lenDecimal, out int scale))
+			return null;
+		var ft = new DtFieldType((FldType)result, precision, scale);
+		if (bool.TryParse(isMax, out bool isMaxDecimal))
+			ft.IsMax = isMaxDecimal;
+		return ft;
+	}
+
 	public override string ToString()
 	{
 		var sb = new StringBuilder($"{FieldType}");
@@ -126,33 +195,5 @@ public class DtFieldType
 			sb.Append(')');
 		}
 		return $"{sb}";
-	}
-
-	internal string GetNeedCorrect()
-	{
-		var sb = new StringBuilder($"{FieldType}");
-		sb.Append(DtField._sygn);
-		sb.Append($"{Len}");
-		sb.Append(DtField._sygn);
-		sb.Append($"{LenDecimal}");
-		sb.Append(DtField._sygn);
-		sb.Append($"{IsMax}");
-		return $"{sb}";
-	}
-
-	internal static DtFieldType GetNeedCorrect(
-		string fType,
-		string len,
-		string lenDecimal,
-		string isMax)
-	{
-		if (!Enum.TryParse(typeof(FldType), fType, true, out var result) ||
-			!int.TryParse(len, out int precision) ||
-			!int.TryParse(lenDecimal, out int scale))
-			return null;
-		var ft = new DtFieldType((FldType)result, precision, scale);
-		if (bool.TryParse(isMax, out bool isMaxDecimal))
-			ft.IsMax = isMaxDecimal;
-		return ft;
 	}
 }

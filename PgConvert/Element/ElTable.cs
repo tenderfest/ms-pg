@@ -43,6 +43,9 @@ public class ElTable : ElBaseForTable, IEdited
 		.Where(x => x.IsGenerated && !x.CorrectIsDone)
 		.ToArray();
 
+	/// <summary>
+	/// Спосок вычисляемы полей таблицы
+	/// </summary>
 	public string[] GeneratedFields
 	{
 		get => Fields

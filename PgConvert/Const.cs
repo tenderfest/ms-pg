@@ -20,12 +20,19 @@ public static class Const
 	internal const string CASCADE = "cascade";
 	internal const string DELETE = "delete";
 
+	/// <summary>
+	/// Ключевые слова, определяющие в исходном SQL-скрипте индексы
+	/// </summary>
 	private static readonly string[] _indexSign = new string[]
 	{
 		CONSTRAINT,
 		PRIMARY,
 		UNIQUE,
 	};
+
+	/// <summary>
+	/// Ключевые слова, определяющие в исходном SQL-скрипте индексы
+	/// </summary>
 	internal static string[] IndexSign => _indexSign;
 
 	/// <summary>

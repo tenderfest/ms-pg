@@ -1,61 +1,29 @@
-﻿using PgConvert.Element;
+﻿using PgConvert.Enums;
 using System.Text;
 
 namespace PgConvert;
 
+/// <summary>
+/// Определение поля таблицы базы данных
+/// </summary>
 #pragma warning disable IDE0056 // Использовать оператор индекса
 public class DtField
 {
 	public const char _sygn = '^';
+
 	private const string _generated = "as";
-	private const string _persisted = "persisted"; // СОХРАНЯЕТСЯ
+	/// <summary>
+	/// Признак СОХРАНЯЕМОГО вычисляемого поля
+	/// </summary>
+	private const string _persisted = "persisted";
 	private const string _not = "not";
 	private const string _null = "null";
 	private const string _notNull = " NotNull";
 
 	/// <summary>
-	/// вид поля для SQL-запроса, создающего таблицу
+	/// Конструктор
 	/// </summary>
-	public string GeneratedFieldPg =>
-		$"{Name} {FieldType} GENERATED ALWAYS AS ({FormulaPg}) STORED";
-
-	public string Name { get; set; }
-	public DtFieldType FieldType { get; set; }
-	public bool NotNull { get; set; }
-
-	/// <summary>
-	/// вычисляемое поле - формула T-SQL
-	/// </summary>
-	public string FormulaMs { get; set; }
-	/// <summary>
-	/// вычисляемое поле - формула PostgreSQL
-	/// </summary>
-	public string FormulaPg { get; set; }
-	/// <summary>
-	/// Устанавливаемый пользователем признак того, что вычисляемое поле
-	/// откорректировано для PostgreSQL
-	/// </summary>
-	public bool CorrectIsDone { get; private set; }
-
-	/// <summary>
-	/// Утверждение вычисляемого поля как подходящего для PostgreSQL
-	/// </summary>
-	public void SetOk(bool ok) =>
-		CorrectIsDone = ok;
-
-	/// <summary>
-	/// вычисляемое сохраняемое
-	/// </summary>
-	public bool Persisted { get; set; }
-	/// <summary>
-	/// поле является вычисляемым
-	/// </summary>
-	public bool IsGenerated =>
-		!string.IsNullOrEmpty(FormulaMs);
-
-	public bool IsFieldTypeNone =>
-		FldType.None == FieldType?.FieldType;
-
+	/// <param name="pieces"></param>
 	public DtField(string[] pieces)
 	{
 		while (pieces.Length < 3)
@@ -85,6 +53,116 @@ public class DtField
 		}
 	}
 
+	/// <summary>
+	/// Название поля
+	/// </summary>
+	public string Name { get; set; }
+
+	/// <summary>
+	/// Тип поля
+	/// </summary>
+	public DtFieldType FieldType { get; set; }
+
+	/// <summary>
+	/// Является ли поле Not Null
+	/// </summary>
+	public bool NotNull { get; set; }
+
+	/// <summary>
+	/// Вычисляемое поле - формула MS SQL
+	/// </summary>
+	public string FormulaMs { get; set; }
+
+	/// <summary>
+	/// Вычисляемое поле - формула PostgreSQL
+	/// </summary>
+	public string FormulaPg { get; set; }
+
+	/// <summary>
+	/// Устанавливаемый пользователем признак того, что вычисляемое поле
+	/// откорректировано для PostgreSQL
+	/// </summary>
+	public bool CorrectIsDone { get; private set; }
+
+	/// <summary>
+	/// Поле является вычисляемым сохраняемым
+	/// </summary>
+	public bool Persisted { get; set; }
+
+	/// <summary>
+	/// Текст для вычисляемого поля для SQL-запроса, создающего таблицу
+	/// </summary>
+	public string GeneratedFieldPg =>
+		$"{Name} {FieldType} GENERATED ALWAYS AS ({FormulaPg}) STORED";
+
+	/// <summary>
+	/// Утверждение вычисляемого поля как подходящего для PostgreSQL
+	/// </summary>
+	public void SetOk(bool ok) =>
+		CorrectIsDone = ok;
+
+	/// <summary>
+	/// Поле является вычисляемым
+	/// </summary>
+	public bool IsGenerated =>
+		!string.IsNullOrEmpty(FormulaMs);
+
+	/// <summary>
+	/// Тип этого поля не определён
+	/// </summary>
+	public bool IsFieldTypeNone =>
+		FldType.None == FieldType?.FieldType;
+
+	/// <summary>
+	/// Форматирование определения поля для сохранения в файле
+	/// </summary>
+	public string NeedCorrect
+	{
+		get
+		{
+			var sb = new StringBuilder(Name);
+			sb.Append(_sygn);
+			sb.Append(CorrectIsDone);
+			sb.Append(_sygn);
+			sb.Append(FieldType.GetNeedCorrect());
+			sb.Append(_sygn);
+			sb.Append(FormulaPg);
+			return $"{sb}";
+		}
+	}
+
+	/// <summary>
+	/// Представление вычисляемого поля для отображения
+	/// </summary>
+	public string GeneratedFieldToString =>
+		$"{Name}{(
+			Persisted ? $" {_persisted}" : string.Empty)}{(
+			NotNull ? _notNull : string.Empty)}";
+
+	public override string ToString() =>
+		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
+			IsFieldTypeNone ? "???" : FieldType)}{(
+			NotNull ? _notNull : string.Empty)}";
+
+	#region приватные методы
+
+	private static string ClearToLower(string str) =>
+		Clear(str).ToLower();
+
+	private static string Clear(string str) =>
+		str
+		.Trim()
+		.Replace("[", "\"")
+		.Replace("]", "\"");
+
+	#endregion
+
+	#region статические методы
+
+	/// <summary>
+	/// Получение строки определения типа поля по кусочкам такой строки в исходном скрипте
+	/// Разбор строки определения типа
+	/// </summary>
 	private static string ParseFormulaForCalculatedField(string[] pieces, out bool isPersisted)
 	{
 		// от 3 до конца, кроме _persisted _not _null
@@ -94,6 +172,10 @@ public class DtField
 		isPersisted = SkipLast(ref formula, _persisted);
 		return string.Join(' ', formula);
 
+		/// <summary>
+		/// Отсечение последнего элемента описания, если он соответствует переданному
+		/// </summary>
+		/// <returns>true, если отсечение произошло, иначе false</returns>
 		static bool SkipLast(ref IEnumerable<string> formula, string skipField)
 		{
 			var needSkip = ClearToLower(formula.Last()) == skipField;
@@ -103,20 +185,11 @@ public class DtField
 		}
 	}
 
-	private static string ClearToLower(string str) =>
-		Clear(str).ToLower();
-
-	private static string Clear(string str) =>
-		str
-		.Trim()
-		.Replace("[", null)
-		.Replace("]", null);
-
-	public override string ToString() =>
-		$"{(IsGenerated ? "(1+2) " : string.Empty)}{Name} {(
-			IsFieldTypeNone ? "???" : FieldType)}{(
-			NotNull ? _notNull : string.Empty)}";
-
+	/// <summary>
+	/// Разбор определения поля из сохранённого в файле
+	/// </summary>
+	/// <param name="correctField"></param>
+	/// <param name="fields"></param>
 	internal static void SetCorrectField(string correctField, List<DtField> fields)
 	{
 		if (string.IsNullOrEmpty(correctField) ||
@@ -139,25 +212,5 @@ public class DtField
 		field.FormulaPg = piece[6];
 	}
 
-	public string NeedCorrect
-	{
-		get
-		{
-			var sb = new StringBuilder(Name);
-			sb.Append(_sygn);
-			sb.Append(CorrectIsDone);
-			sb.Append(_sygn);
-			sb.Append(FieldType.GetNeedCorrect());
-			sb.Append(_sygn);
-			sb.Append(FormulaPg);
-			return $"{sb}";
-		}
-	}
-
-	// сохранять ещё тип
-
-	public string GeneratedFieldToString =>
-		$"{Name}{(
-			Persisted ? $" {_persisted}" : string.Empty)}{(
-			NotNull ? _notNull : string.Empty)}";
+	#endregion
 }
