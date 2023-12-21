@@ -2,33 +2,15 @@
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
-using System.Xml.Linq;
 using PgConvert.Config;
 using PgConvert.Element;
+using PgConvert.Enums;
 
 namespace PgConvert;
 
-public enum EditElementsType
-{
-	/// <summary> Все </summary>
-	All,
-	/// <summary> Таблицы </summary>
-	Table,
-	/// <summary> Процедуры </summary>
-	Procedure,
-	/// <summary> Триггер </summary>
-	Trigger,
-}
-public enum ShowEditElements
-{
-	/// <summary> Все </summary>
-	All,
-	/// <summary> Требующие внимания </summary>
-	Alert,
-	/// <summary> Утверждённые </summary>
-	Ok,
-}
-
+/// <summary>
+/// Основной класс, реализующий логику работы со скриптами БД
+/// </summary>
 public class ConvertMsToPg
 {
 	const string _cfgFileName = "ConvertMsToPg.Cfg";
@@ -82,14 +64,12 @@ public class ConvertMsToPg
 
 	public void SetConfig(
 		List<OnePgDatabase> databases,
-		//int[] freeElementIds,
 		string[] skipOperation,
 		string[] skipElement)
 	{
 		Config = new ConvertMsToPgCfg
 		{
 			Databases = databases,
-			//FreeElementIds = freeElementIds,
 			SkipElement = skipOperation,
 			SkipOperation = skipElement,
 		};
@@ -541,6 +521,6 @@ public class ConvertMsToPg
 			 _ => ElmType.None,
 		 };
 
-	public Plang[] GetProcedureLanguages() => 
+	public Plang[] GetProcedureLanguages() =>
 		Plang.Langs;
 }

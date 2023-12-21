@@ -1,21 +1,30 @@
 ﻿using PgConvert.Element;
+using PgConvert.Enums;
 using System.Text;
 using System.Text.Json.Serialization;
-using System.Xml.Linq;
 
 namespace PgConvert.Config;
-#pragma warning disable S2365 // Properties should not make collection or array copies
 
+/// <summary>
+/// Настройки преобразования скрипта создания БД, сохраняемые в файле
+/// </summary>
+#pragma warning disable S2365 // Properties should not make collection or array copies
 [Serializable]
 public class ConvertMsToPgCfg
 {
+	/// <summary>
+	/// "Встроенная" БД, куда пользователь должен отнести игнорируемые элементы из исходного скрипта
+	/// </summary>
 	public readonly OnePgDatabase IgnoreDatabase;
 
+	/// <summary>
+	/// Конструктор
+	/// </summary>
 	public ConvertMsToPgCfg()
 	{
 		if (null == Databases)
 		{
-			IgnoreDatabase = new OnePgDatabase(OnePgDatabase.ThisIgnore)
+			IgnoreDatabase = new OnePgDatabase(OnePgDatabase._thisDbIsIgnore)
 			{
 				ConnectionString = "У этой базы данных нет строки подключения"
 			};
@@ -23,34 +32,56 @@ public class ConvertMsToPgCfg
 		}
 	}
 
+	/// <summary>
+	/// Список игнорируемых операций из скрипта MS-SQL
+	/// </summary>
+	public string[] SkipOperation { get; set; } = new string[3] { "use", "if", "set" };
 
-	public string[] SkipOperation { get; set; }
-	public string[] SkipElement { get; set; }
+	/// <summary>
+	/// Список игнорируемых элементов
+	/// </summary>
+	public string[] SkipElement { get; set; } = new string[2] { "assembly", "database" };
+
+	/// <summary>
+	/// Набор целевых баз данных PostgreSQL (включая "встроенную")
+	/// </summary>
 	public List<OnePgDatabase> Databases { get; set; }
+
+	/// <summary>
+	/// Список элементов, которые нуждаются в ручной корректировке:
+	/// триггеры, процедуры, вычисляемые поля таблиц
+	/// </summary>
 	public List<NeedCorrect> NeedCorrect { get; set; }
 
+	/// <summary>
+	/// Элементы исходного скрипта, ещё не отнесённые к какой-либо целевой базе данных
+	/// </summary>
 	[JsonIgnore]
 	public List<DtElement> FreeElements { get; set; }
 
+	/// <summary>
+	/// Идентификаторы нераспределённых по БД элементов
+	/// </summary>
 	public int[] FreeElementIds =>
 		FreeElements?.Select(e => e.Id).ToArray();
 
-	public static string[] GetSkipArrayFromText(string text) =>
+	/// <summary>
+	/// Получение массива строк из текста
+	/// </summary>
+	/// <param name="text">Исходный текст, состоящий из строк, разделённых символом разделения строк</param>
+	/// <returns>Массив строк, полученный из исходного текста</returns>
+	public static string[] GetStringArrayFromText(string text) =>
 		text?.Split('\n')
-		.Select(s =>
-			s.ToLower().Trim())
-		.Where(s =>
-			!string.IsNullOrEmpty(s))
+		.Select(s => s.ToLower().Trim())
+		.Where(s => !string.IsNullOrEmpty(s))
 		.ToArray();
 
-	private static string GetStringArrayAsText(string[] stringArray)
-	{
-		var sb = new StringBuilder();
-		stringArray?.ToList().ForEach(s =>
-			sb.AppendLine(s));
-		return sb.ToString();
-	}
-
+	/// <summary>
+	/// Добавление или удаление базы данных из набора целевых БД
+	/// </summary>
+	/// <param name="db">Добавляемая или удаляемая из списка БД</param>
+	/// <param name="isAdd">true, если нужно добавить БД в список, иначе false</param>
+	/// <returns>Результат добавление или удаления БД из списка целевых</returns>
 	public ResultChangeDatabaseList AddDelDatabase(OnePgDatabase db, bool isAdd)
 	{
 		if (null == db || db.IsDefault)
@@ -69,18 +100,32 @@ public class ConvertMsToPgCfg
 			: ResultChangeDatabaseList.None;
 	}
 
-	public string GetSkipElementAsText() =>
-		GetStringArrayAsText(SkipElement);
+	/// <summary>
+	/// Набор игнорируемых элементов
+	/// </summary>
+	public string SkipElementAsText =>
+		SkipElement.ToOneString();
 
-	public string GetSkipOperationAsText() =>
-		GetStringArrayAsText(SkipOperation);
+	/// <summary>
+	/// Набор игнорируемых операций исходного скрипта
+	/// </summary>
+	public string SkipOperationAsText =>
+		SkipOperation.ToOneString();
 
+	/// <summary>
+	/// Добавление элемента исходного скрипта в список нераспределённых элементов
+	/// </summary>
+	/// <param name="element">Добавляемый элемент</param>
 	internal void AddFreeElements(DtElement element)
 	{
 		if (!FreeElements.Contains(element))
 			FreeElements.Add(element);
 	}
 
+	/// <summary>
+	/// Добавление элемента исходного скрипта в список элементов, требующих ручной корректировки
+	/// </summary>
+	/// <param name="element">Добавляемый элемент</param>
 	internal void AddNeedCorrect(DtElement element)
 	{
 		NeedCorrect ??= new List<NeedCorrect>();

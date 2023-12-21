@@ -1,6 +1,7 @@
 using PgConvert;
 using PgConvert.Config;
 using PgConvert.Element;
+using PgConvert.Enums;
 
 namespace ConvertToPg;
 
@@ -463,11 +464,11 @@ public partial class FormMain : Form
 
 		ShowEditElements showEditElements;
 		if (radioButton == radioButtonEditElementsAlert)
-			showEditElements = PgConvert.ShowEditElements.Alert;
+			showEditElements = PgConvert.Enums.ShowEditElements.Alert;
 		else if (radioButton == radioButtonEditElementsOk)
-			showEditElements = PgConvert.ShowEditElements.Ok;
+			showEditElements = PgConvert.Enums.ShowEditElements.Ok;
 		else
-			showEditElements = PgConvert.ShowEditElements.All;
+			showEditElements = PgConvert.Enums.ShowEditElements.All;
 		convert.SetShowEditElements(showEditElements);
 		ShowEditElements();
 	}
