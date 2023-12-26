@@ -1,6 +1,5 @@
 ﻿using PgConvert.Element;
 using PgConvert.Enums;
-using System.Text;
 using System.Text.Json.Serialization;
 
 namespace PgConvert.Config;

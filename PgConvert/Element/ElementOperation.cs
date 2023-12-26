@@ -1,17 +1,17 @@
-﻿namespace PgConvert.Element;
+﻿using PgConvert.Enums;
 
-public enum ElmOperation
-{
-	None = 0,
-	Create,
-	Alter,
-	Exec,
-	Set,
-	Use,
-}
+namespace PgConvert.Element;
 
+/// <summary>
+/// Методы обработки операций элементов
+/// </summary>
 internal static class ElementOperation
 {
+	/// <summary>
+	/// Получить тип операции по её текстовому описанию
+	/// </summary>
+	/// <param name="operation">Текстовое описание операции</param>
+	/// <returns>Тип операции</returns>
 	internal static ElmOperation GetOperation(string operation) =>
 		operation.ToLower() switch
 		{
@@ -23,6 +23,11 @@ internal static class ElementOperation
 			_ => ElmOperation.None,
 		};
 
+	/// <summary>
+	/// Получить буквенное обозначение операции
+	/// </summary>
+	/// <param name="operation">Операция</param>
+	/// <returns>Буква для короткого отображения операции</returns>
 	internal static string GetOperationSign(ElmOperation operation) =>
 		operation switch
 		{

@@ -1,18 +1,24 @@
-﻿namespace PgConvert.Element;
+﻿using PgConvert.Enums;
 
+namespace PgConvert.Element;
+
+/// <summary>
+/// Элемент: представление
+/// </summary>
 public class ElView : ElBaseForTable
 {
-	public ElView(string[] lines) : base(lines)
-	{
+	/// <summary>
+	/// Конструктор
+	/// </summary>
+	/// <param name="lines">Набор строк, определяющий изначальный MS SQL-скрипт для этого элемента</param>
+	public ElView(string[] lines) : base(lines) =>
 		ElementType = ElmType.View;
-	}
 
+	/// <inheritdoc/>
 	public override string ToString() =>
 		base.ToString() + $" ON ({string.Join(',', TableNames)})";
 
-	internal override string Parse()
-	{
-
-		return null;
-	}
+	/// <inheritdoc/>
+	internal override string Parse() =>
+		null;
 }

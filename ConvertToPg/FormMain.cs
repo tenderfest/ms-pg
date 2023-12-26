@@ -632,7 +632,7 @@ public partial class FormMain : Form
 			return;
 		}
 		textBoxEditTriggerText.Text = trigger.GetTriggerText(functionName);
-		labelEditTriggerFunctionBegin.Text = trigger.GetTriggerFunctionTextBegin();
+		labelEditTriggerFunctionBegin.Text = trigger.TriggerFunctionTextBegin;
 		labelEditTriggerFunctionEnd.Text = ElTrigger.TriggerFunctionTextEnd;
 	}
 
@@ -768,7 +768,7 @@ public partial class FormMain : Form
 	{
 		if (CurrentEditElement is not ElTrigger trigger)
 			return;
-		trigger.SetTriggerFunctionFirstString(textBoxEditTriggerFirstString.Text);
+		trigger.SetOwnVariantLanguage(textBoxEditTriggerFirstString.Text);
 		SetTextBoxEditTriggerFirstString(trigger);
 	}
 

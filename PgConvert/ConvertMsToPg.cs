@@ -77,79 +77,6 @@ public class ConvertMsToPg
 
 	#endregion
 
-	#region приватные свойства
-
-	/// <summary>
-	/// Строки, полученные из исходного файла
-	/// </summary>
-	private List<string> InFile { get; set; }
-
-	/// <summary>
-	/// Элементы, получившиеся после разбора входного файла
-	/// </summary>
-	private List<DtElement> Elements { get; set; }
-
-	/// <summary>
-	/// Тип элементов для отображения на вкладке "Доработка текстов процедур"
-	/// </summary>
-	private EditElementsType CurrentEditElementsType { get; set; }
-
-	/// <summary>
-	/// Статус элементов для отображения на вкладке "Доработка текстов процедур"
-	/// </summary>
-	private ShowEditElements CurrentShowEditElements { get; set; }
-
-	/// <summary>
-	/// Все таблицы
-	/// </summary>
-	private ElTable[] Tables
-	{
-		get
-		{
-			if (null == allTables)
-			{
-				allTables = Elements
-				.Where(e =>
-					e.ElementType == ElmType.Table)
-				.Select(t =>
-					t as ElTable)
-				.ToArray();
-			}
-			return allTables;
-		}
-	}
-
-	/// <summary>
-	/// Все триггеры
-	/// </summary>
-	private ElTrigger[] Triggers
-	{
-		get
-		{
-			if (null == allTriggers)
-			{
-				allTriggers = Elements
-				.Where(e =>
-					e.ElementType == ElmType.Trigger)
-				.Select(t =>
-					t as ElTrigger)
-				.ToArray();
-			}
-			return allTriggers;
-		}
-	}
-
-	/// <summary>
-	/// Параметры сериализации файла настроек
-	/// </summary>
-	private static readonly JsonSerializerOptions _jsonOptions = new()
-	{
-		Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
-		WriteIndented = true,
-	};
-
-	#endregion
-
 	#region публичные методы
 
 	/// <summary>
@@ -356,6 +283,79 @@ public class ConvertMsToPg
 	/// </summary>
 	public Plang[] GetProcedureLanguages() =>
 		Plang.Langs;
+
+	#endregion
+
+	#region приватные свойства
+
+	/// <summary>
+	/// Строки, полученные из исходного файла
+	/// </summary>
+	private List<string> InFile { get; set; }
+
+	/// <summary>
+	/// Элементы, получившиеся после разбора входного файла
+	/// </summary>
+	private List<DtElement> Elements { get; set; }
+
+	/// <summary>
+	/// Тип элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private EditElementsType CurrentEditElementsType { get; set; }
+
+	/// <summary>
+	/// Статус элементов для отображения на вкладке "Доработка текстов процедур"
+	/// </summary>
+	private ShowEditElements CurrentShowEditElements { get; set; }
+
+	/// <summary>
+	/// Все таблицы
+	/// </summary>
+	private ElTable[] Tables
+	{
+		get
+		{
+			if (null == allTables)
+			{
+				allTables = Elements
+				.Where(e =>
+					e.ElementType == ElmType.Table)
+				.Select(t =>
+					t as ElTable)
+				.ToArray();
+			}
+			return allTables;
+		}
+	}
+
+	/// <summary>
+	/// Все триггеры
+	/// </summary>
+	private ElTrigger[] Triggers
+	{
+		get
+		{
+			if (null == allTriggers)
+			{
+				allTriggers = Elements
+				.Where(e =>
+					e.ElementType == ElmType.Trigger)
+				.Select(t =>
+					t as ElTrigger)
+				.ToArray();
+			}
+			return allTriggers;
+		}
+	}
+
+	/// <summary>
+	/// Параметры сериализации файла настроек
+	/// </summary>
+	private static readonly JsonSerializerOptions _jsonOptions = new()
+	{
+		Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.Cyrillic),
+		WriteIndented = true,
+	};
 
 	#endregion
 

@@ -1,9 +1,25 @@
 ﻿namespace PgConvert.Element;
 
+/// <summary>
+/// Внешний ключ для таблицы
+/// </summary>
 public class DtForeignKey
 {
+	#region публичные свойства
+
+	/// <summary>
+	/// Имя внешнего ключа
+	/// </summary>
 	public string Name { get; set; }
+
+	/// <summary>
+	/// Имя таблицы, которой принадлежит этот внешний ключ
+	/// </summary>
 	public string FromTableName { get; set; }
+
+	/// <summary>
+	/// Имя таблицы, на которую ссылается этот внешний ключ
+	/// </summary>
 	public string ToTableName { get; set; }
 
 	/* TODO см. коммент ниже
@@ -15,10 +31,26 @@ public class DtForeignKey
 	public bool OnDeleteCascade { get; set; }
 	*/
 
-	public DtForeignKey() { }
-	public DtForeignKey(string[] piecesLower, string[] pieces, string name)
+	#endregion
+
+	/// <summary>
+	/// Контруктор без параметров
+	/// </summary>
+	public DtForeignKey()
 	{
-		FromTableName = name;
+	}
+
+	/// <summary>
+	/// Конструктор
+	/// </summary>
+	/// <param name="piecesLower">Массив, состоящий из слов строки исходного SQL-скрипта,
+	/// относящихся к внешнему ключу, в нижнем регистре</param>
+	/// <param name="pieces">Массив, состоящий из слов строки исходного SQL-скрипта,
+	/// относящихся к внешнему ключу</param>
+	/// <param name="fromTableName">Имя таблицы, которой принадлежит этот внешний ключ</param>
+	public DtForeignKey(string[] piecesLower, string[] pieces, string fromTableName)
+	{
+		FromTableName = fromTableName;
 
 		int posCONSTRAINT = 0;
 		int posFOREIGN = 0;

@@ -1,27 +1,64 @@
-﻿using PgConvert.Config;
+﻿using PgConvert.Enums;
 
 namespace PgConvert.Element;
-#pragma warning disable S2365 // Properties should not make collection or array copies
 
+/// <summary>
+/// Элемент: таблица базы данных
+/// </summary>
+#pragma warning disable S2365 // Properties should not make collection or array copies
 public class ElTable : ElBaseForTable, IEdited
 {
+	/// <summary>
+	/// Конструктор
+	/// </summary>
+	/// <param name="lines">Набор строк, определяющий изначальный MS SQL-скрипт для этого элемента</param>
 	public ElTable(string[] lines) : base(lines)
 	{
 		ElementType = ElmType.Table;
 	}
 
-	public List<DtField> Fields { get; private set; } = new List<DtField>();
-	public bool IsGeneratedFields => Fields?.Count(x => x.IsGenerated) > 0;
+	#region реализация интерфейса IEdited
 
+	/// <inheritdoc/>
+	public bool CanSetOk =>
+		false;
+
+	/// <inheritdoc/>
+	public void SetOk(bool ok)
+	{
+	}
+
+	/// <inheritdoc/>
+	public bool IsOk =>
+		!FieldsForCorrect.Any();
+
+	#endregion
+
+	#region публичные свойства
+
+	/// <summary>
+	/// Поля таблицы
+	/// </summary>
+	public List<DtField> Fields { get; private set; } = new List<DtField>();
+
+	/// <summary>
+	/// Признак того, что таблица содержит вычисляемые поля
+	/// </summary>
+	public bool IsGeneratedFields =>
+		Fields?.Count(x => x.IsGenerated) > 0;
+
+	/// <summary>
+	/// Набор триггеров, относящихся к таблице
+	/// </summary>
 	public List<ElTrigger> Triggers { get; private set; } = new List<ElTrigger>();
 
 	/// <summary>
-	/// внутритабличные индексы
+	/// Внутритабличные индексы
 	/// </summary>
 	public List<ElIndex> IndexCreateTable { get; private set; } = new List<ElIndex>();
 
 	/// <summary>
-	/// изменения таблицы: внешние ключи и индексы
+	/// Изменения таблицы: внешние ключи и индексы
 	/// </summary>
 	public List<ElTable> AlterTable { get; private set; } = new List<ElTable>();
 
@@ -30,21 +67,25 @@ public class ElTable : ElBaseForTable, IEdited
 	/// </summary>
 	public DtForeignKey ForeignKey { get; private set; }
 
+	/// <summary>
+	/// Индексы таблицы
+	/// </summary>
 	public IEnumerable<ElBaseForTable> Indexes =>
 		IndexCreateTable
-			.Select(x =>
-				x as ElBaseForTable)
+			.Select(x => x as ElBaseForTable)
 		.Union(AlterTable
-			.Select(x =>
-				x as ElBaseForTable));
+			.Select(x => x as ElBaseForTable));
 
+	/// <summary>
+	/// Вычисляемые поля таблицы, требующие утверждения пользователем
+	/// </summary>
 	public DtField[] FieldsForCorrect =>
 		Fields
 		.Where(x => x.IsGenerated && !x.CorrectIsDone)
 		.ToArray();
 
 	/// <summary>
-	/// Спосок вычисляемы полей таблицы
+	/// Спосок вычисляемых полей таблицы
 	/// </summary>
 	public string[] GeneratedFields
 	{
@@ -61,16 +102,25 @@ public class ElTable : ElBaseForTable, IEdited
 		}
 	}
 
-	public bool IsOk =>
-		!FieldsForCorrect.Any();
+	#endregion
 
-	OnePgDatabase IEdited.Database =>
-		Database;
+	#region публичные методы
 
-	public bool CanSetOk =>
-		false;
-	public void SetOk(bool ok) { }
+	/// <summary>
+	/// Добавление элементов к списку изменений этой таблицы
+	/// </summary>
+	/// <param name="alterTables">Добавляемые элементы</param>
+	internal void AddAlterTable(IEnumerable<ElTable> alterTables) =>
+		AlterTable.AddRange(alterTables);
 
+	/// <summary>
+	/// Добавление триггеров к списку триггеров этой балицы
+	/// </summary>
+	/// <param name="trigger">Добавляемые триггеры</param>
+	internal void AddTriggers(ElTrigger[] trigger) =>
+		Triggers.AddRange(trigger);
+
+	/// <inheritdoc/>
 	internal override string Parse()
 	{
 		// изменение таблицы
@@ -134,6 +184,16 @@ public class ElTable : ElBaseForTable, IEdited
 		}
 		return null;
 	}
+
+	/// <inheritdoc/>
+	public override string ToString() =>
+		null == ForeignKey
+			? base.ToString()
+			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {ForeignKey.Name}";
+
+	#endregion
+
+	#region приватные методы
 
 	/// <summary>
 	/// Разбор полей по запятым
@@ -214,16 +274,5 @@ public class ElTable : ElBaseForTable, IEdited
 		return commaIndexList;
 	}
 
-	internal void AddAlterTable(IEnumerable<ElTable> alterTables) =>
-		AlterTable.AddRange(alterTables);
-
-	internal void AddTriggers(ElTrigger[] trigger) =>
-		Triggers.AddRange(trigger);
-
-	public override string ToString()
-	{
-		return ForeignKey == null
-			? base.ToString()
-			: $"{IgnoreAsString}{ElementOperation.GetOperationSign(Operation)} {ElementType}: {ForeignKey.Name}";
-	}
+	#endregion
 }

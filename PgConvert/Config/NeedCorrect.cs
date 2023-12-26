@@ -1,4 +1,5 @@
 ﻿using PgConvert.Element;
+using PgConvert.Enums;
 
 namespace PgConvert.Config;
 
