@@ -1,4 +1,5 @@
-﻿using PgConvert.Enums;
+﻿using Microsoft.VisualBasic.FileIO;
+using PgConvert.Enums;
 using System.Text;
 
 namespace PgConvert;
@@ -42,7 +43,8 @@ public class DtField
 		if (_generated == secondPiece)
 		// вычисляемое поле
 		{
-			FormulaPg = FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
+			FormulaMs = ParseFormulaForCalculatedField(pieces, out bool isPersisted);
+			FormulaPg = Clear(FormulaMs);
 			Persisted = isPersisted;
 			FieldType = new DtFieldType();
 		}
@@ -210,6 +212,26 @@ public class DtField
 
 		field.FieldType = DtFieldType.GetNeedCorrect(piece[2], piece[3], piece[4], piece[5]);
 		field.FormulaPg = piece[6];
+	}
+
+	/// <summary>
+	/// Установка значений Precision и Scale для типа этого поля
+	/// </summary>
+	/// <param name="precision">Точность числового или длина строкового поля</param>
+	/// <param name="scale">Масштаб числового поля</param>
+	/// <returns>Сообщение об ошибке, если значения некорректны, либо null, если ошибок нет</returns>
+	public string SetPrecisionScale(decimal precision, decimal scale)
+	{
+		try
+		{
+			FieldType.Precision = Convert.ToInt32(precision);
+			FieldType.Scale = Convert.ToInt32(scale);
+			return null;
+		}
+		catch (Exception ex)
+		{
+			return $"{ex}";
+		}
 	}
 
 	#endregion

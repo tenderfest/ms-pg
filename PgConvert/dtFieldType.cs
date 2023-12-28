@@ -46,10 +46,10 @@ public class DtFieldType
 		{
 			var byComma = pieces[1].Split(',');
 			if (byComma.Length > 1)
-				LenDecimal = int.Parse(byComma[1]);
+				Scale = int.Parse(byComma[1]);
 			IsMax = _max == byComma[0];
 			if (!IsMax)
-				Len = int.Parse(byComma[0]);
+				Precision = int.Parse(byComma[0]);
 		}
 	}
 
@@ -62,8 +62,8 @@ public class DtFieldType
 	public DtFieldType(FldType fieldType, int precision, int scale)
 	{
 		FieldType = fieldType;
-		Len = precision;
-		LenDecimal = scale;
+		Precision = precision;
+		Scale = scale;
 	}
 
 	/// <summary>
@@ -75,12 +75,12 @@ public class DtFieldType
 	/// Точность десятичных значений NUMERIC(точность, масштаб)
 	/// </summary>
 	/// 
-	int Len { get; set; }
+	public int Precision { get; set; }
 
 	/// <summary>
 	/// Масштаб десятичных значений NUMERIC(точность, масштаб)
 	/// </summary>
-	int LenDecimal { get; set; }
+	public int Scale { get; set; }
 
 	/// <summary>
 	/// Максимально возможная длина поля
@@ -146,9 +146,9 @@ public class DtFieldType
 	{
 		StringBuilder sb = new($"{FieldType}");
 		sb.Append(DtField._sygn);
-		sb.Append($"{Len}");
+		sb.Append($"{Precision}");
 		sb.Append(DtField._sygn);
-		sb.Append($"{LenDecimal}");
+		sb.Append($"{Scale}");
 		sb.Append(DtField._sygn);
 		sb.Append($"{IsMax}");
 		return $"{sb}";
@@ -180,17 +180,21 @@ public class DtFieldType
 
 	public override string ToString()
 	{
-		var sb = new StringBuilder($"{FieldType}");
+		var sb = new StringBuilder();
+		if (FldType.None == FieldType)
+			sb.Append("???");
+		else
+			sb.Append($"{FieldType}");
 		if (IsMax)
 			sb.Append("(MAX)");
-		if (Len > 0)
+		if (Precision > 0)
 		{
 			sb.Append('(');
-			sb.Append(Len);
-			if (LenDecimal > 0)
+			sb.Append(Precision);
+			if (Scale > 0)
 			{
 				sb.Append(", ");
-				sb.Append(LenDecimal);
+				sb.Append(Scale);
 			}
 			sb.Append(')');
 		}

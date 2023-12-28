@@ -499,7 +499,7 @@ public partial class FormMain : Form
 		{
 			textBoxEditTableCurrentField.Text = null;
 			comboBoxEditTableCurrentFieldType.SelectedItem = null;
-			labelEditTableCurrentFieldExample.Text = null;
+			textBoxEditTableCurrentFieldExample.Text = null;
 			return;
 		}
 
@@ -508,10 +508,19 @@ public partial class FormMain : Form
 			groupBoxEditTableCurrentFieldType.Enabled =
 			groupBoxEditTableCurrentField.Enabled = CurrentField.IsGenerated;
 
-		labelEditTableCurrentFieldExample.Text = CurrentField.GeneratedFieldPg;
-		labelEditTableCurrentFieldExample.ForeColor = CurrentField.IsFieldTypeNone
+		string errMessage = CurrentField.SetPrecisionScale(
+			numericUpDownPrecision.Value,
+			numericUpDownScale.Value);
+		if (!string.IsNullOrEmpty(errMessage))
+		{
+			ShowErrorMessage(errMessage);
+			return;
+		}
+
+		textBoxEditTableCurrentFieldExample.Text = CurrentField.GeneratedFieldPg;
+		textBoxEditTableCurrentFieldExample.ForeColor = CurrentField.IsFieldTypeNone
 			? Color.Red
-			: labelEditTableCurrentFieldExample.Parent.ForeColor;
+			: textBoxEditTableCurrentFieldExample.Parent.ForeColor;
 	}
 
 	private DtElement currentEditElement;
@@ -636,6 +645,9 @@ public partial class FormMain : Form
 		labelEditTriggerFunctionEnd.Text = ElTrigger.TriggerFunctionTextEnd;
 	}
 
+	/// <summary>
+	/// Изменение типа вычисляемого поля
+	/// </summary>
 	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
 	{
 		if (null == comboBoxEditTableCurrentFieldType.SelectedItem)
@@ -812,5 +824,7 @@ public partial class FormMain : Form
 		if (null == CurrentField)
 			return;
 		CurrentField.FormulaPg = textBoxEditTableCurrentField.Text;
+
+		ShowCurrentEditField();
 	}
 }
