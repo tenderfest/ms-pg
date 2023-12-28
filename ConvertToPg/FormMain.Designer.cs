@@ -69,7 +69,6 @@ partial class FormMain
 		listViewEditTableFieldNames = new ListView();
 		groupBoxEditTableCurrentField = new GroupBox();
 		textBoxEditTableCurrentField = new TextBox();
-		buttonEditMakeGeneratedField = new Button();
 		groupBoxEditTableCurrentFieldType = new GroupBox();
 		numericUpDownScale = new NumericUpDown();
 		labelScale = new Label();
@@ -77,6 +76,8 @@ partial class FormMain
 		labelPrecision = new Label();
 		comboBoxEditTableCurrentFieldType = new ComboBox();
 		groupBoxEditTableCurrentFieldExample = new GroupBox();
+		textBoxEditTableCurrentFieldExample = new TextBox();
+		buttonEditMakeGeneratedField = new Button();
 		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
 		tabPageTrigger = new TabPage();
@@ -114,7 +115,6 @@ partial class FormMain
 		radioButtonResultAlert = new RadioButton();
 		radioButtonResultShowAll = new RadioButton();
 		labelResultTree = new Label();
-		textBoxEditTableCurrentFieldExample = new TextBox();
 		panelTop.SuspendLayout();
 		((System.ComponentModel.ISupportInitialize)splitContainerSourceElements).BeginInit();
 		splitContainerSourceElements.Panel1.SuspendLayout();
@@ -648,6 +648,7 @@ partial class FormMain
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldType);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldExample);
+		splitContainerEditTable.Panel2.Controls.Add(buttonEditMakeGeneratedField);
 		splitContainerEditTable.Size = new Size(632, 356);
 		splitContainerEditTable.SplitterDistance = 210;
 		splitContainerEditTable.TabIndex = 0;
@@ -679,11 +680,10 @@ partial class FormMain
 		// groupBoxEditTableCurrentField
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
-		groupBoxEditTableCurrentField.Controls.Add(buttonEditMakeGeneratedField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
-		groupBoxEditTableCurrentField.Location = new Point(0, 118);
+		groupBoxEditTableCurrentField.Location = new Point(0, 164);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
-		groupBoxEditTableCurrentField.Size = new Size(418, 238);
+		groupBoxEditTableCurrentField.Size = new Size(418, 192);
 		groupBoxEditTableCurrentField.TabIndex = 1;
 		groupBoxEditTableCurrentField.TabStop = false;
 		groupBoxEditTableCurrentField.Text = "Значение вычисляемого поля";
@@ -695,19 +695,8 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 193);
+		textBoxEditTableCurrentField.Size = new Size(412, 170);
 		textBoxEditTableCurrentField.TabIndex = 0;
-		// 
-		// buttonEditMakeGeneratedField
-		// 
-		buttonEditMakeGeneratedField.Dock = DockStyle.Bottom;
-		buttonEditMakeGeneratedField.Location = new Point(3, 212);
-		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
-		buttonEditMakeGeneratedField.Size = new Size(412, 23);
-		buttonEditMakeGeneratedField.TabIndex = 1;
-		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
-		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
-		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
 		// 
 		// groupBoxEditTableCurrentFieldType
 		// 
@@ -717,7 +706,7 @@ partial class FormMain
 		groupBoxEditTableCurrentFieldType.Controls.Add(labelPrecision);
 		groupBoxEditTableCurrentFieldType.Controls.Add(comboBoxEditTableCurrentFieldType);
 		groupBoxEditTableCurrentFieldType.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldType.Location = new Point(0, 68);
+		groupBoxEditTableCurrentFieldType.Location = new Point(0, 114);
 		groupBoxEditTableCurrentFieldType.Name = "groupBoxEditTableCurrentFieldType";
 		groupBoxEditTableCurrentFieldType.Size = new Size(418, 50);
 		groupBoxEditTableCurrentFieldType.TabIndex = 2;
@@ -778,12 +767,34 @@ partial class FormMain
 		// 
 		groupBoxEditTableCurrentFieldExample.Controls.Add(textBoxEditTableCurrentFieldExample);
 		groupBoxEditTableCurrentFieldExample.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 0);
+		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 23);
 		groupBoxEditTableCurrentFieldExample.Name = "groupBoxEditTableCurrentFieldExample";
-		groupBoxEditTableCurrentFieldExample.Size = new Size(418, 68);
+		groupBoxEditTableCurrentFieldExample.Size = new Size(418, 91);
 		groupBoxEditTableCurrentFieldExample.TabIndex = 3;
 		groupBoxEditTableCurrentFieldExample.TabStop = false;
 		groupBoxEditTableCurrentFieldExample.Text = "Определение вычисляемого поля для PostgreSQL";
+		// 
+		// textBoxEditTableCurrentFieldExample
+		// 
+		textBoxEditTableCurrentFieldExample.Dock = DockStyle.Fill;
+		textBoxEditTableCurrentFieldExample.Location = new Point(3, 19);
+		textBoxEditTableCurrentFieldExample.Multiline = true;
+		textBoxEditTableCurrentFieldExample.Name = "textBoxEditTableCurrentFieldExample";
+		textBoxEditTableCurrentFieldExample.ReadOnly = true;
+		textBoxEditTableCurrentFieldExample.Size = new Size(412, 69);
+		textBoxEditTableCurrentFieldExample.TabIndex = 0;
+		// 
+		// buttonEditMakeGeneratedField
+		// 
+		buttonEditMakeGeneratedField.Dock = DockStyle.Top;
+		buttonEditMakeGeneratedField.Enabled = false;
+		buttonEditMakeGeneratedField.Location = new Point(0, 0);
+		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
+		buttonEditMakeGeneratedField.Size = new Size(418, 23);
+		buttonEditMakeGeneratedField.TabIndex = 4;
+		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
+		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
+		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
 		// 
 		// tabPageProcedure
 		// 
@@ -1220,16 +1231,6 @@ partial class FormMain
 		labelResultTree.Text = "Результат";
 		labelResultTree.TextAlign = ContentAlignment.TopCenter;
 		// 
-		// textBoxEditTableCurrentFieldExample
-		// 
-		textBoxEditTableCurrentFieldExample.Dock = DockStyle.Fill;
-		textBoxEditTableCurrentFieldExample.Location = new Point(3, 19);
-		textBoxEditTableCurrentFieldExample.Multiline = true;
-		textBoxEditTableCurrentFieldExample.Name = "textBoxEditTableCurrentFieldExample";
-		textBoxEditTableCurrentFieldExample.ReadOnly = true;
-		textBoxEditTableCurrentFieldExample.Size = new Size(412, 46);
-		textBoxEditTableCurrentFieldExample.TabIndex = 0;
-		// 
 		// FormMain
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
@@ -1403,6 +1404,6 @@ partial class FormMain
 	private Panel panelEditTriggerLanguage;
 	private Button buttonEditOwnTriggerLanguageSave;
 	private ComboBox comboBoxEditFunctionLanguage;
-	private Button buttonEditMakeGeneratedField;
 	private TextBox textBoxEditTableCurrentFieldExample;
+	private Button buttonEditMakeGeneratedField;
 }

@@ -645,36 +645,6 @@ public partial class FormMain : Form
 		labelEditTriggerFunctionEnd.Text = ElTrigger.TriggerFunctionTextEnd;
 	}
 
-	/// <summary>
-	/// Изменение типа вычисляемого поля
-	/// </summary>
-	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
-	{
-		if (null == comboBoxEditTableCurrentFieldType.SelectedItem)
-			return;
-
-		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
-
-		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
-			fieldType == FldType.Numeric ||
-			fieldType == FldType.Char ||
-			fieldType == FldType.Varchar;
-		if (!numericUpDownPrecision.Enabled)
-			numericUpDownPrecision.Value = 0;
-
-		numericUpDownScale.Enabled = labelScale.Enabled =
-			fieldType == FldType.Numeric;
-		if (!numericUpDownScale.Enabled)
-			numericUpDownScale.Value = 0;
-
-		CurrentField.FieldType = new DtFieldType(
-			fieldType,
-			Convert.ToInt32(numericUpDownPrecision.Value),
-			Convert.ToInt32(numericUpDownScale.Value));
-
-		ShowCurrentEditField();
-	}
-
 	private void ButtonEditUndo_Click(object sender, EventArgs e) =>
 		UndoEdit();
 
@@ -810,14 +780,50 @@ public partial class FormMain : Form
 		}
 	}
 
-	private void NumericUpDownPrecision_ValueChanged(object sender, EventArgs e) =>
-		ShowCurrentEditField();
+	/// <summary>
+	/// Изменение типа вычисляемого поля
+	/// </summary>
+	private void ComboBoxEditTableCurrentFieldType_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (null == comboBoxEditTableCurrentFieldType.SelectedItem)
+			return;
 
-	private void NumericUpDownScale_ValueChanged(object sender, EventArgs e) =>
-		ShowCurrentEditField();
+		var fieldType = (FldType)Enum.Parse(typeof(FldType), comboBoxEditTableCurrentFieldType.SelectedItem as string);
+
+		numericUpDownPrecision.Enabled = labelPrecision.Enabled =
+			fieldType == FldType.Numeric ||
+			fieldType == FldType.Char ||
+			fieldType == FldType.Varchar;
+		if (!numericUpDownPrecision.Enabled)
+			numericUpDownPrecision.Value = 0;
+
+		numericUpDownScale.Enabled = labelScale.Enabled =
+			fieldType == FldType.Numeric;
+		if (!numericUpDownScale.Enabled)
+			numericUpDownScale.Value = 0;
+
+		CurrentField.FieldType = new DtFieldType(
+			fieldType,
+			Convert.ToInt32(numericUpDownPrecision.Value),
+			Convert.ToInt32(numericUpDownScale.Value));
+
+		buttonEditMakeGeneratedField.Enabled = true;
+	}
 
 	/// <summary>
-	/// Изменение формулы для вычисляемого поля
+	/// Изменение значения Precision вычисляемого поля
+	/// </summary>
+	private void NumericUpDownPrecision_ValueChanged(object sender, EventArgs e) =>
+		buttonEditMakeGeneratedField.Enabled = true;
+
+	/// <summary>
+	/// Изменение значения Scale вычисляемого поля
+	/// </summary>
+	private void NumericUpDownScale_ValueChanged(object sender, EventArgs e) =>
+		buttonEditMakeGeneratedField.Enabled = true;
+
+	/// <summary>
+	/// Формирование определения вычисляемого поля
 	/// </summary>
 	private void ButtonEditMakeGeneratedField_Click(object sender, EventArgs e)
 	{

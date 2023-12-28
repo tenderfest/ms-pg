@@ -45,10 +45,15 @@
 			textBoxServer = new TextBox();
 			textBoxConnectionString = new TextBox();
 			groupBoxDbParams = new GroupBox();
+			comboBoxTableSpace = new ComboBox();
 			groupBoxConnectionString = new GroupBox();
+			buttonAddTableSpace = new Button();
+			groupBoxTableSpace = new GroupBox();
+			textBoxTableSpace = new TextBox();
 			panelButtons.SuspendLayout();
 			groupBoxDbParams.SuspendLayout();
 			groupBoxConnectionString.SuspendLayout();
+			groupBoxTableSpace.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panelButtons
@@ -60,7 +65,7 @@
 			panelButtons.Dock = DockStyle.Top;
 			panelButtons.Location = new Point(0, 0);
 			panelButtons.Name = "panelButtons";
-			panelButtons.Size = new Size(480, 24);
+			panelButtons.Size = new Size(509, 24);
 			panelButtons.TabIndex = 0;
 			// 
 			// textBoxName
@@ -68,7 +73,7 @@
 			textBoxName.Dock = DockStyle.Fill;
 			textBoxName.Location = new Point(142, 0);
 			textBoxName.Name = "textBoxName";
-			textBoxName.Size = new Size(263, 23);
+			textBoxName.Size = new Size(292, 23);
 			textBoxName.TabIndex = 2;
 			textBoxName.TextChanged += TextBoxName_TextChanged;
 			// 
@@ -77,7 +82,7 @@
 			buttonSave.DialogResult = DialogResult.OK;
 			buttonSave.Dock = DockStyle.Right;
 			buttonSave.Enabled = false;
-			buttonSave.Location = new Point(405, 0);
+			buttonSave.Location = new Point(434, 0);
 			buttonSave.Name = "buttonSave";
 			buttonSave.Size = new Size(75, 24);
 			buttonSave.TabIndex = 1;
@@ -107,7 +112,7 @@
 			// labelBdName
 			// 
 			labelBdName.AutoSize = true;
-			labelBdName.Location = new Point(6, 48);
+			labelBdName.Location = new Point(6, 77);
 			labelBdName.Name = "labelBdName";
 			labelBdName.Size = new Size(49, 15);
 			labelBdName.TabIndex = 3;
@@ -115,15 +120,15 @@
 			// 
 			// textBoxBdName
 			// 
-			textBoxBdName.Location = new Point(71, 45);
+			textBoxBdName.Location = new Point(61, 74);
 			textBoxBdName.Name = "textBoxBdName";
-			textBoxBdName.Size = new Size(164, 23);
+			textBoxBdName.Size = new Size(181, 23);
 			textBoxBdName.TabIndex = 4;
 			// 
 			// labelPassword
 			// 
 			labelPassword.AutoSize = true;
-			labelPassword.Location = new Point(250, 77);
+			labelPassword.Location = new Point(248, 48);
 			labelPassword.Name = "labelPassword";
 			labelPassword.Size = new Size(49, 15);
 			labelPassword.TabIndex = 11;
@@ -131,16 +136,16 @@
 			// 
 			// textBoxPassword
 			// 
-			textBoxPassword.Location = new Point(305, 74);
+			textBoxPassword.Location = new Point(322, 45);
 			textBoxPassword.Name = "textBoxPassword";
-			textBoxPassword.Size = new Size(164, 23);
+			textBoxPassword.Size = new Size(181, 23);
 			textBoxPassword.TabIndex = 12;
 			textBoxPassword.TextChanged += TextBoxName_TextChanged;
 			// 
 			// labelLogin
 			// 
 			labelLogin.AutoSize = true;
-			labelLogin.Location = new Point(6, 77);
+			labelLogin.Location = new Point(6, 48);
 			labelLogin.Name = "labelLogin";
 			labelLogin.Size = new Size(41, 15);
 			labelLogin.TabIndex = 9;
@@ -148,16 +153,16 @@
 			// 
 			// textBoxLogin
 			// 
-			textBoxLogin.Location = new Point(71, 74);
+			textBoxLogin.Location = new Point(61, 45);
 			textBoxLogin.Name = "textBoxLogin";
-			textBoxLogin.Size = new Size(164, 23);
+			textBoxLogin.Size = new Size(181, 23);
 			textBoxLogin.TabIndex = 10;
 			textBoxLogin.TextChanged += TextBoxName_TextChanged;
 			// 
 			// labelPort
 			// 
 			labelPort.AutoSize = true;
-			labelPort.Location = new Point(250, 19);
+			labelPort.Location = new Point(248, 19);
 			labelPort.Name = "labelPort";
 			labelPort.Size = new Size(35, 15);
 			labelPort.TabIndex = 7;
@@ -165,9 +170,9 @@
 			// 
 			// textBoxPort
 			// 
-			textBoxPort.Location = new Point(305, 16);
+			textBoxPort.Location = new Point(322, 16);
 			textBoxPort.Name = "textBoxPort";
-			textBoxPort.Size = new Size(164, 23);
+			textBoxPort.Size = new Size(181, 23);
 			textBoxPort.TabIndex = 8;
 			textBoxPort.TextChanged += TextBoxName_TextChanged;
 			// 
@@ -182,9 +187,9 @@
 			// 
 			// textBoxServer
 			// 
-			textBoxServer.Location = new Point(71, 16);
+			textBoxServer.Location = new Point(61, 16);
 			textBoxServer.Name = "textBoxServer";
-			textBoxServer.Size = new Size(164, 23);
+			textBoxServer.Size = new Size(181, 23);
 			textBoxServer.TabIndex = 6;
 			textBoxServer.TextChanged += TextBoxName_TextChanged;
 			// 
@@ -192,12 +197,13 @@
 			// 
 			textBoxConnectionString.Location = new Point(6, 22);
 			textBoxConnectionString.Name = "textBoxConnectionString";
-			textBoxConnectionString.Size = new Size(463, 23);
+			textBoxConnectionString.Size = new Size(497, 23);
 			textBoxConnectionString.TabIndex = 14;
 			textBoxConnectionString.TextChanged += TextBoxName_TextChanged;
 			// 
 			// groupBoxDbParams
 			// 
+			groupBoxDbParams.Controls.Add(comboBoxTableSpace);
 			groupBoxDbParams.Controls.Add(labelServer);
 			groupBoxDbParams.Controls.Add(textBoxBdName);
 			groupBoxDbParams.Controls.Add(labelBdName);
@@ -211,21 +217,61 @@
 			groupBoxDbParams.Dock = DockStyle.Top;
 			groupBoxDbParams.Location = new Point(0, 24);
 			groupBoxDbParams.Name = "groupBoxDbParams";
-			groupBoxDbParams.Size = new Size(480, 105);
+			groupBoxDbParams.Size = new Size(509, 108);
 			groupBoxDbParams.TabIndex = 15;
 			groupBoxDbParams.TabStop = false;
 			groupBoxDbParams.Text = "Параметры подключения";
+			// 
+			// comboBoxTableSpace
+			// 
+			comboBoxTableSpace.FormattingEnabled = true;
+			comboBoxTableSpace.Items.AddRange(new object[] { "Табличное пространство по умолчанию" });
+			comboBoxTableSpace.Location = new Point(248, 74);
+			comboBoxTableSpace.Name = "comboBoxTableSpace";
+			comboBoxTableSpace.Size = new Size(255, 23);
+			comboBoxTableSpace.TabIndex = 13;
 			// 
 			// groupBoxConnectionString
 			// 
 			groupBoxConnectionString.Controls.Add(textBoxConnectionString);
 			groupBoxConnectionString.Dock = DockStyle.Top;
-			groupBoxConnectionString.Location = new Point(0, 129);
+			groupBoxConnectionString.Location = new Point(0, 186);
 			groupBoxConnectionString.Name = "groupBoxConnectionString";
-			groupBoxConnectionString.Size = new Size(480, 54);
+			groupBoxConnectionString.Size = new Size(509, 54);
 			groupBoxConnectionString.TabIndex = 16;
 			groupBoxConnectionString.TabStop = false;
 			groupBoxConnectionString.Text = "Строка подключения";
+			// 
+			// buttonAddTableSpace
+			// 
+			buttonAddTableSpace.Enabled = false;
+			buttonAddTableSpace.Location = new Point(234, 21);
+			buttonAddTableSpace.Name = "buttonAddTableSpace";
+			buttonAddTableSpace.Size = new Size(269, 23);
+			buttonAddTableSpace.TabIndex = 14;
+			buttonAddTableSpace.Text = "Добавить табличное пространство на сервер";
+			buttonAddTableSpace.UseVisualStyleBackColor = true;
+			buttonAddTableSpace.Click += buttonAddTableSpace_Click;
+			// 
+			// groupBoxTableSpace
+			// 
+			groupBoxTableSpace.Controls.Add(textBoxTableSpace);
+			groupBoxTableSpace.Controls.Add(buttonAddTableSpace);
+			groupBoxTableSpace.Dock = DockStyle.Top;
+			groupBoxTableSpace.Location = new Point(0, 132);
+			groupBoxTableSpace.Name = "groupBoxTableSpace";
+			groupBoxTableSpace.Size = new Size(509, 54);
+			groupBoxTableSpace.TabIndex = 17;
+			groupBoxTableSpace.TabStop = false;
+			groupBoxTableSpace.Text = "Табличное пространство";
+			// 
+			// textBoxTableSpace
+			// 
+			textBoxTableSpace.Location = new Point(6, 22);
+			textBoxTableSpace.Name = "textBoxTableSpace";
+			textBoxTableSpace.Size = new Size(222, 23);
+			textBoxTableSpace.TabIndex = 14;
+			textBoxTableSpace.TextChanged += TextBoxTableSpace_TextChanged;
 			// 
 			// FormNewDatabase
 			// 
@@ -233,9 +279,10 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = buttonCancel;
-			ClientSize = new Size(480, 182);
+			ClientSize = new Size(509, 239);
 			ControlBox = false;
 			Controls.Add(groupBoxConnectionString);
+			Controls.Add(groupBoxTableSpace);
 			Controls.Add(groupBoxDbParams);
 			Controls.Add(panelButtons);
 			FormBorderStyle = FormBorderStyle.Fixed3D;
@@ -248,6 +295,8 @@
 			groupBoxDbParams.PerformLayout();
 			groupBoxConnectionString.ResumeLayout(false);
 			groupBoxConnectionString.PerformLayout();
+			groupBoxTableSpace.ResumeLayout(false);
+			groupBoxTableSpace.PerformLayout();
 			ResumeLayout(false);
 		}
 
@@ -271,5 +320,10 @@
 		private TextBox textBoxConnectionString;
 		private GroupBox groupBoxDbParams;
 		private GroupBox groupBoxConnectionString;
+		private ComboBox comboBoxTableSpace;
+		private Button buttonAddTableSpace;
+		private Label labelTableSpace;
+		private GroupBox groupBoxTableSpace;
+		private TextBox textBoxTableSpace;
 	}
 }

@@ -2,8 +2,11 @@
 
 public partial class FormNewDatabase : Form
 {
-	public FormNewDatabase() =>
+	public FormNewDatabase()
+	{
 		InitializeComponent();
+		comboBoxTableSpace.SelectedIndex = 0;
+	}
 
 	/// <summary>
 	/// Удобное для человека название базы двнных
@@ -34,4 +37,29 @@ public partial class FormNewDatabase : Form
 			!string.IsNullOrEmpty(textBoxLogin.Text) &&
 			!string.IsNullOrEmpty(textBoxPassword.Text))
 		);
+
+	private void TextBoxTableSpace_TextChanged(object sender, EventArgs e)
+	{
+		buttonAddTableSpace.Enabled = textBoxTableSpace.Text.Trim().Length > 0;
+	}
+
+	private void buttonAddTableSpace_Click(object sender, EventArgs e)
+	{
+		var tableSpace = textBoxTableSpace.Text.Trim();
+		if (string.IsNullOrEmpty(tableSpace))
+			return;
+
+		if (tableSpace.ToLower().StartsWith("pg_"))
+		{
+			MessageBox.Show(
+				"Имя создаваемого табличного пространства не может начинаться с 'pg_'",
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+			return;
+		}
+
+		// TODO здесь создание ТП на сервере
+		MessageBox.Show("сделать!");
+	}
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using PgConvert.Enums;
+﻿using PgConvert.Enums;
 using System.Text;
 
 namespace PgConvert;
