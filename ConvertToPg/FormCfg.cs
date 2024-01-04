@@ -3,7 +3,7 @@ using PgConvert.Enums;
 
 namespace ConvertToPg
 {
-    public partial class FormCfg : Form
+	public partial class FormCfg : Form
 	{
 		private readonly ConvertMsToPgCfg _cfg;
 		private int panelDatabaseHeight;
@@ -35,8 +35,8 @@ namespace ConvertToPg
 					db,
 					db.ConnectionString,
 					TestConnect,
-					DeleteDatabase,
-					ConnectionStringChanged)
+					EditDatabase,
+					DeleteDatabase)
 					{
 						Text = db.Name,
 						Dock = DockStyle.Top,
@@ -54,7 +54,10 @@ namespace ConvertToPg
 
 		private void HeightChange(bool needAdd)
 		{
-			int height = needAdd ? panelDatabaseHeight : panelDatabaseHeight * -1;
+			int height = needAdd
+				? panelDatabaseHeight
+				: panelDatabaseHeight * -1;
+
 			groupBoxTargetDatabases.Height += height;
 			Height += height;
 		}
@@ -73,63 +76,44 @@ namespace ConvertToPg
 			{
 				var result = db.TestConnectDatabase();
 				if (string.IsNullOrEmpty(result))
+				{
 					MessageBox.Show("OK");
-				else
+					return;
+				}
+
+				if (DialogResult.Yes == MessageBox.Show(
+						$"{result}\n\nНадо ли попытаться создать базу данных?",
+						"Вопрос",
+						MessageBoxButtons.YesNo))
 				{
-					var tryCreateDatabaseAnswer = MessageBox
-						.Show($"{result}\n\nНадо ли попытаться создать базу данных?", "Ошибка", MessageBoxButtons.YesNo);
-					if (tryCreateDatabaseAnswer == DialogResult.Yes)
-					{
-						result = db.TryCreate();
-						MessageBox.Show(result);
-					}
+					MessageBox.Show(db.TryCreate());
 				}
 			});
-
-		private void DeleteDatabase(object sender, EventArgs e) =>
-			DatabaseFromControl(sender, (db) =>
-			{
-				if (db.IsDefault) return;
-
-				if (Cfg.AddDelDatabase(db, false) == ResultChangeDatabaseList.Ok)
-				{
-					HeightChange(false);
-					ShowDatabases(false);
-				}
-			});
-
-		private void ConnectionStringChanged(object sender, EventArgs e) =>
-			DatabaseFromControl(sender, (db) =>
-				db.ConnectionString = ((TextBox)sender).Text);
-
-		private void ButtonSave_Click(object sender, EventArgs e)
-		{
-			DialogResult = DialogResult.OK;
-		}
 
 		private void ButtonAddDatabase_Click(object sender, EventArgs e)
 		{
-			var newDbForm = new FormNewDatabase();
+			var newDbForm = new FormNewDatabase(null);
 			if (newDbForm.ShowDialog(this) != DialogResult.OK)
 				return;
 
-			var newDatabase = new OnePgDatabase(newDbForm.DatabaseName);
-			if (!string.IsNullOrEmpty(newDbForm.ConnectionString))
-				newDatabase.ConnectionString = newDbForm.ConnectionString;
-			else
-			{
-				var errSetConnectionString = newDatabase.SetConnectionString(
-						newDbForm.BdServer,
-						newDbForm.BdPort,
-						newDbForm.BdName,
-						newDbForm.BdLogin,
-						newDbForm.BdPassword);
-				if (!string.IsNullOrEmpty(errSetConnectionString))
-				{
-					MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-			}
+			var newDatabase = newDbForm.Database;
+			//if (!string.IsNullOrEmpty(newDbForm.ConnectionString))
+			//	newDatabase.ConnectionString = newDbForm.ConnectionString;
+			//else
+			//{
+			//	var errSetConnectionString = newDatabase.SetConnectionString(newDbForm.pgConnectionString);
+			//	//SetConnectionString(
+			//	//	newDbForm.BdServer,
+			//	//	newDbForm.BdPort,
+			//	//	newDbForm.BdName,
+			//	//	newDbForm.BdLogin,
+			//	//	newDbForm.BdPassword);
+			//	if (!string.IsNullOrEmpty(errSetConnectionString))
+			//	{
+			//		MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			//		return;
+			//	}
+			//}
 
 			var addResult = Cfg.AddDelDatabase(newDatabase, true);
 			if (addResult == ResultChangeDatabaseList.Ok)
@@ -143,8 +127,41 @@ namespace ConvertToPg
 			}
 		}
 
+		private void EditDatabase(object sender, EventArgs e) =>
+			DatabaseFromControl(sender, (db) =>
+			{
+				var newDbForm = new FormNewDatabase(db);
+				if (newDbForm.ShowDialog(this) != DialogResult.OK)
+					return;
+
+				if (db.PgConnectionString.IsError)
+				{
+					MessageBox.Show(db.PgConnectionString.Error, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
+				ShowDatabases(false);
+			});
+
+		private void DeleteDatabase(object sender, EventArgs e) =>
+			DatabaseFromControl(sender, (db) =>
+			{
+				if (db.IsDefault)
+					return;
+
+				if (Cfg.AddDelDatabase(db, false) == ResultChangeDatabaseList.Ok)
+				{
+					HeightChange(false);
+					ShowDatabases(false);
+				}
+			});
+
+		private void ButtonSave_Click(object sender, EventArgs e) =>
+			DialogResult = DialogResult.OK;
+
 		public string[] SkipOperation =>
 			ConvertMsToPgCfg.GetStringArrayFromText(textBoxSkipOperations.Text);
+
 		public string[] SkipElement =>
 			ConvertMsToPgCfg.GetStringArrayFromText(textBoxSkipElement.Text);
 	}

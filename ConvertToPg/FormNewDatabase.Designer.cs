@@ -1,4 +1,5 @@
-﻿namespace ConvertToPg
+﻿
+namespace ConvertToPg
 {
 	partial class FormNewDatabase
 	{
@@ -29,10 +30,10 @@
 		private void InitializeComponent()
 		{
 			panelButtons = new Panel();
-			textBoxName = new TextBox();
 			buttonSave = new Button();
-			labelName = new Label();
 			buttonCancel = new Button();
+			textBoxName = new TextBox();
+			labelName = new Label();
 			labelBdName = new Label();
 			textBoxBdName = new TextBox();
 			labelPassword = new Label();
@@ -45,37 +46,28 @@
 			textBoxServer = new TextBox();
 			textBoxConnectionString = new TextBox();
 			groupBoxDbParams = new GroupBox();
+			buttonTestConnect = new Button();
+			buttonCreateDatabase = new Button();
 			comboBoxTableSpace = new ComboBox();
-			groupBoxConnectionString = new GroupBox();
-			buttonAddTableSpace = new Button();
 			groupBoxTableSpace = new GroupBox();
 			textBoxTableSpace = new TextBox();
+			buttonAddTableSpace = new Button();
+			groupBoxConnectionString = new GroupBox();
 			panelButtons.SuspendLayout();
 			groupBoxDbParams.SuspendLayout();
-			groupBoxConnectionString.SuspendLayout();
 			groupBoxTableSpace.SuspendLayout();
+			groupBoxConnectionString.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panelButtons
 			// 
-			panelButtons.Controls.Add(textBoxName);
 			panelButtons.Controls.Add(buttonSave);
-			panelButtons.Controls.Add(labelName);
 			panelButtons.Controls.Add(buttonCancel);
 			panelButtons.Dock = DockStyle.Top;
 			panelButtons.Location = new Point(0, 0);
 			panelButtons.Name = "panelButtons";
 			panelButtons.Size = new Size(509, 24);
 			panelButtons.TabIndex = 0;
-			// 
-			// textBoxName
-			// 
-			textBoxName.Dock = DockStyle.Fill;
-			textBoxName.Location = new Point(142, 0);
-			textBoxName.Name = "textBoxName";
-			textBoxName.Size = new Size(292, 23);
-			textBoxName.TabIndex = 2;
-			textBoxName.TextChanged += TextBoxName_TextChanged;
 			// 
 			// buttonSave
 			// 
@@ -89,16 +81,6 @@
 			buttonSave.Text = "Сохранить";
 			buttonSave.UseVisualStyleBackColor = true;
 			// 
-			// labelName
-			// 
-			labelName.Dock = DockStyle.Left;
-			labelName.Location = new Point(75, 0);
-			labelName.Name = "labelName";
-			labelName.Size = new Size(67, 24);
-			labelName.TabIndex = 1;
-			labelName.Text = "Название";
-			labelName.TextAlign = ContentAlignment.MiddleLeft;
-			// 
 			// buttonCancel
 			// 
 			buttonCancel.Dock = DockStyle.Left;
@@ -109,101 +91,125 @@
 			buttonCancel.Text = "Отменить";
 			buttonCancel.UseVisualStyleBackColor = true;
 			// 
+			// textBoxName
+			// 
+			textBoxName.Dock = DockStyle.Top;
+			textBoxName.Location = new Point(0, 39);
+			textBoxName.Name = "textBoxName";
+			textBoxName.Size = new Size(509, 23);
+			textBoxName.TabIndex = 1;
+			textBoxName.TextChanged += TextBoxName_TextChanged;
+			// 
+			// labelName
+			// 
+			labelName.AutoSize = true;
+			labelName.Dock = DockStyle.Top;
+			labelName.Location = new Point(0, 24);
+			labelName.Name = "labelName";
+			labelName.Size = new Size(257, 15);
+			labelName.TabIndex = 0;
+			labelName.Text = "Удобное для человека название базы данных";
+			labelName.TextAlign = ContentAlignment.MiddleLeft;
+			// 
 			// labelBdName
 			// 
 			labelBdName.AutoSize = true;
-			labelBdName.Location = new Point(6, 77);
+			labelBdName.Location = new Point(5, 143);
 			labelBdName.Name = "labelBdName";
 			labelBdName.Size = new Size(49, 15);
-			labelBdName.TabIndex = 3;
+			labelBdName.TabIndex = 9;
 			labelBdName.Text = "Имя БД";
 			// 
 			// textBoxBdName
 			// 
-			textBoxBdName.Location = new Point(61, 74);
+			textBoxBdName.Location = new Point(60, 140);
 			textBoxBdName.Name = "textBoxBdName";
 			textBoxBdName.Size = new Size(181, 23);
-			textBoxBdName.TabIndex = 4;
+			textBoxBdName.TabIndex = 10;
+			textBoxBdName.TextChanged += TextBoxBdName_TextChanged;
 			// 
 			// labelPassword
 			// 
 			labelPassword.AutoSize = true;
-			labelPassword.Location = new Point(248, 48);
+			labelPassword.Location = new Point(247, 54);
 			labelPassword.Name = "labelPassword";
 			labelPassword.Size = new Size(49, 15);
-			labelPassword.TabIndex = 11;
+			labelPassword.TabIndex = 6;
 			labelPassword.Text = "Пароль";
 			// 
 			// textBoxPassword
 			// 
-			textBoxPassword.Location = new Point(322, 45);
+			textBoxPassword.Location = new Point(321, 51);
 			textBoxPassword.Name = "textBoxPassword";
 			textBoxPassword.Size = new Size(181, 23);
-			textBoxPassword.TabIndex = 12;
-			textBoxPassword.TextChanged += TextBoxName_TextChanged;
+			textBoxPassword.TabIndex = 7;
+			textBoxPassword.TextChanged += TextBoxPassword_TextChanged;
 			// 
 			// labelLogin
 			// 
 			labelLogin.AutoSize = true;
-			labelLogin.Location = new Point(6, 48);
+			labelLogin.Location = new Point(5, 54);
 			labelLogin.Name = "labelLogin";
 			labelLogin.Size = new Size(41, 15);
-			labelLogin.TabIndex = 9;
+			labelLogin.TabIndex = 4;
 			labelLogin.Text = "Логин";
 			// 
 			// textBoxLogin
 			// 
-			textBoxLogin.Location = new Point(61, 45);
+			textBoxLogin.Location = new Point(60, 51);
 			textBoxLogin.Name = "textBoxLogin";
 			textBoxLogin.Size = new Size(181, 23);
-			textBoxLogin.TabIndex = 10;
-			textBoxLogin.TextChanged += TextBoxName_TextChanged;
+			textBoxLogin.TabIndex = 5;
+			textBoxLogin.TextChanged += TextBoxLogin_TextChanged;
 			// 
 			// labelPort
 			// 
 			labelPort.AutoSize = true;
-			labelPort.Location = new Point(248, 19);
+			labelPort.Location = new Point(247, 25);
 			labelPort.Name = "labelPort";
 			labelPort.Size = new Size(35, 15);
-			labelPort.TabIndex = 7;
+			labelPort.TabIndex = 2;
 			labelPort.Text = "Порт";
 			// 
 			// textBoxPort
 			// 
-			textBoxPort.Location = new Point(322, 16);
+			textBoxPort.Location = new Point(321, 22);
 			textBoxPort.Name = "textBoxPort";
 			textBoxPort.Size = new Size(181, 23);
-			textBoxPort.TabIndex = 8;
-			textBoxPort.TextChanged += TextBoxName_TextChanged;
+			textBoxPort.TabIndex = 3;
+			textBoxPort.TextChanged += TextBoxPort_TextChanged;
 			// 
 			// labelServer
 			// 
 			labelServer.AutoSize = true;
-			labelServer.Location = new Point(6, 19);
+			labelServer.Location = new Point(5, 25);
 			labelServer.Name = "labelServer";
 			labelServer.Size = new Size(47, 15);
-			labelServer.TabIndex = 5;
+			labelServer.TabIndex = 0;
 			labelServer.Text = "Сервер";
 			// 
 			// textBoxServer
 			// 
-			textBoxServer.Location = new Point(61, 16);
+			textBoxServer.Location = new Point(60, 22);
 			textBoxServer.Name = "textBoxServer";
 			textBoxServer.Size = new Size(181, 23);
-			textBoxServer.TabIndex = 6;
-			textBoxServer.TextChanged += TextBoxName_TextChanged;
+			textBoxServer.TabIndex = 1;
+			textBoxServer.TextChanged += TextBoxServer_TextChanged;
 			// 
 			// textBoxConnectionString
 			// 
 			textBoxConnectionString.Location = new Point(6, 22);
 			textBoxConnectionString.Name = "textBoxConnectionString";
+			textBoxConnectionString.ReadOnly = true;
 			textBoxConnectionString.Size = new Size(497, 23);
-			textBoxConnectionString.TabIndex = 14;
-			textBoxConnectionString.TextChanged += TextBoxName_TextChanged;
+			textBoxConnectionString.TabIndex = 0;
 			// 
 			// groupBoxDbParams
 			// 
+			groupBoxDbParams.Controls.Add(buttonTestConnect);
+			groupBoxDbParams.Controls.Add(buttonCreateDatabase);
 			groupBoxDbParams.Controls.Add(comboBoxTableSpace);
+			groupBoxDbParams.Controls.Add(groupBoxTableSpace);
 			groupBoxDbParams.Controls.Add(labelServer);
 			groupBoxDbParams.Controls.Add(textBoxBdName);
 			groupBoxDbParams.Controls.Add(labelBdName);
@@ -215,53 +221,52 @@
 			groupBoxDbParams.Controls.Add(textBoxServer);
 			groupBoxDbParams.Controls.Add(labelPassword);
 			groupBoxDbParams.Dock = DockStyle.Top;
-			groupBoxDbParams.Location = new Point(0, 24);
+			groupBoxDbParams.Location = new Point(0, 62);
 			groupBoxDbParams.Name = "groupBoxDbParams";
-			groupBoxDbParams.Size = new Size(509, 108);
-			groupBoxDbParams.TabIndex = 15;
+			groupBoxDbParams.Size = new Size(509, 202);
+			groupBoxDbParams.TabIndex = 2;
 			groupBoxDbParams.TabStop = false;
 			groupBoxDbParams.Text = "Параметры подключения";
 			// 
+			// buttonTestConnect
+			// 
+			buttonTestConnect.Enabled = false;
+			buttonTestConnect.Location = new Point(60, 169);
+			buttonTestConnect.Name = "buttonTestConnect";
+			buttonTestConnect.Size = new Size(181, 23);
+			buttonTestConnect.TabIndex = 12;
+			buttonTestConnect.Text = "Проверить подключение";
+			buttonTestConnect.UseVisualStyleBackColor = true;
+			// 
+			// buttonCreateDatabase
+			// 
+			buttonCreateDatabase.Enabled = false;
+			buttonCreateDatabase.Location = new Point(247, 169);
+			buttonCreateDatabase.Name = "buttonCreateDatabase";
+			buttonCreateDatabase.Size = new Size(255, 23);
+			buttonCreateDatabase.TabIndex = 13;
+			buttonCreateDatabase.Text = "Создать базу данных";
+			buttonCreateDatabase.UseVisualStyleBackColor = true;
+			// 
 			// comboBoxTableSpace
 			// 
+			comboBoxTableSpace.DropDownStyle = ComboBoxStyle.DropDownList;
+			comboBoxTableSpace.Enabled = false;
 			comboBoxTableSpace.FormattingEnabled = true;
 			comboBoxTableSpace.Items.AddRange(new object[] { "Табличное пространство по умолчанию" });
-			comboBoxTableSpace.Location = new Point(248, 74);
+			comboBoxTableSpace.Location = new Point(247, 140);
 			comboBoxTableSpace.Name = "comboBoxTableSpace";
 			comboBoxTableSpace.Size = new Size(255, 23);
-			comboBoxTableSpace.TabIndex = 13;
-			// 
-			// groupBoxConnectionString
-			// 
-			groupBoxConnectionString.Controls.Add(textBoxConnectionString);
-			groupBoxConnectionString.Dock = DockStyle.Top;
-			groupBoxConnectionString.Location = new Point(0, 186);
-			groupBoxConnectionString.Name = "groupBoxConnectionString";
-			groupBoxConnectionString.Size = new Size(509, 54);
-			groupBoxConnectionString.TabIndex = 16;
-			groupBoxConnectionString.TabStop = false;
-			groupBoxConnectionString.Text = "Строка подключения";
-			// 
-			// buttonAddTableSpace
-			// 
-			buttonAddTableSpace.Enabled = false;
-			buttonAddTableSpace.Location = new Point(234, 21);
-			buttonAddTableSpace.Name = "buttonAddTableSpace";
-			buttonAddTableSpace.Size = new Size(269, 23);
-			buttonAddTableSpace.TabIndex = 14;
-			buttonAddTableSpace.Text = "Добавить табличное пространство на сервер";
-			buttonAddTableSpace.UseVisualStyleBackColor = true;
-			buttonAddTableSpace.Click += buttonAddTableSpace_Click;
+			comboBoxTableSpace.TabIndex = 11;
 			// 
 			// groupBoxTableSpace
 			// 
 			groupBoxTableSpace.Controls.Add(textBoxTableSpace);
 			groupBoxTableSpace.Controls.Add(buttonAddTableSpace);
-			groupBoxTableSpace.Dock = DockStyle.Top;
-			groupBoxTableSpace.Location = new Point(0, 132);
+			groupBoxTableSpace.Location = new Point(-1, 80);
 			groupBoxTableSpace.Name = "groupBoxTableSpace";
 			groupBoxTableSpace.Size = new Size(509, 54);
-			groupBoxTableSpace.TabIndex = 17;
+			groupBoxTableSpace.TabIndex = 8;
 			groupBoxTableSpace.TabStop = false;
 			groupBoxTableSpace.Text = "Табличное пространство";
 			// 
@@ -270,8 +275,30 @@
 			textBoxTableSpace.Location = new Point(6, 22);
 			textBoxTableSpace.Name = "textBoxTableSpace";
 			textBoxTableSpace.Size = new Size(222, 23);
-			textBoxTableSpace.TabIndex = 14;
+			textBoxTableSpace.TabIndex = 0;
 			textBoxTableSpace.TextChanged += TextBoxTableSpace_TextChanged;
+			// 
+			// buttonAddTableSpace
+			// 
+			buttonAddTableSpace.Enabled = false;
+			buttonAddTableSpace.Location = new Point(234, 21);
+			buttonAddTableSpace.Name = "buttonAddTableSpace";
+			buttonAddTableSpace.Size = new Size(269, 23);
+			buttonAddTableSpace.TabIndex = 1;
+			buttonAddTableSpace.Text = "Добавить табличное пространство на сервер";
+			buttonAddTableSpace.UseVisualStyleBackColor = true;
+			buttonAddTableSpace.Click += ButtonAddTableSpace_Click;
+			// 
+			// groupBoxConnectionString
+			// 
+			groupBoxConnectionString.Controls.Add(textBoxConnectionString);
+			groupBoxConnectionString.Dock = DockStyle.Top;
+			groupBoxConnectionString.Location = new Point(0, 264);
+			groupBoxConnectionString.Name = "groupBoxConnectionString";
+			groupBoxConnectionString.Size = new Size(509, 54);
+			groupBoxConnectionString.TabIndex = 3;
+			groupBoxConnectionString.TabStop = false;
+			groupBoxConnectionString.Text = "Строка подключения";
 			// 
 			// FormNewDatabase
 			// 
@@ -279,25 +306,27 @@
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			CancelButton = buttonCancel;
-			ClientSize = new Size(509, 239);
+			ClientSize = new Size(509, 318);
 			ControlBox = false;
 			Controls.Add(groupBoxConnectionString);
-			Controls.Add(groupBoxTableSpace);
 			Controls.Add(groupBoxDbParams);
+			Controls.Add(textBoxName);
+			Controls.Add(labelName);
 			Controls.Add(panelButtons);
 			FormBorderStyle = FormBorderStyle.Fixed3D;
 			Name = "FormNewDatabase";
 			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Новая база данных";
+			Load += FormNewDatabase_Load;
 			panelButtons.ResumeLayout(false);
-			panelButtons.PerformLayout();
 			groupBoxDbParams.ResumeLayout(false);
 			groupBoxDbParams.PerformLayout();
-			groupBoxConnectionString.ResumeLayout(false);
-			groupBoxConnectionString.PerformLayout();
 			groupBoxTableSpace.ResumeLayout(false);
 			groupBoxTableSpace.PerformLayout();
+			groupBoxConnectionString.ResumeLayout(false);
+			groupBoxConnectionString.PerformLayout();
 			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -325,5 +354,7 @@
 		private Label labelTableSpace;
 		private GroupBox groupBoxTableSpace;
 		private TextBox textBoxTableSpace;
+		private Button buttonTestConnect;
+		private Button buttonCreateDatabase;
 	}
 }

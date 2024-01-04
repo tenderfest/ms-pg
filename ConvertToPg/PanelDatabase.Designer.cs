@@ -32,6 +32,7 @@
 			textBoxConnStr = new TextBox();
 			labelConnStr = new Label();
 			buttonCheckConnect = new Button();
+			buttonEditDatabase = new Button();
 			buttonDelDatabase = new Button();
 			panel.SuspendLayout();
 			SuspendLayout();
@@ -42,6 +43,7 @@
 			panel.Controls.Add(textBoxConnStr);
 			panel.Controls.Add(labelConnStr);
 			panel.Controls.Add(buttonCheckConnect);
+			panel.Controls.Add(buttonEditDatabase);
 			panel.Controls.Add(buttonDelDatabase);
 			panel.Dock = DockStyle.Top;
 			panel.Location = new Point(0, 0);
@@ -54,7 +56,8 @@
 			textBoxConnStr.Dock = DockStyle.Fill;
 			textBoxConnStr.Location = new Point(133, 0);
 			textBoxConnStr.Name = "textBoxConnStr";
-			textBoxConnStr.Size = new Size(384, 23);
+			textBoxConnStr.ReadOnly = true;
+			textBoxConnStr.Size = new Size(361, 23);
 			textBoxConnStr.TabIndex = 3;
 			// 
 			// labelConnStr
@@ -70,12 +73,22 @@
 			// buttonCheckConnect
 			// 
 			buttonCheckConnect.Dock = DockStyle.Right;
-			buttonCheckConnect.Location = new Point(517, 0);
+			buttonCheckConnect.Location = new Point(494, 0);
 			buttonCheckConnect.Name = "buttonCheckConnect";
 			buttonCheckConnect.Size = new Size(23, 24);
 			buttonCheckConnect.TabIndex = 9;
 			buttonCheckConnect.Text = "?";
 			buttonCheckConnect.UseVisualStyleBackColor = true;
+			// 
+			// buttonEditDatabase
+			// 
+			buttonEditDatabase.Dock = DockStyle.Right;
+			buttonEditDatabase.Location = new Point(517, 0);
+			buttonEditDatabase.Name = "buttonEditDatabase";
+			buttonEditDatabase.Size = new Size(23, 24);
+			buttonEditDatabase.TabIndex = 10;
+			buttonEditDatabase.Text = "E";
+			buttonEditDatabase.UseVisualStyleBackColor = true;
 			// 
 			// buttonDelDatabase
 			// 
@@ -106,5 +119,6 @@
 		private Button buttonCheckConnect;
 		private TextBox textBoxConnStr;
 		private Button buttonDelDatabase;
+		private Button buttonEditDatabase;
 	}
 }

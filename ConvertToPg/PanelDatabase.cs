@@ -11,18 +11,22 @@
 			object database,
 			string connectString,
 			EventHandler checkConnect,
-			EventHandler deleteDatabase,
-			EventHandler connectStringChanged)
+			EventHandler editDatabase,
+			EventHandler deleteDatabase)
 			: this()
 		{
 			Tag = database;
 			textBoxConnStr.Text = connectString;
 			buttonCheckConnect.Click += checkConnect;
+			buttonEditDatabase.Click += editDatabase;
 			buttonDelDatabase.Click += deleteDatabase;
-			textBoxConnStr.TextChanged += connectStringChanged;
 		}
 
-		public override string Text { set { labelConnStr.Text = value; } }
+		public override string Text
+		{
+			set =>
+				labelConnStr.Text = value;
+		}
 
 		public event EventHandler ClickButtonCheckConnect
 		{

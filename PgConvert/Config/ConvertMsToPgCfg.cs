@@ -23,10 +23,7 @@ public class ConvertMsToPgCfg
 	{
 		if (null == Databases)
 		{
-			IgnoreDatabase = new OnePgDatabase(OnePgDatabase._thisDbIsIgnore)
-			{
-				ConnectionString = "У этой базы данных нет строки подключения"
-			};
+			IgnoreDatabase = new OnePgDatabase(OnePgDatabase._thisDbIsIgnore);
 			Databases = new List<OnePgDatabase> { IgnoreDatabase };
 		}
 	}
@@ -80,7 +77,7 @@ public class ConvertMsToPgCfg
 	/// </summary>
 	/// <param name="db">Добавляемая или удаляемая из списка БД</param>
 	/// <param name="isAdd">true, если нужно добавить БД в список, иначе false</param>
-	/// <returns>Результат добавление или удаления БД из списка целевых</returns>
+	/// <returns>Результат добавления или удаления БД из списка целевых</returns>
 	public ResultChangeDatabaseList AddDelDatabase(OnePgDatabase db, bool isAdd)
 	{
 		if (null == db || db.IsDefault)
@@ -88,7 +85,7 @@ public class ConvertMsToPgCfg
 
 		if (isAdd)
 		{
-			if (Databases.Exists(ddd => ddd.Name == db.Name))
+			if (Databases.Exists(d => d.Name == db.Name))
 				return ResultChangeDatabaseList.Error;
 			Databases.Add(db);
 			return ResultChangeDatabaseList.Ok;

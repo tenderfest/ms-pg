@@ -1,6 +1,8 @@
 ﻿using Npgsql;
 using PgConvert.Element;
+using System.Text;
 using System.Text.Json.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PgConvert.Config;
 
@@ -17,18 +19,6 @@ public class OnePgDatabase
 	public const string _thisDbIsIgnore = "Игнорировать";
 
 	/// <summary>
-	/// Название БД для создания её на сервере
-	/// </summary>
-	public const string _postgresDatabase = "postgres";
-
-	private const string _mustBeSpecified = " должен быть указан!";
-	private const string _dbServer = "Server";
-	private const string _dbPort = "Port";
-	private const string _dbDatabase = "Database";
-	private const string _dbUID = "UID";
-	private const string _dbPWD = "PWD";
-
-	/// <summary>
 	/// Идентификаторы элементов, отнесённых к этой БД
 	/// </summary>
 	private int[] _elementIds;
@@ -36,7 +26,8 @@ public class OnePgDatabase
 	/// <summary>
 	/// Конструктор
 	/// </summary>
-	public OnePgDatabase() { }
+	public OnePgDatabase() =>
+		PgConnectionString = new PgConnectionString();
 
 	/// <summary>
 	/// Конструктор
@@ -47,7 +38,24 @@ public class OnePgDatabase
 	/// <summary>
 	/// Строка подключения
 	/// </summary>
-	public string ConnectionString { get; set; }
+	public string ConnectionString
+	{
+		get =>
+			PgConnectionString.GetConnectionString(IsDefault);
+		set
+		{
+			PgConnectionString = new PgConnectionString(value);
+			if (!string.IsNullOrEmpty(PgConnectionString.Error))
+			{
+				// TODO куда девать сообщение об ошибке?
+			}
+		}
+	}
+
+	/// <summary>
+	/// Табличное пространство для БД, если оно не по умолчанию
+	/// </summary>
+	public string TableSpace { get; set; }
 
 	/// <summary>
 	/// Название базы данных
@@ -55,16 +63,9 @@ public class OnePgDatabase
 	public string Name { get; set; }
 
 	/// <summary>
-	/// Части строки подключения
+	/// Элементы строки подключения к БД
 	/// </summary>
-	private Dictionary<string, string> PartsOfConnectionString =>
-		string.IsNullOrEmpty(ConnectionString)
-		? new()
-		: ConnectionString
-			.Split(';', StringSplitOptions.RemoveEmptyEntries)
-			.Select(x => x.Split('=', StringSplitOptions.TrimEntries))
-			.Where(x => null != x && x.Any() && x.Length == 2)
-			.ToDictionary(x => x[0], y => y[1]);
+	public PgConnectionString PgConnectionString { get; private set; }
 
 	/// <summary>
 	/// Элементы, отнесённые к этой БД
@@ -90,6 +91,17 @@ public class OnePgDatabase
 			_elementIds = value;
 	}
 
+	public string GetBdName =>
+		PgConnectionString?.DatabaseName;
+	public string GetServer =>
+		PgConnectionString?.Server;
+	public string GetPort =>
+		PgConnectionString?.Port;
+	public string GetLogin =>
+		PgConnectionString?.Login;
+	public string GetPassword =>
+		PgConnectionString?.Password;
+
 	/// <summary>
 	/// Относится ли элемент к этой БД?
 	/// </summary>
@@ -104,6 +116,9 @@ public class OnePgDatabase
 	/// <returns>null, если проверка была успешной, иначе сообщение об ошибке</returns>
 	public string TestConnectDatabase()
 	{
+		if (IsDefault)
+			return "База данных 'Игнорировать' не предназначена для подключения.";
+
 		try
 		{
 			using NpgsqlConnection connection = new(ConnectionString);
@@ -117,84 +132,33 @@ public class OnePgDatabase
 	}
 
 	/// <summary>
-	/// Сборка строки подключения из элементов
-	/// </summary>
-	/// <returns>null, если сборка была успешной, иначе сообщение об ошибке</returns>
-	public string SetConnectionString(string server, string port, string name, string login, string password)
-	{
-		if (string.IsNullOrEmpty(server))
-			return $"Сервер{_mustBeSpecified}";
-		if (string.IsNullOrEmpty(port))
-			return $"Порт{_mustBeSpecified}";
-		if (string.IsNullOrEmpty(login))
-			return $"Логин{_mustBeSpecified}";
-		if (string.IsNullOrEmpty(password))
-			return $"Пароль{_mustBeSpecified}";
-		var bdName = string.IsNullOrEmpty(name) ? _postgresDatabase : name;
-
-		ConnectionString = MakeConnectionString(server, port, bdName, login, password);
-		return null;
-	}
-
-	/// <summary>
-	/// Получение строки подключенея из элементов
-	/// </summary>
-	private static string MakeConnectionString(
-		string server,
-		string port,
-		string databaseName,
-		string login,
-		string password) =>
-		$"{_dbServer}={server};{_dbPort}={port};{_dbDatabase}={databaseName};{_dbUID}={login};{_dbPWD}={password}";
-
-	/// <summary>
 	/// Попытка создать базу данных на сервере
 	/// </summary>
 	/// <returns>сообщение о результате создания базы данных на сервере</returns>
 	public string TryCreate()
 	{
-		var _partsOfConnectionString = PartsOfConnectionString;
-		if (string.IsNullOrEmpty(ConnectionString)
-			|| null == _partsOfConnectionString
-			|| !_partsOfConnectionString.Any())
-			return "Не определена строка подключения!";
+		if (IsDefault)
+			return $"База данных '{_thisDbIsIgnore}' не предназначена для содания.";
 
-		string error = IsNotConnectionStringKey(_dbServer);
-		if (error != null) return error;
-		error = IsNotConnectionStringKey(_dbPort);
-		if (error != null) return error;
-		error = IsNotConnectionStringKey(_dbDatabase);
-		if (error != null) return error;
-		error = IsNotConnectionStringKey(_dbUID);
-		if (error != null) return error;
-		error = IsNotConnectionStringKey(_dbPWD);
-		if (error != null) return error;
+		if (PgConnectionString.IsError)
+			return PgConnectionString.Error;
 
 		try
 		{
-			var database = _partsOfConnectionString[_dbDatabase];
-			var pgConnectionString = MakeConnectionString(
-				_partsOfConnectionString[_dbServer],
-				_partsOfConnectionString[_dbPort],
-				_postgresDatabase,
-				_partsOfConnectionString[_dbUID],
-				_partsOfConnectionString[_dbPWD]);
-
-			using NpgsqlConnection connection = new(pgConnectionString);
+			var database = PgConnectionString.DatabaseName;
+			var sb = new StringBuilder($"CREATE DATABASE {database}");
+			if (!string.IsNullOrEmpty(TableSpace))
+				sb.Append($" TABLESPACE {TableSpace}");
+			sb.Append(';');
+			using NpgsqlConnection connection = new(PgConnectionString.GetPostgresConnectionString());
 			connection.Open();
-			new NpgsqlCommand($"CREATE DATABASE {database}", connection)
-				.ExecuteNonQuery();
+			new NpgsqlCommand($"{sb}", connection).ExecuteNonQuery();
 			return $"База данных '{database}' создана.";
 		}
 		catch (Exception ex)
 		{
 			return $"Ошибка при создании базы данных: {ex.Message}";
 		}
-
-		string IsNotConnectionStringKey(string key) =>
-			_partsOfConnectionString.ContainsKey(key)
-			? null
-			: $"В строке подключения отсутствует ключ '{key}'.";
 	}
 
 	public override string ToString() =>
