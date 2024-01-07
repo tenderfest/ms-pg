@@ -231,22 +231,24 @@ namespace ConvertToPg
 			// buttonTestConnect
 			// 
 			buttonTestConnect.Enabled = false;
-			buttonTestConnect.Location = new Point(60, 169);
+			buttonTestConnect.Location = new Point(247, 169);
 			buttonTestConnect.Name = "buttonTestConnect";
-			buttonTestConnect.Size = new Size(181, 23);
+			buttonTestConnect.Size = new Size(255, 23);
 			buttonTestConnect.TabIndex = 12;
 			buttonTestConnect.Text = "Проверить подключение";
 			buttonTestConnect.UseVisualStyleBackColor = true;
+			buttonTestConnect.Click += ButtonTestConnect_Click;
 			// 
 			// buttonCreateDatabase
 			// 
 			buttonCreateDatabase.Enabled = false;
-			buttonCreateDatabase.Location = new Point(247, 169);
+			buttonCreateDatabase.Location = new Point(6, 169);
 			buttonCreateDatabase.Name = "buttonCreateDatabase";
-			buttonCreateDatabase.Size = new Size(255, 23);
+			buttonCreateDatabase.Size = new Size(235, 23);
 			buttonCreateDatabase.TabIndex = 13;
 			buttonCreateDatabase.Text = "Создать базу данных";
 			buttonCreateDatabase.UseVisualStyleBackColor = true;
+			buttonCreateDatabase.Click += ButtonCreateDatabase_Click;
 			// 
 			// comboBoxTableSpace
 			// 

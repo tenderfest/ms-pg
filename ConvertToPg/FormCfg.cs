@@ -92,29 +92,13 @@ namespace ConvertToPg
 
 		private void ButtonAddDatabase_Click(object sender, EventArgs e)
 		{
-			var newDbForm = new FormNewDatabase(null);
+			var newDbForm = Cfg.Databases.Count > 1
+				? new FormNewDatabase(Cfg.Databases[^1].PartCopy)
+				: new FormNewDatabase(null);
 			if (newDbForm.ShowDialog(this) != DialogResult.OK)
 				return;
 
 			var newDatabase = newDbForm.Database;
-			//if (!string.IsNullOrEmpty(newDbForm.ConnectionString))
-			//	newDatabase.ConnectionString = newDbForm.ConnectionString;
-			//else
-			//{
-			//	var errSetConnectionString = newDatabase.SetConnectionString(newDbForm.pgConnectionString);
-			//	//SetConnectionString(
-			//	//	newDbForm.BdServer,
-			//	//	newDbForm.BdPort,
-			//	//	newDbForm.BdName,
-			//	//	newDbForm.BdLogin,
-			//	//	newDbForm.BdPassword);
-			//	if (!string.IsNullOrEmpty(errSetConnectionString))
-			//	{
-			//		MessageBox.Show(errSetConnectionString, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			//		return;
-			//	}
-			//}
-
 			var addResult = Cfg.AddDelDatabase(newDatabase, true);
 			if (addResult == ResultChangeDatabaseList.Ok)
 			{

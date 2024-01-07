@@ -93,12 +93,23 @@ public class OnePgDatabase
 	}
 
 	/// <summary>
+	/// Получить новое определение БД на основе существующей строки подключения к тому же серверу БД
+	/// </summary>
+	[JsonIgnore]
+	public OnePgDatabase PartCopy =>
+		new()
+		{
+			PgConnectionString = PgConnectionString.PartCopy,
+		};
+
+	/// <summary>
 	/// Относится ли элемент к этой БД?
 	/// </summary>
 	/// <param name="hashCode">Хэш-код проверяемого элемента</param>
 	/// <returns>true, если проверяемый элемент отнесён к это БД, иначе false</returns>
 	internal bool IsContainsElementIds(int hashCode) =>
-		null != _elementIds && _elementIds.Contains(hashCode);
+		null != _elementIds &&
+		_elementIds.Contains(hashCode);
 
 	/// <summary>
 	/// Метод проверки подключения к этой БД

@@ -28,6 +28,19 @@
 		public bool IsError =>
 			!string.IsNullOrEmpty(Error);
 
+		/// <summary>
+		/// Получение строки подключения к тому же серверу БД
+		/// </summary>
+		public PgConnectionString PartCopy =>
+			new()
+			{
+				Login = Login,
+				Password = Password,
+				Server = Server,
+				Port = Port,
+				DatabaseName = _postgresDatabase,
+			};
+
 		public PgConnectionString()
 		{ }
 

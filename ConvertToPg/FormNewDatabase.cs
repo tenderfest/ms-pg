@@ -169,7 +169,10 @@ public partial class FormNewDatabase : Form
 
 		if (!string.IsNullOrEmpty(Database.TableSpace) &&
 			comboBoxTableSpace.Items.Contains(Database.TableSpace))
-			comboBoxTableSpace.SelectedItem = Database.TableSpace;
+		{
+			comboBoxTableSpace.SelectedItem =
+				textBoxTableSpace.Text = Database.TableSpace;
+		}
 
 		textBoxName.Text = Database.Name;
 		textBoxBdName.Text = Database.PgConnectionString?.DatabaseName;
@@ -201,4 +204,20 @@ public partial class FormNewDatabase : Form
 
 		Database.TableSpace = comboBoxTableSpace.SelectedItem as string;
 	}
+
+	private void ButtonTestConnect_Click(object sender, EventArgs e)
+	{
+		var errMessage = Database.TestConnectDatabase();
+		if (string.IsNullOrEmpty(errMessage))
+			MessageBox.Show("OK");
+		else
+			MessageBox.Show(
+				errMessage,
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+	}
+
+	private void ButtonCreateDatabase_Click(object sender, EventArgs e) =>
+		MessageBox.Show(Database.TryCreate());
 }
