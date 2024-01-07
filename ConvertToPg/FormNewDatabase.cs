@@ -118,8 +118,45 @@ public partial class FormNewDatabase : Form
 			return;
 		}
 
-		// TODO здесь создание ТП на сервере
-		MessageBox.Show("сделать!");
+		var formTableSpace = new FormTableSpace();
+		if (formTableSpace.ShowDialog() != DialogResult.OK)
+			return;
+
+		if (string.IsNullOrWhiteSpace(formTableSpace.TableSpaceLocation))
+		{
+			MessageBox.Show(
+				"Путь в файловой системе сервера БД не должен быть пустым.",
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+			return;
+		}
+
+		var tableSpaceLocation = formTableSpace.TableSpaceLocation.Trim();
+		var errMessage = Database.AddTableSpace(tableSpace, tableSpaceLocation);
+		if (!string.IsNullOrEmpty(errMessage))
+		{
+			MessageBox.Show(
+				errMessage,
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+			return;
+		}
+
+		errMessage = ReadTableSpaces();
+		if (!string.IsNullOrEmpty(errMessage))
+		{
+			MessageBox.Show(
+				errMessage,
+				"Ошибка",
+				MessageBoxButtons.OK,
+				MessageBoxIcon.Error);
+			return;
+		}
+
+		MessageBox.Show(
+			$"Табличное пространство '{tableSpace}' по пути на сервере баз данных '{tableSpaceLocation}' добавлено.");
 	}
 
 	private void FormNewDatabase_Load(object sender, EventArgs e)
@@ -127,12 +164,41 @@ public partial class FormNewDatabase : Form
 		if (null == Database)
 			return;
 
+		if (string.IsNullOrEmpty(Database.GetTableSpaces(out string[] tableSpaces)))
+			comboBoxTableSpace.Items.AddRange(tableSpaces);
+
+		if (!string.IsNullOrEmpty(Database.TableSpace) &&
+			comboBoxTableSpace.Items.Contains(Database.TableSpace))
+			comboBoxTableSpace.SelectedItem = Database.TableSpace;
+
 		textBoxName.Text = Database.Name;
-		textBoxBdName.Text = Database.GetBdName;
-		textBoxServer.Text = Database.GetServer;
-		textBoxPort.Text = Database.GetPort;
-		textBoxLogin.Text = Database.GetLogin;
-		textBoxPassword.Text = Database.GetPassword;
+		textBoxBdName.Text = Database.PgConnectionString?.DatabaseName;
+		textBoxServer.Text = Database.PgConnectionString?.Server;
+		textBoxPort.Text = Database.PgConnectionString?.Port;
+		textBoxLogin.Text = Database.PgConnectionString?.Login;
+		textBoxPassword.Text = Database.PgConnectionString?.Password;
 		textBoxConnectionString.Text = Database.ConnectionString;
+	}
+
+	private string ReadTableSpaces()
+	{
+		var errMassage = Database.GetTableSpaces(out string[] tableSpaces);
+		if (!string.IsNullOrEmpty(errMassage))
+			return errMassage;
+
+		var defTableSpace = comboBoxTableSpace.Items[0];
+		comboBoxTableSpace.Items.Clear();
+		comboBoxTableSpace.Items.Add(defTableSpace);
+		comboBoxTableSpace.Items.AddRange(tableSpaces);
+		return null;
+	}
+
+	private void ComboBoxTableSpace_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		var selectedIndex = comboBoxTableSpace.SelectedIndex;
+		if (selectedIndex == -1 || selectedIndex == 0)
+			return;
+
+		Database.TableSpace = comboBoxTableSpace.SelectedItem as string;
 	}
 }

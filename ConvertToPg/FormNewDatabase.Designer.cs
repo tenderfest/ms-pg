@@ -258,6 +258,7 @@ namespace ConvertToPg
 			comboBoxTableSpace.Name = "comboBoxTableSpace";
 			comboBoxTableSpace.Size = new Size(255, 23);
 			comboBoxTableSpace.TabIndex = 11;
+			comboBoxTableSpace.SelectedIndexChanged += ComboBoxTableSpace_SelectedIndexChanged;
 			// 
 			// groupBoxTableSpace
 			// 

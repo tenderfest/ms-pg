@@ -32,7 +32,7 @@ public class OnePgDatabase
 	/// <summary>
 	/// Конструктор
 	/// </summary>
-	public OnePgDatabase(string databaseName) =>
+	public OnePgDatabase(string databaseName) : this() =>
 		Name = databaseName;
 
 	/// <summary>
@@ -65,6 +65,7 @@ public class OnePgDatabase
 	/// <summary>
 	/// Элементы строки подключения к БД
 	/// </summary>
+	[JsonIgnore]
 	public PgConnectionString PgConnectionString { get; private set; }
 
 	/// <summary>
@@ -90,17 +91,6 @@ public class OnePgDatabase
 		set =>
 			_elementIds = value;
 	}
-
-	public string GetBdName =>
-		PgConnectionString?.DatabaseName;
-	public string GetServer =>
-		PgConnectionString?.Server;
-	public string GetPort =>
-		PgConnectionString?.Port;
-	public string GetLogin =>
-		PgConnectionString?.Login;
-	public string GetPassword =>
-		PgConnectionString?.Password;
 
 	/// <summary>
 	/// Относится ли элемент к этой БД?
@@ -143,24 +133,61 @@ public class OnePgDatabase
 		if (PgConnectionString.IsError)
 			return PgConnectionString.Error;
 
+		var database = PgConnectionString.DatabaseName;
+		var sb = new StringBuilder($"CREATE DATABASE {database}");
+		if (!string.IsNullOrEmpty(TableSpace))
+			sb.Append($" TABLESPACE {TableSpace}");
+		sb.Append(';');
+
+		var errMessage = ExecutePostgresCommand(sb.ToString());
+		return !string.IsNullOrEmpty(errMessage)
+			? $"Ошибка при создании базы данных: {errMessage}"
+			: $"База данных '{database}' создана.";
+	}
+
+	private string ExecutePostgresCommand(string sqlCommand)
+	{
 		try
 		{
-			var database = PgConnectionString.DatabaseName;
-			var sb = new StringBuilder($"CREATE DATABASE {database}");
-			if (!string.IsNullOrEmpty(TableSpace))
-				sb.Append($" TABLESPACE {TableSpace}");
-			sb.Append(';');
 			using NpgsqlConnection connection = new(PgConnectionString.GetPostgresConnectionString());
 			connection.Open();
-			new NpgsqlCommand($"{sb}", connection).ExecuteNonQuery();
-			return $"База данных '{database}' создана.";
+			new NpgsqlCommand(sqlCommand, connection).ExecuteNonQuery();
 		}
 		catch (Exception ex)
 		{
-			return $"Ошибка при создании базы данных: {ex.Message}";
+			return ex.Message;
+		}
+		return null;
+	}
+
+	private string QueryPostgresCommand(string sqlCommand, out string[] strings)
+	{
+		try
+		{
+			using NpgsqlConnection connection = new(PgConnectionString.GetPostgresConnectionString());
+			connection.Open();
+			var lines = new List<string>();
+			using var reader = new NpgsqlCommand(sqlCommand, connection).ExecuteReader();
+			while (reader.Read())
+			{
+				lines.Add(reader.GetString(0));
+			}
+			strings = lines.ToArray();
+			return null;
+		}
+		catch (Exception ex)
+		{
+			strings = null;
+			return ex.Message;
 		}
 	}
 
 	public override string ToString() =>
 		Name;
+
+	public string AddTableSpace(string tableSpace, string location) =>
+		ExecutePostgresCommand($"CREATE TABLESPACE {tableSpace} LOCATION '{location.Trim()}';");
+
+	public string GetTableSpaces(out string[] strings) =>
+		QueryPostgresCommand("SELECT spcname FROM pg_tablespace;", out strings);
 }
