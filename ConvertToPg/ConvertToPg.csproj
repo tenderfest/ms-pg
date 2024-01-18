@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="FormMain.cs~RF821477ad.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PgConvert\PgConvert.csproj" />
   </ItemGroup>
 

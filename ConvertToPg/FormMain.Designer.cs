@@ -77,6 +77,7 @@ partial class FormMain
 		comboBoxEditTableCurrentFieldType = new ComboBox();
 		groupBoxEditTableCurrentFieldExample = new GroupBox();
 		textBoxEditTableCurrentFieldExample = new TextBox();
+		buttonEditCopyFieldType = new Button();
 		buttonEditMakeGeneratedField = new Button();
 		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
@@ -648,6 +649,7 @@ partial class FormMain
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldType);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldExample);
+		splitContainerEditTable.Panel2.Controls.Add(buttonEditCopyFieldType);
 		splitContainerEditTable.Panel2.Controls.Add(buttonEditMakeGeneratedField);
 		splitContainerEditTable.Size = new Size(632, 356);
 		splitContainerEditTable.SplitterDistance = 210;
@@ -681,9 +683,9 @@ partial class FormMain
 		// 
 		groupBoxEditTableCurrentField.Controls.Add(textBoxEditTableCurrentField);
 		groupBoxEditTableCurrentField.Dock = DockStyle.Fill;
-		groupBoxEditTableCurrentField.Location = new Point(0, 164);
+		groupBoxEditTableCurrentField.Location = new Point(0, 187);
 		groupBoxEditTableCurrentField.Name = "groupBoxEditTableCurrentField";
-		groupBoxEditTableCurrentField.Size = new Size(418, 192);
+		groupBoxEditTableCurrentField.Size = new Size(418, 169);
 		groupBoxEditTableCurrentField.TabIndex = 1;
 		groupBoxEditTableCurrentField.TabStop = false;
 		groupBoxEditTableCurrentField.Text = "Значение вычисляемого поля";
@@ -695,7 +697,7 @@ partial class FormMain
 		textBoxEditTableCurrentField.Location = new Point(3, 19);
 		textBoxEditTableCurrentField.Multiline = true;
 		textBoxEditTableCurrentField.Name = "textBoxEditTableCurrentField";
-		textBoxEditTableCurrentField.Size = new Size(412, 170);
+		textBoxEditTableCurrentField.Size = new Size(412, 147);
 		textBoxEditTableCurrentField.TabIndex = 0;
 		// 
 		// groupBoxEditTableCurrentFieldType
@@ -706,7 +708,7 @@ partial class FormMain
 		groupBoxEditTableCurrentFieldType.Controls.Add(labelPrecision);
 		groupBoxEditTableCurrentFieldType.Controls.Add(comboBoxEditTableCurrentFieldType);
 		groupBoxEditTableCurrentFieldType.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldType.Location = new Point(0, 114);
+		groupBoxEditTableCurrentFieldType.Location = new Point(0, 137);
 		groupBoxEditTableCurrentFieldType.Name = "groupBoxEditTableCurrentFieldType";
 		groupBoxEditTableCurrentFieldType.Size = new Size(418, 50);
 		groupBoxEditTableCurrentFieldType.TabIndex = 2;
@@ -767,12 +769,12 @@ partial class FormMain
 		// 
 		groupBoxEditTableCurrentFieldExample.Controls.Add(textBoxEditTableCurrentFieldExample);
 		groupBoxEditTableCurrentFieldExample.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 23);
+		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 46);
 		groupBoxEditTableCurrentFieldExample.Name = "groupBoxEditTableCurrentFieldExample";
 		groupBoxEditTableCurrentFieldExample.Size = new Size(418, 91);
 		groupBoxEditTableCurrentFieldExample.TabIndex = 3;
 		groupBoxEditTableCurrentFieldExample.TabStop = false;
-		groupBoxEditTableCurrentFieldExample.Text = "Определение вычисляемого поля для PostgreSQL";
+		groupBoxEditTableCurrentFieldExample.Text = "Определение поля для PostgreSQL";
 		// 
 		// textBoxEditTableCurrentFieldExample
 		// 
@@ -783,6 +785,18 @@ partial class FormMain
 		textBoxEditTableCurrentFieldExample.ReadOnly = true;
 		textBoxEditTableCurrentFieldExample.Size = new Size(412, 69);
 		textBoxEditTableCurrentFieldExample.TabIndex = 0;
+		// 
+		// buttonEditCopyFieldType
+		// 
+		buttonEditCopyFieldType.Dock = DockStyle.Top;
+		buttonEditCopyFieldType.Enabled = false;
+		buttonEditCopyFieldType.Location = new Point(0, 23);
+		buttonEditCopyFieldType.Name = "buttonEditCopyFieldType";
+		buttonEditCopyFieldType.Size = new Size(418, 23);
+		buttonEditCopyFieldType.TabIndex = 5;
+		buttonEditCopyFieldType.Text = "← Взять тип из другого поля";
+		buttonEditCopyFieldType.UseVisualStyleBackColor = true;
+		buttonEditCopyFieldType.Click += ButtonEditCopyFieldType_Click;
 		// 
 		// buttonEditMakeGeneratedField
 		// 
@@ -1406,4 +1420,5 @@ partial class FormMain
 	private ComboBox comboBoxEditFunctionLanguage;
 	private TextBox textBoxEditTableCurrentFieldExample;
 	private Button buttonEditMakeGeneratedField;
+	private Button buttonEditCopyFieldType;
 }

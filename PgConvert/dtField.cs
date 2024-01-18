@@ -90,11 +90,10 @@ public class DtField
 	/// </summary>
 	public bool Persisted { get; set; }
 
-	/// <summary>
-	/// Текст для вычисляемого поля для SQL-запроса, создающего таблицу
-	/// </summary>
-	public string GeneratedFieldPg =>
-		$"{Name} {FieldType} GENERATED ALWAYS AS ({FormulaPg}) STORED";
+	public string FieldPgForCreateTable =>
+		IsGenerated
+		? GeneratedFieldPg
+		: $"{Name} {FieldType}";
 
 	/// <summary>
 	/// Утверждение вычисляемого поля как подходящего для PostgreSQL
@@ -147,9 +146,21 @@ public class DtField
 
 	#region приватные методы
 
+	/// <summary>
+	/// Текст для вычисляемого поля для SQL-запроса, создающего таблицу
+	/// </summary>
+	private string GeneratedFieldPg =>
+		$"{Name} {FieldType} GENERATED ALWAYS AS ({FormulaPg}) STORED";
+
+	/// <summary>
+	/// Очищенный от квадратных скобок текст в нижнем регистре
+	/// </summary>
 	private static string ClearToLower(string str) =>
 		Clear(str).ToLower();
 
+	/// <summary>
+	/// Очищенный от квадратных скобок текст
+	/// </summary>
 	private static string Clear(string str) =>
 		str
 		.Trim()

@@ -488,13 +488,23 @@ public partial class FormMain : Form
 	/// <summary>
 	/// Выбор поля в списке полей изменяемого определения таблицы
 	/// </summary>
-	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e) =>
-		ShowCurrentEditField();
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (!isCopyFieldType)
+		{
+			ShowCurrentEditField();
+			return;
+		}
+
+		// выбор поля для копирования типа
+		if (null == CurrentField)
+			return;
+
+		MessageBox.Show($"скопировать тип {CurrentField.FieldType}!");
+	}
 
 	private void ShowCurrentEditField()
 	{
-		//textBoxEditTableCurrentField.Text = null;
-
 		if (null == CurrentField)
 		{
 			textBoxEditTableCurrentField.Text = null;
@@ -506,7 +516,8 @@ public partial class FormMain : Form
 		textBoxEditTableCurrentField.Text = CurrentField.FormulaPg;
 		groupBoxEditTableCurrentFieldExample.Enabled =
 			groupBoxEditTableCurrentFieldType.Enabled =
-			groupBoxEditTableCurrentField.Enabled = CurrentField.IsGenerated;
+			groupBoxEditTableCurrentField.Enabled =
+			buttonEditCopyFieldType.Enabled = CurrentField.IsGenerated;
 
 		string errMessage = CurrentField.SetPrecisionScale(
 			numericUpDownPrecision.Value,
@@ -517,10 +528,7 @@ public partial class FormMain : Form
 			return;
 		}
 
-		textBoxEditTableCurrentFieldExample.Text = CurrentField.GeneratedFieldPg;
-		textBoxEditTableCurrentFieldExample.ForeColor = CurrentField.IsFieldTypeNone
-			? Color.Red
-			: textBoxEditTableCurrentFieldExample.Parent.ForeColor;
+		textBoxEditTableCurrentFieldExample.Text = CurrentField.FieldPgForCreateTable;
 	}
 
 	private DtElement currentEditElement;
@@ -552,6 +560,7 @@ public partial class FormMain : Form
 				// показ данных для элемента
 				if (SwitchCurrentElement(
 					() =>
+					// ---------------- Table
 					{
 						tabControlEditElement.SelectTab(0);
 						// вычисляемые поля
@@ -578,12 +587,14 @@ public partial class FormMain : Form
 						enableEditButtons = true;
 					},
 					() =>
+					// ---------------- Procedure
 					{
 						tabControlEditElement.SelectTab(1);
 						textBoxEditProcedure.Text = ((ElProcedure)value).LinesPg.ToOneString();
 						enableEditButtons = true;
 					},
 					() =>
+					// ---------------- Trigger
 					{
 						tabControlEditElement.SelectTab(2);
 						var trigger = (ElTrigger)value;
@@ -832,5 +843,24 @@ public partial class FormMain : Form
 		CurrentField.FormulaPg = textBoxEditTableCurrentField.Text;
 
 		ShowCurrentEditField();
+	}
+
+	/// <summary>
+	/// происходит копирование типа поля для вычисляемого
+	/// </summary>
+	private bool isCopyFieldType = false;
+
+	/// <summary>
+	/// Взять тип для вычисляемого поля из другого поля той же таблицы
+	/// </summary>
+	private void ButtonEditCopyFieldType_Click(object sender, EventArgs e)
+	{
+		buttonEditCopyFieldType.Text = isCopyFieldType
+			? "← Взять тип из другого поля"
+			: "Отмена";
+		foreach (Control c in splitContainerEditTable.Panel2.Controls)
+			c.Enabled = isCopyFieldType;
+		buttonEditCopyFieldType.Enabled = !isCopyFieldType;
+		isCopyFieldType = !isCopyFieldType;
 	}
 }
