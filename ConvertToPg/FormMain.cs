@@ -485,25 +485,7 @@ public partial class FormMain : Form
 		? (DtField)listViewEditTableFieldNames.SelectedItems[0].Tag
 		: null;
 
-	/// <summary>
-	/// Выбор поля в списке полей изменяемого определения таблицы
-	/// </summary>
-	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
-	{
-		if (!isCopyFieldType)
-		{
-			ShowCurrentEditField();
-			return;
-		}
-
-		// выбор поля для копирования типа
-		if (null == CurrentField)
-			return;
-
-		MessageBox.Show($"скопировать тип {CurrentField.FieldType}!");
-	}
-
-	private void ShowCurrentEditField()
+	private void ShowCurrentEditField(bool setFromControls)
 	{
 		if (null == CurrentField)
 		{
@@ -512,22 +494,23 @@ public partial class FormMain : Form
 			textBoxEditTableCurrentFieldExample.Text = null;
 			return;
 		}
-
 		textBoxEditTableCurrentField.Text = CurrentField.FormulaPg;
 		groupBoxEditTableCurrentFieldExample.Enabled =
 			groupBoxEditTableCurrentFieldType.Enabled =
 			groupBoxEditTableCurrentField.Enabled =
+			buttonEditMakeGeneratedField.Enabled =
 			buttonEditCopyFieldType.Enabled = CurrentField.IsGenerated;
-
-		string errMessage = CurrentField.SetPrecisionScale(
-			numericUpDownPrecision.Value,
-			numericUpDownScale.Value);
-		if (!string.IsNullOrEmpty(errMessage))
+		if (setFromControls)
 		{
-			ShowErrorMessage(errMessage);
-			return;
+			var errMessage = CurrentField.SetPrecisionScale(
+				numericUpDownPrecision.Value,
+				numericUpDownScale.Value);
+			if (!string.IsNullOrEmpty(errMessage))
+			{
+				ShowErrorMessage(errMessage);
+				return;
+			}
 		}
-
 		textBoxEditTableCurrentFieldExample.Text = CurrentField.FieldPgForCreateTable;
 	}
 
@@ -842,25 +825,77 @@ public partial class FormMain : Form
 			return;
 		CurrentField.FormulaPg = textBoxEditTableCurrentField.Text;
 
-		ShowCurrentEditField();
+		ShowCurrentEditField(true);
 	}
 
 	/// <summary>
-	/// происходит копирование типа поля для вычисляемого
+	/// Вычисляемое поле для копирования в него типа из другого поля
 	/// </summary>
-	private bool isCopyFieldType = false;
+	private DtField fieldForType = null;
+	private int fieldForTypeIndex = -1;
+
+	/// <summary>
+	/// Происходит копирование типа поля для вычисляемого
+	/// </summary>
+	private bool IsCopyFieldType
+		=> fieldForType != null;
 
 	/// <summary>
 	/// Взять тип для вычисляемого поля из другого поля той же таблицы
 	/// </summary>
 	private void ButtonEditCopyFieldType_Click(object sender, EventArgs e)
 	{
-		buttonEditCopyFieldType.Text = isCopyFieldType
+		EditCopyFieldStartStop(true);
+		fieldForTypeIndex = listViewEditTableFieldNames.SelectedItems[0].Index;
+	}
+
+	private void EditCopyFieldStartStop(bool setFieldForType)
+	{
+		if (null == CurrentField)
+			return;
+
+		buttonEditCopyFieldType.Text = !setFieldForType
 			? "← Взять тип из другого поля"
 			: "Отмена";
 		foreach (Control c in splitContainerEditTable.Panel2.Controls)
-			c.Enabled = isCopyFieldType;
-		buttonEditCopyFieldType.Enabled = !isCopyFieldType;
-		isCopyFieldType = !isCopyFieldType;
+			c.Enabled = !setFieldForType;
+		if (setFieldForType)
+		{
+			buttonEditCopyFieldType.Enabled = true;
+			fieldForType = CurrentField;
+		}
+	}
+
+	private bool isListViewEditTableFieldSelfNamesSetIndex = false;
+
+	/// <summary>
+	/// Выбор поля в списке полей изменяемого определения таблицы
+	/// </summary>
+	private void ListViewEditTableFieldNames_SelectedIndexChanged(object sender, EventArgs e)
+	{
+		if (null == CurrentField)
+			return;
+		if (!IsCopyFieldType)
+		{
+			ShowCurrentEditField(false);
+			return;
+		}
+		if (isListViewEditTableFieldSelfNamesSetIndex)
+		{
+			isListViewEditTableFieldSelfNamesSetIndex = false;
+			return;
+		}
+
+		fieldForType.FieldType = CurrentField.FieldType;
+		isListViewEditTableFieldSelfNamesSetIndex = true;
+		if (fieldForTypeIndex > -1)
+		{
+			listViewEditTableFieldNames.Items[fieldForTypeIndex].Selected = true;
+			listViewEditTableFieldNames.FocusedItem = listViewEditTableFieldNames.Items[fieldForTypeIndex];
+		}
+		fieldForType = null;
+		fieldForTypeIndex = -1;
+		EditCopyFieldStartStop(false);
+		ShowCurrentEditField(false);
 	}
 }

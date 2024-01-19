@@ -75,10 +75,10 @@ partial class FormMain
 		numericUpDownPrecision = new NumericUpDown();
 		labelPrecision = new Label();
 		comboBoxEditTableCurrentFieldType = new ComboBox();
+		buttonEditMakeGeneratedField = new Button();
 		groupBoxEditTableCurrentFieldExample = new GroupBox();
 		textBoxEditTableCurrentFieldExample = new TextBox();
 		buttonEditCopyFieldType = new Button();
-		buttonEditMakeGeneratedField = new Button();
 		tabPageProcedure = new TabPage();
 		textBoxEditProcedure = new TextBox();
 		tabPageTrigger = new TabPage();
@@ -647,10 +647,10 @@ partial class FormMain
 		// splitContainerEditTable.Panel2
 		// 
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentField);
+		splitContainerEditTable.Panel2.Controls.Add(buttonEditMakeGeneratedField);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldType);
 		splitContainerEditTable.Panel2.Controls.Add(groupBoxEditTableCurrentFieldExample);
 		splitContainerEditTable.Panel2.Controls.Add(buttonEditCopyFieldType);
-		splitContainerEditTable.Panel2.Controls.Add(buttonEditMakeGeneratedField);
 		splitContainerEditTable.Size = new Size(632, 356);
 		splitContainerEditTable.SplitterDistance = 210;
 		splitContainerEditTable.TabIndex = 0;
@@ -708,7 +708,7 @@ partial class FormMain
 		groupBoxEditTableCurrentFieldType.Controls.Add(labelPrecision);
 		groupBoxEditTableCurrentFieldType.Controls.Add(comboBoxEditTableCurrentFieldType);
 		groupBoxEditTableCurrentFieldType.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldType.Location = new Point(0, 137);
+		groupBoxEditTableCurrentFieldType.Location = new Point(0, 114);
 		groupBoxEditTableCurrentFieldType.Name = "groupBoxEditTableCurrentFieldType";
 		groupBoxEditTableCurrentFieldType.Size = new Size(418, 50);
 		groupBoxEditTableCurrentFieldType.TabIndex = 2;
@@ -765,11 +765,23 @@ partial class FormMain
 		comboBoxEditTableCurrentFieldType.TabIndex = 0;
 		comboBoxEditTableCurrentFieldType.SelectedIndexChanged += ComboBoxEditTableCurrentFieldType_SelectedIndexChanged;
 		// 
+		// buttonEditMakeGeneratedField
+		// 
+		buttonEditMakeGeneratedField.Dock = DockStyle.Top;
+		buttonEditMakeGeneratedField.Enabled = false;
+		buttonEditMakeGeneratedField.Location = new Point(0, 164);
+		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
+		buttonEditMakeGeneratedField.Size = new Size(418, 23);
+		buttonEditMakeGeneratedField.TabIndex = 4;
+		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
+		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
+		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
+		// 
 		// groupBoxEditTableCurrentFieldExample
 		// 
 		groupBoxEditTableCurrentFieldExample.Controls.Add(textBoxEditTableCurrentFieldExample);
 		groupBoxEditTableCurrentFieldExample.Dock = DockStyle.Top;
-		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 46);
+		groupBoxEditTableCurrentFieldExample.Location = new Point(0, 23);
 		groupBoxEditTableCurrentFieldExample.Name = "groupBoxEditTableCurrentFieldExample";
 		groupBoxEditTableCurrentFieldExample.Size = new Size(418, 91);
 		groupBoxEditTableCurrentFieldExample.TabIndex = 3;
@@ -790,25 +802,13 @@ partial class FormMain
 		// 
 		buttonEditCopyFieldType.Dock = DockStyle.Top;
 		buttonEditCopyFieldType.Enabled = false;
-		buttonEditCopyFieldType.Location = new Point(0, 23);
+		buttonEditCopyFieldType.Location = new Point(0, 0);
 		buttonEditCopyFieldType.Name = "buttonEditCopyFieldType";
 		buttonEditCopyFieldType.Size = new Size(418, 23);
 		buttonEditCopyFieldType.TabIndex = 5;
 		buttonEditCopyFieldType.Text = "← Взять тип из другого поля";
 		buttonEditCopyFieldType.UseVisualStyleBackColor = true;
 		buttonEditCopyFieldType.Click += ButtonEditCopyFieldType_Click;
-		// 
-		// buttonEditMakeGeneratedField
-		// 
-		buttonEditMakeGeneratedField.Dock = DockStyle.Top;
-		buttonEditMakeGeneratedField.Enabled = false;
-		buttonEditMakeGeneratedField.Location = new Point(0, 0);
-		buttonEditMakeGeneratedField.Name = "buttonEditMakeGeneratedField";
-		buttonEditMakeGeneratedField.Size = new Size(418, 23);
-		buttonEditMakeGeneratedField.TabIndex = 4;
-		buttonEditMakeGeneratedField.Text = "Сформировать определение вычисляемого поля";
-		buttonEditMakeGeneratedField.UseVisualStyleBackColor = true;
-		buttonEditMakeGeneratedField.Click += ButtonEditMakeGeneratedField_Click;
 		// 
 		// tabPageProcedure
 		// 
